@@ -264,4 +264,31 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         }
     }
 
+    public DObject.Type childType() {
+        DObject.Type type = referentType();
+        if (type != null && DObject.Type.DATASET != type) {
+            switch (type) {
+            case PROJECT:
+                return DObject.Type.SUBJECT;
+            case SUBJECT:
+                return DObject.Type.EX_METHOD;
+            case EX_METHOD:
+                return DObject.Type.STUDY;
+            case STUDY:
+                return DObject.Type.DATASET;
+            default:
+                break;
+            }
+        }
+        return null;
+    }
+
+    public String childTypeName() {
+        DObject.Type childType = childType();
+        if (childType != null) {
+            return childType.toString();
+        }
+        return null;
+    }
+
 }

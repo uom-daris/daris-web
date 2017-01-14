@@ -7,12 +7,8 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.History;
 
 import arc.gui.gwt.colour.Colour;
 import arc.gui.gwt.colour.RGB;
@@ -26,8 +22,9 @@ import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.HorizontalSplitPanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
+import arc.mf.client.plugin.Plugin;
+import arc.mf.client.util.ObjectUtil;
 import arc.mf.object.ObjectResolveHandler;
-import daris.web.client.HistoryManager;
 import daris.web.client.gui.DObjectListGrid.ParentUpdateListener;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObject;
@@ -50,7 +47,7 @@ public class DObjectExplorer extends ContainerWidget {
 
     private static class NavButton extends HTML {
 
-        NavButton(DObjectRef o, boolean link) {
+        NavButton(DObjectRef o, ClickHandler ch) {
             super(o == null ? "Home" : labelFor(o));
             setFontFamily("Roboto,Helvetica,sans-serif");
             setFontSize(NAV_FONT_SIZE);
@@ -61,32 +58,18 @@ public class DObjectExplorer extends ContainerWidget {
             setHeight(NAV_HEIGHT);
             element().getStyle().setLineHeight(NAV_HEIGHT, Unit.PX);
             setOverflow(Overflow.HIDDEN);
-            if (link) {
+            if (ch != null) {
                 setColour(NAV_LINK_COLOR);
                 setCursor(Cursor.POINTER);
-                addMouseOverHandler(new MouseOverHandler() {
-
-                    @Override
-                    public void onMouseOver(MouseOverEvent event) {
-                        setColour(RGB.WHITE);
-                        setBackgroundColour(RGBA.GREY_888);
-                    }
+                addMouseOverHandler(event -> {
+                    setColour(RGB.WHITE);
+                    setBackgroundColour(RGBA.GREY_888);
                 });
-                addMouseOutHandler(new MouseOutHandler() {
-
-                    @Override
-                    public void onMouseOut(MouseOutEvent event) {
-                        setColour(NAV_LINK_COLOR);
-                        setBackgroundColour(RGBA.TRANSPARENT);
-                    }
+                addMouseOutHandler(event -> {
+                    setColour(NAV_LINK_COLOR);
+                    setBackgroundColour(RGBA.TRANSPARENT);
                 });
-                addClickHandler(new ClickHandler() {
-
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        DObjectExplorer.get().list(o == null ? null : o.citeableId(), false);
-                    }
-                });
+                addClickHandler(ch);
             } else {
                 setColour(RGB.BLACK);
             }
@@ -187,6 +170,7 @@ public class DObjectExplorer extends ContainerWidget {
 
             @Override
             public void selected(DObjectRef o) {
+                updateHistoryToken(o);
                 _dv.loadAndDisplayObject(o);
             }
 
@@ -215,32 +199,69 @@ public class DObjectExplorer extends ContainerWidget {
         });
 
         initWidget(_vp);
+
+        if (Plugin.isStandaloneApplication()) {
+            History.addValueChangeHandler(e -> {
+                String token = e.getValue();
+                if (token != null && token.startsWith("list_")) {
+                    String cid = token.substring(5);
+                    list(cid);
+                } else if (token != null && token.startsWith("view_")) {
+                    String cid = token.substring(5);
+                    view(cid);
+                } else {
+                    if (!"list".equals(token)) {
+                        History.replaceItem("list", false);
+                    }
+                    list();
+                }
+            });
+        }
     }
 
     private void updateNavBar(List<DObjectRef> parents) {
+        int nbParents = parents == null ? 0 : parents.size();
         _navHP.removeAll();
-        _navHP.add(new NavButton(null, true));
-        if (parents != null) {
-            int n = parents.size();
-            for (int i = 0; i < n; i++) {
+        _navHP.add(new NavButton(null, (nbParents > 0) ? (event -> {
+            list();
+        }) : null));
+        if (nbParents > 0) {
+            for (int i = 0; i < nbParents; i++) {
                 DObjectRef p = parents.get(i);
                 _navHP.add(new NavSeparator());
-                _navHP.add(new NavButton(p, i != n - 1));
+                _navHP.add(new NavButton(p, (i != nbParents - 1) ? (event -> {
+                    list(p);
+                }) : null));
             }
         }
     }
 
-    public void view(String cid, final boolean fireHistoryState) {
+    public void view(String cid) {
         new DObjectPathRef(cid).resolve(new ObjectResolveHandler<DObjectPath>() {
 
             @Override
             public void resolved(DObjectPath path) {
-                view(path.parents(), path.object(), fireHistoryState);
+                view(path.parents(), path.object());
             }
         });
     }
 
-    public void list(String parentCid, final boolean fireHistoryState) {
+    public void view(DObjectRef o) {
+        view(o.citeableId());
+    }
+
+    /**
+     * List projects.
+     */
+    public void list() {
+        list((String) null);
+    }
+
+    public void list(DObjectRef parent) {
+        list(parent == null ? null : parent.citeableId());
+    }
+
+    public void list(String parentCid) {
         if (parentCid == null) {
             _list.setParentObject(null);
             return;
@@ -249,16 +270,55 @@ public class DObjectExplorer extends ContainerWidget {
 
             @Override
             public void resolved(DObjectPath path) {
-                view(path.list(true, false), path.child(), fireHistoryState);
+                view(path.list(true, false), path.child());
             }
         });
     }
 
-    private void view(List<DObjectRef> parents, DObjectRef object, boolean fireHistoryState) {
+    private void view(List<DObjectRef> parents, DObjectRef object) {
         updateNavBar(parents);
         DObjectRef directParent = (parents == null || parents.isEmpty()) ? null : parents.get(parents.size() - 1);
         _list.seekTo(directParent, object);
-        HistoryManager.newItem(directParent, object, fireHistoryState);
+        if (Plugin.isStandaloneApplication()) {
+            // update history token if needed
+            updateHistoryToken(directParent, object);
+        }
+    }
+
+    private static String historyTokenFor(DObjectRef parent, DObjectRef object) {
+        if (object == null) {
+            if (parent == null) {
+                return "list";
+            } else {
+                return "list_" + parent.citeableId();
+            }
+        } else {
+            return "view_" + object.citeableId();
+        }
+    }
+
+    private static String historyTokenFor(DObjectRef object) {
+        if (object == null || object.isProject()) {
+            return historyTokenFor(null, object);
+        }
+        DObjectRef parent = new DObjectRef(CiteableIdUtils.parent(object.citeableId()), -1);
+        return historyTokenFor(parent, object);
+    }
+
+    private static void updateHistoryToken(String token) {
+        if (!ObjectUtil.equals(token, History.getToken())) {
+            History.newItem(token, false);
+        }
+    }
+
+    private static void updateHistoryToken(DObjectRef parent, DObjectRef object) {
+        String token = historyTokenFor(parent, object);
+        updateHistoryToken(token);
+    }
+
+    private static void updateHistoryToken(DObjectRef object) {
+        String token = historyTokenFor(object);
+        updateHistoryToken(token);
     }
 
     private static DObjectExplorer _instance;

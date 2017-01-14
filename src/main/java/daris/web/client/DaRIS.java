@@ -6,6 +6,7 @@ import com.google.gwt.user.client.History;
 import arc.gui.gwt.dnd.DragAndDrop;
 import arc.gui.gwt.theme.ThemeRegistry;
 import arc.gui.gwt.widget.panel.RootPanel;
+import arc.mf.client.plugin.Plugin;
 import arc.mf.event.SystemEventChannel;
 import arc.mf.model.shopping.events.ShoppingEvents;
 import arc.mf.session.DefaultLoginDialog;
@@ -24,10 +25,10 @@ public class DaRIS implements EntryPoint, SessionHandler {
          */
         new ThemeRegistry().setCurrentTheme(new DaRISTheme());
 
-        /*
-         * initialize history
-         */
-        HistoryManager.initialize();
+//        /*
+//         * initialize history
+//         */
+//        HistoryManager.initialize();
 
         /*
          * start mediaflux session
@@ -64,14 +65,16 @@ public class DaRIS implements EntryPoint, SessionHandler {
         SystemEventChannel.subscribe();
 
         /*
-         * 
+         * show gui
          */
         RootPanel.add(DObjectExplorer.get());
 
         /*
          * Fire current history state
          */
-        History.fireCurrentHistoryState();
+        if (Plugin.isStandaloneApplication()) {
+            History.fireCurrentHistoryState();
+        }
     }
 
     @Override

@@ -5,14 +5,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 
 import arc.gui.gwt.widget.BaseWidget;
@@ -21,9 +20,7 @@ import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.list.ListGrid;
-import arc.gui.gwt.widget.list.ListGridColumn;
 import arc.gui.gwt.widget.list.ListGridEntry;
-import arc.gui.gwt.widget.list.ListGridHeader;
 import arc.gui.gwt.widget.list.ListGridRowDoubleClickHandler;
 import arc.gui.gwt.widget.list.ListGridRowEnterHandler;
 import arc.gui.gwt.widget.paging.PagingControl;
@@ -39,15 +36,6 @@ import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.messages.DObjectChildCursorFromGet;
 import daris.web.client.util.StringUtils;
 
-/**
- * NOTE: This ListGrid supports multi-select also it has header checkbox and row
- * check box to make selections easier. However, it causes flood of (selection)
- * events. Do not have time to deal with it, so decide not to use this class.
- * 
- * @author wliu5
- *
- */
-
 public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     public static final int DEFAULT_PAGE_SIZE = 100;
@@ -61,7 +49,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     private DObjectRef _parent;
     private LinkedHashMap<DObjectRef, DObjectChildrenRef> _childrenMap;
-    private LinkedHashMap<DObjectRef, Set<DObjectRef>> _selectionMap;
     private LinkedHashMap<DObjectRef, DObjectRef> _selectedMap;
     private List<DObjectRef> _childrenInCurrentPage;
 
@@ -70,7 +57,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
     private VerticalPanel _vp;
 
     private ListGrid<DObjectRef> _list;
-    private HeaderCheckBox _headerCheckBox;
     private PagingControl _pc;
 
     private List<SelectionHandler<DObjectRef>> _shs;
@@ -85,13 +71,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             private static final long serialVersionUID = 1L;
 
             protected boolean removeEldestEntry(Map.Entry<DObjectRef, DObjectChildrenRef> eldest) {
-                return size() > MAX_MAP_ENTRIES;
-            }
-        };
-        _selectionMap = new LinkedHashMap<DObjectRef, Set<DObjectRef>>() {
-            private static final long serialVersionUID = 1L;
-
-            protected boolean removeEldestEntry(Map.Entry<DObjectRef, Set<DObjectRef>> eldest) {
                 return size() > MAX_MAP_ENTRIES;
             }
         };
@@ -114,9 +93,8 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                  * restore selections
                  */
                 if (entries != null && !entries.isEmpty()) {
-                    Set<DObjectRef> savedSelections = _selectionMap.get(_parent);
                     DObjectRef selected = _selectedMap.get(_parent);
-                    if (savedSelections == null || savedSelections.isEmpty()) {
+                    if (selected == null) {
                         select(0);
                     } else {
                         int selectedIdx = -1;
@@ -128,12 +106,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                             }
                             if (selected != null && selected.equals(o)) {
                                 selectedIdx = i;
-                            }
-                            if (savedSelections.contains(o)) {
-                                select(i, true, false);
-                                if (selected == null && selectedIdx < 0) {
-                                    selectedIdx = i;
-                                }
                             }
                         }
                         if (toSelectIdx >= 0) {
@@ -149,75 +121,21 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                 _toSelect = null;
             }
 
-            @Override
-            public void select(int i, boolean multiSelect, boolean fireEvent) {
-                super.select(i, multiSelect, fireEvent);
-                DObjectRef o = _childrenInCurrentPage.get(i);
-                RowCheckBox rcb = (RowCheckBox) rowFor(o).cell(0).widget();
-                if (!rcb.checked()) {
-                    rcb.setChecked(true);
-                }
-            }
-
-            @Override
-            public void deselect(int i, boolean fireEvent) {
-                super.deselect(i, fireEvent);
-                DObjectRef o = _childrenInCurrentPage.get(i);
-                RowCheckBox rcb = (RowCheckBox) rowFor(o).cell(0).widget();
-                if (rcb.checked()) {
-                    rcb.setChecked(false);
-                }
-            }
-
-            @Override
-            public void deselectAll(boolean fireEvent) {
-                super.deselectAll(fireEvent);
-                if (_childrenInCurrentPage != null) {
-                    for (DObjectRef o : _childrenInCurrentPage) {
-                        RowCheckBox rcb = (RowCheckBox) rowFor(o).cell(0).widget();
-                        if (rcb.checked()) {
-                            rcb.setChecked(false);
-                        }
-                    }
-                }
-            }
-
         };
         _list.setObjectRegistry(DObjectGUIRegistry.get());
         _list.fitToParent();
         _list.setMinRowHeight(MIN_ROW_HEIGHT);
 
-        // TODO: check if it work as expected
         _list.setClearSelectionOnRefresh(false);
 
-        _list.setMultiSelect(true);
+        _list.setMultiSelect(false);
 
         _list.setSelectionHandler(new SelectionHandler<DObjectRef>() {
 
             @Override
             public void selected(DObjectRef selected) {
 
-                System.out.println("Selected: " + selected.citeableId());
-
                 _selectedMap.put(_parent, selected);
-
-                Set<DObjectRef> selections = _selectionMap.get(_parent);
-                if (selections == null) {
-                    selections = new TreeSet<DObjectRef>();
-                    _selectionMap.put(_parent, selections);
-                }
-                selections.add(selected);
-
-                RowCheckBox rcb = (RowCheckBox) _list.rowFor(selected).cell(0).widget();
-                if (!rcb.checked()) {
-                    rcb.setChecked(true);
-                }
-
-                if (_list.selections().size() == _childrenInCurrentPage.size()) {
-                    _headerCheckBox.setState(HeaderCheckBox.State.ALL);
-                } else {
-                    _headerCheckBox.setState(HeaderCheckBox.State.PARTIAL);
-                }
 
                 notifyOfSelectionInPage(selected);
             }
@@ -229,22 +147,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
                 _selectedMap.remove(_parent);
 
-                Set<DObjectRef> selections = _selectionMap.get(_parent);
-                if (selections != null) {
-                    selections.remove(deselected);
-                }
-
-                RowCheckBox rcb = (RowCheckBox) _list.rowFor(deselected).cell(0).widget();
-                if (rcb.checked()) {
-                    rcb.setChecked(false);
-                }
-
-                if (_list.haveSelections()) {
-                    _headerCheckBox.setState(HeaderCheckBox.State.PARTIAL);
-                } else {
-                    _headerCheckBox.setState(HeaderCheckBox.State.NONE);
-                }
-
                 notifyOfDeselectionInPage(deselected);
             }
         });
@@ -252,63 +154,13 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         _list.setLoadingMessage("");
         _list.setCursorSize(_pageSize);
 
-        _headerCheckBox = new HeaderCheckBox(HeaderCheckBox.State.NONE, false);
-        _headerCheckBox.addClickHandler(new ClickHandler() {
+        _list.addColumnDefn("nbc", "", null, new WidgetFormatter<DObjectRef, Integer>() {
 
             @Override
-            public void onClick(ClickEvent event) {
-                HeaderCheckBox.State state = _headerCheckBox.state();
-                switch (state) {
-                case NONE:
-                case PARTIAL:
-                    if (_childrenInCurrentPage != null) {
-                        DObjectRef selected = selected();
-                        int size = _childrenInCurrentPage.size();
-                        for (int i = 0; i < size; i++) {
-                            _list.select(i);
-                        }
-                        if (selected != null) {
-                            _list.select(selected);
-                        }
-                        _headerCheckBox.setState(HeaderCheckBox.State.ALL);
-                    } else {
-                        _headerCheckBox.setState(HeaderCheckBox.State.NONE);
-                    }
-                    break;
-                default:
-                    if (_list.haveSelections()) {
-                        _list.deselectAll(true);
-                    }
-                    break;
-                }
-
+            public BaseWidget format(DObjectRef o, Integer nbc) {
+                return new ObjectIcon(o);
             }
-        });
-
-        ListGridColumn<DObjectRef> checkBoxColumn = new ListGridColumn<DObjectRef>("selected", _headerCheckBox, null,
-                new WidgetFormatter<DObjectRef, Boolean>() {
-
-                    @Override
-                    public BaseWidget format(DObjectRef o, Boolean selected) {
-                        final RowCheckBox rcb = new RowCheckBox(selected == null ? false : selected);
-                        rcb.addClickHandler(new ClickHandler() {
-
-                            @Override
-                            public void onClick(ClickEvent event) {
-                                if (rcb.checked()) {
-                                    rcb.setChecked(false);
-                                    _list.deselect(o);
-                                } else {
-                                    rcb.setChecked(true);
-                                    _list.select(o);
-                                }
-                            }
-                        });
-                        return rcb;
-                    }
-                }, "");
-        checkBoxColumn.setWidth(MIN_ROW_HEIGHT);
-        _list.add(checkBoxColumn);
+        }).setWidth(28);
 
         _list.addColumnDefn("cid", "ID", "Object identifier", new WidgetFormatter<DObjectRef, String>() {
 
@@ -341,6 +193,30 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                 return html;
             }
         }).setWidth(500);
+
+        _list.addColumnDefn("nbc", "Number of Members", "Number of member objects",
+                new WidgetFormatter<DObjectRef, Integer>() {
+
+                    @Override
+                    public BaseWidget format(DObjectRef o, Integer nbc) {
+                        if (nbc != null && nbc >= 0) {
+                            HTML html = new HTML(Integer.toString(nbc));
+                            html.setFontSize(FONT_SIZE);
+                            html.setFontFamily("Roboto,Helvetica,sans-serif");
+                            html.setFontWeight(FontWeight.BOLD);
+                            if (!o.isDataset() && o.numberOfChildren() != 0) {
+                                html.setCursor(Cursor.POINTER);
+                            }
+                            html.setTextAlign(TextAlign.CENTER);
+                            html.setVerticalAlign(VerticalAlign.MIDDLE);
+                            html.element().getStyle().setLineHeight(MIN_ROW_HEIGHT, Unit.PX);
+                            html.setHeight(MIN_ROW_HEIGHT);
+                            html.setWidth100();
+                            return html;
+                        }
+                        return null;
+                    }
+                }).setWidth(120);
 
         _list.setRowDoubleClickHandler(new ListGridRowDoubleClickHandler<DObjectRef>() {
 
@@ -400,10 +276,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         return c;
     }
 
-    Set<DObjectRef> selections() {
-        return _selectionMap.get(_parent);
-    }
-
     DObjectRef selected() {
         return _selectedMap.get(_parent);
     }
@@ -429,7 +301,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             @Override
             public void resolved(List<DObjectRef> cos) throws Throwable {
                 long total = childrenRef.totalNumberOfMembers();
-                _headerCheckBox.setEnabled(total > 0);
                 _pc.setOffset(offset, total, true);
                 _childrenInCurrentPage = cos;
                 List<ListGridEntry<DObjectRef>> entries = null;
@@ -439,6 +310,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                         ListGridEntry<DObjectRef> entry = new ListGridEntry<DObjectRef>(co);
                         entry.set("cid", co.citeableId());
                         entry.set("name", co.name());
+                        entry.set("nbc", co.numberOfChildren());
                         entries.add(entry);
                     }
                 }
@@ -525,118 +397,56 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         }
     }
 
-    private static class HeaderCheckBox extends ContainerWidget {
+    public static final arc.gui.image.Image IMG_FOLDER = new arc.gui.image.Image(
+            Resource.INSTANCE.folder_32().getSafeUri().asString(), 16, 16);
+    public static final arc.gui.image.Image IMG_FOLDER_ENTER = new arc.gui.image.Image(
+            Resource.INSTANCE.folder_enter_32().getSafeUri().asString(), 16, 16);
+    public static final arc.gui.image.Image IMG_DOCUMENT = new arc.gui.image.Image(
+            Resource.INSTANCE.document_32().getSafeUri().asString(), 16, 16);
 
-        static final arc.gui.image.Image IMG_UNCHECKED = new arc.gui.image.Image(
-                Resource.INSTANCE.checkbox_unchecked_24().getSafeUri().asString(), 12, 12);
-        static final arc.gui.image.Image IMG_INDETERMINATE = new arc.gui.image.Image(
-                Resource.INSTANCE.checkbox_indeterminate_24().getSafeUri().asString(), 12, 12);
-        static final arc.gui.image.Image IMG_CHECKED = new arc.gui.image.Image(
-                Resource.INSTANCE.checkbox_checked_24().getSafeUri().asString(), 12, 12);
-
-        static enum State {
-            NONE, PARTIAL, ALL
-        }
+    private static class ObjectIcon extends ContainerWidget {
 
         private AbsolutePanel _ap;
         private arc.gui.gwt.widget.image.Image _img;
 
-        private State _state;
-        private boolean _enabled;
+        ObjectIcon(DObjectRef o) {
 
-        HeaderCheckBox(State state, boolean enabled) {
-            _state = state;
-            _enabled = enabled;
-            _ap = new AbsolutePanel();
-            _ap.setWidth100();
-            _ap.setHeight(ListGridHeader.HEIGHT);
-            _ap.setCursor(_enabled ? Cursor.POINTER : Cursor.DEFAULT);
-
-            _img = createImage(_state);
-            _ap.add(_img);
-
-            initWidget(_ap);
-        }
-
-        public void setEnabled(boolean enabled) {
-            if (enabled != _enabled) {
-                _enabled = enabled;
-                _ap.setCursor(_enabled ? Cursor.POINTER : Cursor.DEFAULT);
-            }
-        }
-
-        public void setState(State state) {
-            if (state != _state) {
-                _state = state;
-                _ap.remove(_img);
-                _img = createImage(_state);
-                _ap.add(_img);
-            }
-        }
-
-        public State state() {
-            return _state;
-        }
-
-        private static arc.gui.gwt.widget.image.Image createImage(State state) {
-            arc.gui.gwt.widget.image.Image image;
-            switch (state) {
-            case ALL:
-                image = new arc.gui.gwt.widget.image.Image(IMG_CHECKED);
-                break;
-            case PARTIAL:
-                image = new arc.gui.gwt.widget.image.Image(IMG_INDETERMINATE);
-                break;
-            default:
-                image = new arc.gui.gwt.widget.image.Image(IMG_UNCHECKED);
-                break;
-            }
-            image.setPosition(Position.ABSOLUTE);
-            image.element().getStyle().setProperty("margin", "auto");
-            image.setTop(0);
-            image.setBottom(0);
-            image.setLeft(0);
-            image.setRight(0);
-            return image;
-        }
-
-    }
-
-    private static class RowCheckBox extends ContainerWidget {
-
-        static final arc.gui.image.Image IMG_CIRCLE = new arc.gui.image.Image(
-                Resource.INSTANCE.checkbox_unchecked_24().getSafeUri().asString(), 12, 12);
-        static final arc.gui.image.Image IMG_TICK = new arc.gui.image.Image(
-                Resource.INSTANCE.checkbox_checked_24().getSafeUri().asString(), 12, 12);
-
-        private AbsolutePanel _ap;
-        private arc.gui.gwt.widget.image.Image _img;
-
-        RowCheckBox(boolean checked) {
             _ap = new AbsolutePanel();
             _ap.setWidth100();
             _ap.setHeight(MIN_ROW_HEIGHT);
             _ap.setCursor(Cursor.POINTER);
 
-            _img = new arc.gui.gwt.widget.image.Image(IMG_TICK);
-            _img.setDisabledImage(IMG_CIRCLE);
+            if (o.numberOfChildren() != 0) {
+                _img = new arc.gui.gwt.widget.image.Image(IMG_FOLDER_ENTER);
+                if (o.numberOfChildren() > 0) {
+                    String childrenType = o.childTypeName();
+                    if (childrenType != null) {
+                        if (childrenType.endsWith("y")) {
+                            childrenType = childrenType.substring(0, childrenType.length() - 1) + "ies";
+                        } else {
+                            childrenType = childrenType + "s";
+                        }
+                    }
+                    _img.setTitle("contains " + o.numberOfChildren() + " " + childrenType + ". Double-click to open.");
+                } else {
+                    _img.setTitle("may contain " + o.childTypeName() + ". Double-click to open.");
+                }
+            } else {
+                if (o.isDataset()) {
+                    _img = new arc.gui.gwt.widget.image.Image(IMG_DOCUMENT);
+                } else {
+                    _img = new arc.gui.gwt.widget.image.Image(IMG_FOLDER);
+                    _img.setTitle("contains 0 " + o.childTypeName() + ".");
+                }
+            }
             _img.setPosition(Position.ABSOLUTE);
             _img.element().getStyle().setProperty("margin", "auto");
             _img.setTop(0);
             _img.setBottom(0);
             _img.setLeft(0);
             _img.setRight(0);
-            _img.setEnabled(checked);
             _ap.add(_img);
             initWidget(_ap);
-        }
-
-        public boolean checked() {
-            return _img.enabled();
-        }
-
-        public void setChecked(boolean checked) {
-            _img.setEnabled(checked);
         }
 
     }

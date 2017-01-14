@@ -7,31 +7,16 @@ import com.google.gwt.resources.client.ImageResource;
 public interface Resource extends ClientBundle {
     Resource INSTANCE = GWT.create(Resource.class);
 
-    @Source("resource/checkbox_checked_24.png")
-    ImageResource checkbox_checked_24();
+    @Source("resource/document_32.png")
+    ImageResource document_32();
 
-    @Source("resource/checkbox_indeterminate_24.png")
-    ImageResource checkbox_indeterminate_24();
+    @Source("resource/folder_32.png")
+    ImageResource folder_32();
 
-    @Source("resource/checkbox_unchecked_24.png")
-    ImageResource checkbox_unchecked_24();
+    @Source("resource/folder_enter_32.png")
+    ImageResource folder_enter_32();
 
-    @Source("resource/circle_12.png")
-    ImageResource circle12();
-
-    @Source("resource/circle_16.png")
-    ImageResource circle16();
-
-    @Source("resource/sub_12.png")
-    ImageResource sub12();
-
-    @Source("resource/sub_16.png")
-    ImageResource sub16();
-
-    @Source("resource/tick_12.png")
-    ImageResource tick12();
-
-    @Source("resource/tick_16.png")
-    ImageResource tick16();
+    @Source("resource/image_32.png")
+    ImageResource image_32();
 
 }
