@@ -25,20 +25,20 @@ public class DaRIS implements EntryPoint, SessionHandler {
          */
         new ThemeRegistry().setCurrentTheme(new DaRISTheme());
 
-//        /*
-//         * initialize history
-//         */
-//        HistoryManager.initialize();
-
-        /*
-         * start mediaflux session
-         */
-        LoginDialog dlg = new DefaultLoginDialog();
-        dlg.setTitle("DaRIS");
-        dlg.setVersion(Version.VERSION);
-        Session.setAutoLogonCredentials("system", "manager", "change_me");
-        Session.setLoginDialog(dlg);
-        Session.initialize(this);
+        if (Plugin.isStandaloneApplication()) {
+            /*
+             * start mediaflux session
+             */
+            LoginDialog dlg = new DefaultLoginDialog();
+            dlg.setTitle("DaRIS");
+            dlg.setVersion(Version.VERSION);
+            Session.setAutoLogonCredentials("system", "manager", "change_me");
+            Session.setLoginDialog(dlg);
+            Session.initialize(this);
+        } else {
+            Session.initializeForPlugin();
+            // TODO: install as desktop application...
+        }
     }
 
     @Override

@@ -9,6 +9,8 @@ import arc.gui.object.register.ObjectGUI;
 import arc.gui.object.register.ObjectUpdateHandle;
 import arc.gui.object.register.ObjectUpdateListener;
 import arc.gui.window.Window;
+import daris.web.client.gui.object.DObjectEditor;
+import daris.web.client.gui.object.DObjectViewer;
 import daris.web.client.model.object.DObjectRef;
 
 public class DObjectGUI implements ObjectGUI {
@@ -52,9 +54,18 @@ public class DObjectGUI implements ObjectGUI {
     }
 
     @Override
-    public void displayDetails(Object o, ObjectDetailsDisplay dd, boolean forEdit) {
-        // TODO Auto-generated method stub
-
+    public void displayDetails(Object object, ObjectDetailsDisplay dd, boolean forEdit) {
+        DObjectRef o = ((DObjectRef) object);
+        o.setForEdit(forEdit);
+        if (forEdit) {
+            o.resolveAndLock(oo -> {
+                dd.display(o, DObjectEditor.create(oo).gui());
+            });
+        } else {
+            o.resolve(oo -> {
+                dd.display(o, DObjectViewer.create(oo).gui());
+            });
+        }
     }
 
     @Override

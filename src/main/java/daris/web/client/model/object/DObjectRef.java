@@ -90,8 +90,8 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         _testleaf = testleaf;
     }
 
-    public void setForedit(boolean foredit) {
-        _foredit = foredit;
+    public void setForEdit(boolean forEdit) {
+        _foredit = forEdit;
     }
 
     @Override

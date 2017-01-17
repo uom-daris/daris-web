@@ -128,6 +128,10 @@ public abstract class DObject {
         return _tags;
     }
 
+    public boolean hasTags() {
+        return _tags != null && !_tags.isEmpty();
+    }
+
     public XmlElement metadata() {
         return _meta;
     }

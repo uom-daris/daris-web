@@ -2,115 +2,39 @@ package daris.web.client.gui;
 
 import java.util.List;
 
-import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.History;
 
-import arc.gui.gwt.colour.Colour;
-import arc.gui.gwt.colour.RGB;
-import arc.gui.gwt.colour.RGBA;
 import arc.gui.gwt.object.ObjectDetailedView;
 import arc.gui.gwt.widget.ContainerWidget;
-import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.event.SelectionHandler;
-import arc.gui.gwt.widget.panel.AbsolutePanel;
-import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.HorizontalSplitPanel;
-import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.mf.client.plugin.Plugin;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.object.ObjectResolveHandler;
 import daris.web.client.gui.DObjectListGrid.ParentUpdateListener;
+import daris.web.client.gui.widget.DMenuButton;
+import daris.web.client.gui.widget.DMenuButtonBar;
+import daris.web.client.gui.widget.DNavButtonBar;
 import daris.web.client.model.CiteableIdUtils;
-import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectPath;
 import daris.web.client.model.object.DObjectPathRef;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.util.StringUtils;
 
 public class DObjectExplorer extends ContainerWidget {
 
-    public static final int NAV_HEIGHT = 32;
-
-    public static final int NAV_FONT_SIZE = 13;
-
-    public static final int NAV_SPACING = 5;
-
-    public static final Colour NAV_BACKGROUND_COLOR = new RGB(0xea, 0xea, 0xea);
-
-    public static final Colour NAV_LINK_COLOR = new RGB(0, 0x78, 0xd7);
-
-    private static class NavButton extends HTML {
-
-        NavButton(DObjectRef o, ClickHandler ch) {
-            super(o == null ? "Home" : labelFor(o));
-            setFontFamily("Roboto,Helvetica,sans-serif");
-            setFontSize(NAV_FONT_SIZE);
-            setFontWeight(FontWeight.BOLD);
-            setBorderRadius(3);
-            setPaddingLeft(5);
-            setPaddingRight(5);
-            setHeight(NAV_HEIGHT);
-            element().getStyle().setLineHeight(NAV_HEIGHT, Unit.PX);
-            setOverflow(Overflow.HIDDEN);
-            if (ch != null) {
-                setColour(NAV_LINK_COLOR);
-                setCursor(Cursor.POINTER);
-                addMouseOverHandler(event -> {
-                    setColour(RGB.WHITE);
-                    setBackgroundColour(RGBA.GREY_888);
-                });
-                addMouseOutHandler(event -> {
-                    setColour(NAV_LINK_COLOR);
-                    setBackgroundColour(RGBA.TRANSPARENT);
-                });
-                addClickHandler(ch);
-            } else {
-                setColour(RGB.BLACK);
-            }
-        }
-
-        private static String labelFor(DObjectRef o) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(StringUtils.upperCaseFirst(o.referentTypeName()));
-            sb.append(" ");
-            if (o.referentType() == DObject.Type.PROJECT) {
-                sb.append(o.citeableId());
-            } else {
-                sb.append(CiteableIdUtils.ordinal(o.citeableId()));
-            }
-            if (o.name() != null) {
-                sb.append(": ");
-                sb.append(o.name());
-            }
-            return sb.toString();
-        }
-
-    }
-
-    private static class NavSeparator extends HTML {
-
-        NavSeparator() {
-            super(">");
-            setFontSize(NAV_FONT_SIZE);
-            setFontWeight(FontWeight.BOLD);
-            setHeight(NAV_HEIGHT);
-            element().getStyle().setLineHeight(NAV_HEIGHT, Unit.PX);
-        }
-
-    }
+    public static final arc.gui.image.Image ICON_DARIS = new arc.gui.image.Image(
+            Resource.INSTANCE.daris_16().getSafeUri().asString(), 14, 14);
+    
+    public static final arc.gui.image.Image ICON_ACTION = new arc.gui.image.Image(
+            Resource.INSTANCE.launch_16().getSafeUri().asString(), 12, 12);
 
     private VerticalPanel _vp;
 
-    private HorizontalPanel _actionsHP;
+    private DMenuButtonBar _menuBar;
+    private DMenuButton _actionMenuButton;
 
-    private SimplePanel _navSP;
-    private HorizontalPanel _navHP;
+    private DNavButtonBar _navBar;
 
     private DObjectListGrid _list;
     private ObjectDetailedView _dv;
@@ -119,38 +43,18 @@ public class DObjectExplorer extends ContainerWidget {
         _vp = new VerticalPanel();
         _vp.fitToParent();
 
-        AbsolutePanel actionsAP = new AbsolutePanel();
-        actionsAP.setHeight(32);
-        actionsAP.setWidth100();
-        _vp.add(actionsAP);
-
         /*
-         * Actions bar
+         * menu bar
          */
-        _actionsHP = new HorizontalPanel();
-        _actionsHP.setHeight(32);
-        _actionsHP.setPosition(Position.ABSOLUTE);
-        _actionsHP.setTop(0);
-        _actionsHP.setLeft(0);
-
-        actionsAP.add(_actionsHP);
+        _menuBar = new DMenuButtonBar();
+        _vp.add(_menuBar);
+        initMenuButtons();
 
         /*
          * Nav bar
          */
-        _navSP = new SimplePanel();
-        _navSP.setHeight(NAV_HEIGHT);
-        _navSP.setWidth100();
-        _navSP.setBackgroundColour(NAV_BACKGROUND_COLOR);
-
-        _navHP = new HorizontalPanel();
-        _navHP.setSpacing(NAV_SPACING);
-        _navHP.setHeight(NAV_HEIGHT);
-
-        _navSP.setContent(_navHP);
-        updateNavBar(null);
-
-        _vp.add(_navSP);
+        _navBar = new DNavButtonBar(this);
+        _vp.add(_navBar);
 
         HorizontalSplitPanel hsp = new HorizontalSplitPanel(5);
         hsp.fitToParent();
@@ -185,14 +89,14 @@ public class DObjectExplorer extends ContainerWidget {
             @Override
             public void parentUpdated(DObjectRef parent) {
                 if (parent == null) {
-                    updateNavBar(null);
+                    _navBar.update(null);
                     return;
                 }
                 new DObjectPathRef(parent).resolve(new ObjectResolveHandler<DObjectPath>() {
 
                     @Override
                     public void resolved(DObjectPath path) {
-                        updateNavBar(path.list(true, false));
+                        _navBar.update(path.list(true, false));
                     }
                 });
             }
@@ -219,21 +123,10 @@ public class DObjectExplorer extends ContainerWidget {
         }
     }
 
-    private void updateNavBar(List<DObjectRef> parents) {
-        int nbParents = parents == null ? 0 : parents.size();
-        _navHP.removeAll();
-        _navHP.add(new NavButton(null, (nbParents > 0) ? (event -> {
-            list();
-        }) : null));
-        if (nbParents > 0) {
-            for (int i = 0; i < nbParents; i++) {
-                DObjectRef p = parents.get(i);
-                _navHP.add(new NavSeparator());
-                _navHP.add(new NavButton(p, (i != nbParents - 1) ? (event -> {
-                    list(p);
-                }) : null));
-            }
-        }
+    private void initMenuButtons() {
+        _menuBar.addMenuButton("DaRIS", ICON_DARIS, null);
+        _actionMenuButton = _menuBar.addMenuButton("Action", ICON_ACTION, null);
+        
     }
 
     public void view(String cid) {
@@ -276,7 +169,7 @@ public class DObjectExplorer extends ContainerWidget {
     }
 
     private void view(List<DObjectRef> parents, DObjectRef object) {
-        updateNavBar(parents);
+        _navBar.update(parents);
         DObjectRef directParent = (parents == null || parents.isEmpty()) ? null : parents.get(parents.size() - 1);
         _list.seekTo(directParent, object);
         if (Plugin.isStandaloneApplication()) {
