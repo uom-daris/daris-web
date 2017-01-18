@@ -1,73 +1,68 @@
 package daris.web.client.model.object;
 
 public class Attachment {
-	private String _assetId;
-	private String _name;
-	private String _description;
-	private String _mimeType;
-	private String _ext;
-	private long _size;
+    private String _assetId;
+    private String _name;
+    private String _description;
+    private String _mimeType;
+    private String _ext;
+    private long _size;
+    private String _sizeHR;
 
-	public Attachment(String assetId) {
+    public Attachment(String assetId, String name, String desc, String mimeType, String ext, long size, String sizeHR) {
 
-		this(assetId, null, null, null, null, -1);
-	}
+        _assetId = assetId;
+        _name = name;
+        _description = desc;
+        _mimeType = mimeType;
+        _ext = ext;
+        _size = size;
+        _sizeHR = sizeHR;
+    }
 
-	public Attachment(String assetId, String name, String desc, String mimeType, String ext, long size) {
+    public String assetId() {
 
-		_assetId = assetId;
-		_name = name;
-		_description = desc;
-		_mimeType = mimeType;
-		_ext = ext;
-		_size = size;
-	}
+        return _assetId;
+    }
 
-	public String assetId() {
+    public String name() {
 
-		return _assetId;
-	}
+        return _name;
+    }
 
-	public String name() {
+    public String description() {
+        return _description;
+    }
 
-		return _name;
-	}
+    public String extension() {
 
-	public String description() {
-		return _description;
-	}
+        return _ext;
+    }
 
-	public String extension() {
+    public String mimeType() {
 
-		return _ext;
-	}
+        return _mimeType;
+    }
 
-	public String mimeType() {
+    public long size() {
 
-		return _mimeType;
-	}
+        return _size;
+    }
 
-	public long size() {
+    public String humanReadableSize() {
+        return _sizeHR;
+    }
 
-		return _size;
-	}
+    public String toHTML() {
 
-	public String humanReadableSize() {
-	    // TODO
-	    return null;
-//		return ByteUtil.humanReadableByteCount(_size, true);
-	}
-
-	public String toHTML() {
-
-		String html = "<table><thead><tr><th align=\"center\" colspan=\"2\">Attachment</th></tr><thead>";
-		html += "<tbody>";
-		html += "<tr><td><b>asset id:</b></td><td>" + _assetId + "</td></tr>";
-		html += "<tr><td><b>name:</b></td><td>" + _name + "</td></tr>";
-		html += "<tr><td><b>extension:</b></td><td>" + _ext + "</td></tr>";
-		html += "<tr><td><b>mime type:</b></td><td>" + _mimeType + "</td></tr>";
-		html += "<tr><td><b>size:</b></td><td>" + humanReadableSize() + "</td></tr>";
-		html += "</tbody></table>";
-		return html;
-	}
+        String html = "<table><thead><tr><th align=\"center\" colspan=\"2\">Attachment</th></tr><thead>";
+        html += "<tbody>";
+        html += "<tr><td><b>asset id:</b></td><td>" + _assetId + "</td></tr>";
+        html += "<tr><td><b>name:</b></td><td>" + _name + "</td></tr>";
+        html += "<tr><td><b>extension:</b></td><td>" + _ext + "</td></tr>";
+        html += "<tr><td><b>mime type:</b></td><td>" + _mimeType + "</td></tr>";
+        html += "<tr><td><b>size:</b></td><td>" + humanReadableSize() + "</td></tr>";
+        html += "</tbody></table>";
+        return html;
+    }
 }

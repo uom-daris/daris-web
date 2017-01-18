@@ -16,6 +16,8 @@ import arc.gui.form.FieldDefinition;
 import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
+import arc.gui.form.FormItem.Property;
+import arc.gui.form.FormListener;
 import arc.gui.form.TextFieldRenderOptions;
 import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.widget.BaseWidget;
@@ -27,12 +29,14 @@ import arc.gui.gwt.widget.panel.TabPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
+import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.ListOfType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
 import daris.web.client.gui.dataset.DatasetViewer;
 import daris.web.client.gui.exmethod.ExMethodViewer;
+import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.project.ProjectViewer;
 import daris.web.client.gui.study.StudyViewer;
 import daris.web.client.gui.subject.SubjectViewer;
@@ -101,13 +105,22 @@ public class DObjectViewer<T extends DObject> extends ValidatedInterfaceComponen
     }
 
     private void updateAttachmentTab() {
-        // TODO Auto-generated method stub
-
+        AttachmentListGrid attachmentList = new AttachmentListGrid(_o);
+        putTab(ATTACHMENT_TAB_NAME, "Attachments", attachmentList);
     }
 
     private void updateMetadataTab() {
-        // TODO Auto-generated method stub
 
+        if (_o.metadata() == null) {
+            removeTab(METADATA_TAB_NAME);
+            return;
+        }
+        Form metadataForm = XmlMetaForm.formFor(_o.metadata(), FormEditMode.READ_ONLY);
+        metadataForm.setMarginTop(10);
+        metadataForm.setMarginLeft(10);
+        metadataForm.setWidth100();
+        metadataForm.render();
+        putTab(METADATA_TAB_NAME, "Metadata", new ScrollPanel(metadataForm, ScrollPolicy.AUTO));
     }
 
     private void updateInterfaceTab() {

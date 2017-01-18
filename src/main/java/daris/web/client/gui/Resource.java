@@ -6,7 +6,12 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface Resource extends ClientBundle {
     Resource INSTANCE = GWT.create(Resource.class);
-    
+
+    @Source("resource/add_16.png")
+    ImageResource add_16();
+
+    @Source("resource/cross_16.png")
+    ImageResource cross_16();
 
     @Source("resource/daris_16.png")
     ImageResource daris_16();
@@ -31,5 +36,8 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/launch_16.png")
     ImageResource launch_16();
+
+    @Source("resource/sub_16.png")
+    ImageResource sub_16();
 
 }

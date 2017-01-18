@@ -17,16 +17,16 @@ public class DObjectPath {
             _parents = new ArrayList<DObjectRef>(pes.size());
             for (XmlElement pe : pes) {
                 DObjectRef p = new DObjectRef(pe.value("@cid"), pe.value("@id"), pe.value("@proute"), pe.value("@name"),
-                        pe.intValue("@nbc", 0), false, true);
+                        pe.intValue("@nbc", 0), false);
                 _parents.add(p);
             }
         }
         _object = new DObjectRef(xe.value("object/@cid"), xe.value("object/@id"), xe.value("object/@proute"),
-                xe.value("object/@name"), xe.intValue("object/@nbc", 0), false, true);
+                xe.value("object/@name"), xe.intValue("object/@nbc", 0), false);
         XmlElement ce = xe.element("child");
         if (ce != null) {
             _child = new DObjectRef(ce.value("@cid"), ce.value("@id"), ce.value("@proute"), ce.value("@name"),
-                    ce.intValue("@nbc", 0), false, true);
+                    ce.intValue("@nbc", 0), false);
 
         }
 

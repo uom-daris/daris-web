@@ -117,6 +117,8 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                             select(0);
                         }
                     }
+                } else {
+                    notifyOfDeselectionInPage(_parent);
                 }
                 _toSelect = null;
             }
@@ -142,10 +144,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
             @Override
             public void deselected(DObjectRef deselected) {
-
-                System.out.println("Deselected: " + deselected.citeableId());
-
-                _selectedMap.remove(_parent);
 
                 notifyOfDeselectionInPage(deselected);
             }
@@ -222,7 +220,8 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
             @Override
             public void doubleClicked(DObjectRef o, DoubleClickEvent event) {
-                if (!o.isDataset() && o.numberOfChildren() != 0) {
+                if (!o.isDataset()) {
+                    _selectedMap.put(_parent, o);
                     setParentObject(o);
                 }
             }
@@ -255,6 +254,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     public void setParentObject(DObjectRef parent) {
         if (!ObjectUtil.equals(parent, _parent)) {
+            _list.clearSelections(true);
             _parent = parent;
             DObjectRef selected = _selectedMap.get(parent);
             if (selected != null) {
@@ -416,7 +416,9 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             _ap.setHeight(MIN_ROW_HEIGHT);
             _ap.setCursor(Cursor.POINTER);
 
-            if (o.numberOfChildren() != 0) {
+            if (o.isDataset()) {
+                _img = new arc.gui.gwt.widget.image.Image(IMG_DOCUMENT);
+            } else {
                 _img = new arc.gui.gwt.widget.image.Image(IMG_FOLDER_ENTER);
                 if (o.numberOfChildren() > 0) {
                     String childrenType = o.childTypeName();
@@ -430,13 +432,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                     _img.setTitle("contains " + o.numberOfChildren() + " " + childrenType + ". Double-click to open.");
                 } else {
                     _img.setTitle("may contain " + o.childTypeName() + ". Double-click to open.");
-                }
-            } else {
-                if (o.isDataset()) {
-                    _img = new arc.gui.gwt.widget.image.Image(IMG_DOCUMENT);
-                } else {
-                    _img = new arc.gui.gwt.widget.image.Image(IMG_FOLDER);
-                    _img.setTitle("contains 0 " + o.childTypeName() + ".");
                 }
             }
             _img.setPosition(Position.ABSOLUTE);

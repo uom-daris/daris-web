@@ -25,7 +25,7 @@ public class DObjectExplorer extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_DARIS = new arc.gui.image.Image(
             Resource.INSTANCE.daris_16().getSafeUri().asString(), 14, 14);
-    
+
     public static final arc.gui.image.Image ICON_ACTION = new arc.gui.image.Image(
             Resource.INSTANCE.launch_16().getSafeUri().asString(), 12, 12);
 
@@ -80,7 +80,7 @@ public class DObjectExplorer extends ContainerWidget {
 
             @Override
             public void deselected(DObjectRef o) {
-                //
+                _dv.clear(o);
             }
         });
 
@@ -97,6 +97,7 @@ public class DObjectExplorer extends ContainerWidget {
                     @Override
                     public void resolved(DObjectPath path) {
                         _navBar.update(path.list(true, false));
+                        updateHistoryToken(path.object(), path.child());
                     }
                 });
             }
@@ -126,7 +127,7 @@ public class DObjectExplorer extends ContainerWidget {
     private void initMenuButtons() {
         _menuBar.addMenuButton("DaRIS", ICON_DARIS, null);
         _actionMenuButton = _menuBar.addMenuButton("Action", ICON_ACTION, null);
-        
+
     }
 
     public void view(String cid) {
@@ -134,7 +135,7 @@ public class DObjectExplorer extends ContainerWidget {
 
             @Override
             public void resolved(DObjectPath path) {
-                view(path.parents(), path.object());
+                display(path.parents(), path.object());
             }
         });
     }
@@ -163,12 +164,12 @@ public class DObjectExplorer extends ContainerWidget {
 
             @Override
             public void resolved(DObjectPath path) {
-                view(path.list(true, false), path.child());
+                display(path.list(true, false), path.child());
             }
         });
     }
 
-    private void view(List<DObjectRef> parents, DObjectRef object) {
+    private void display(List<DObjectRef> parents, DObjectRef object) {
         _navBar.update(parents);
         DObjectRef directParent = (parents == null || parents.isEmpty()) ? null : parents.get(parents.size() - 1);
         _list.seekTo(directParent, object);

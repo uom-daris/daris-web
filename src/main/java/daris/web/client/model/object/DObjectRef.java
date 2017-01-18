@@ -16,23 +16,21 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
     private String _name;
     private int _numberOfChildren = -1;
     private boolean _foredit;
-    private boolean _testleaf;
 
     private boolean _resolved = false;
 
     public DObjectRef(String citeableId, int numberOfChildren) {
-        this(citeableId, null, null, null, numberOfChildren, false, true);
+        this(citeableId, null, null, null, numberOfChildren, false);
     }
 
     public DObjectRef(String citeableId, String assetId, String proute, String name, int numberOfChildren,
-            boolean foredit, boolean testleaf) {
+            boolean foredit) {
         _citeableId = citeableId;
         _assetId = assetId;
         _proute = proute;
         _name = name;
         _numberOfChildren = numberOfChildren;
         _foredit = foredit;
-        _testleaf = testleaf;
     }
 
     public DObjectRef(XmlElement oe) {
@@ -43,6 +41,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         try {
             _numberOfChildren = oe.intValue("@nbc");
         } catch (Throwable e) {
+
         }
     }
 
@@ -54,7 +53,6 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         _name = o.name();
         _numberOfChildren = o.numberOfChildren();
         _foredit = o.metadataForEdit() != null;
-        _testleaf = o.numberOfChildren() >= 0;
     }
 
     @Override
@@ -86,10 +84,6 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         return _numberOfChildren;
     }
 
-    public void setTestleaf(boolean testleaf) {
-        _testleaf = testleaf;
-    }
-
     public void setForEdit(boolean forEdit) {
         _foredit = forEdit;
     }
@@ -109,7 +103,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
             w.add("id", _citeableId);
         }
         w.add("foredit", _foredit);
-        w.add("isleaf", _testleaf);
+        w.add("isleaf", true);
 
         if (lock) {
             // Can only lock the latest version.
