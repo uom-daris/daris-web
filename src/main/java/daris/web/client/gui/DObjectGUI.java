@@ -9,8 +9,8 @@ import arc.gui.object.register.ObjectGUI;
 import arc.gui.object.register.ObjectUpdateHandle;
 import arc.gui.object.register.ObjectUpdateListener;
 import arc.gui.window.Window;
-import daris.web.client.gui.object.DObjectEditor;
-import daris.web.client.gui.object.DObjectViewer;
+import daris.web.client.gui.object.DObjectEditorGUI;
+import daris.web.client.gui.object.DObjectViewerGUI;
 import daris.web.client.model.object.DObjectRef;
 
 public class DObjectGUI implements ObjectGUI {
@@ -59,11 +59,11 @@ public class DObjectGUI implements ObjectGUI {
         o.setForEdit(forEdit);
         if (forEdit) {
             o.resolveAndLock(oo -> {
-                dd.display(o, DObjectEditor.create(oo).gui());
+                dd.display(o, DObjectEditorGUI.create(oo).gui());
             });
         } else {
             o.resolve(oo -> {
-                dd.display(o, DObjectViewer.create(oo).gui());
+                dd.display(o, DObjectViewerGUI.create(oo).gui());
             });
         }
     }

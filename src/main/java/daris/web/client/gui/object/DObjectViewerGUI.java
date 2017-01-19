@@ -16,8 +16,6 @@ import arc.gui.form.FieldDefinition;
 import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
-import arc.gui.form.FormItem.Property;
-import arc.gui.form.FormListener;
 import arc.gui.form.TextFieldRenderOptions;
 import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.widget.BaseWidget;
@@ -29,7 +27,6 @@ import arc.gui.gwt.widget.panel.TabPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
-import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.ListOfType;
 import arc.mf.dtype.StringType;
@@ -37,7 +34,7 @@ import arc.mf.dtype.TextType;
 import daris.web.client.gui.dataset.DatasetViewer;
 import daris.web.client.gui.exmethod.ExMethodViewer;
 import daris.web.client.gui.form.XmlMetaForm;
-import daris.web.client.gui.project.ProjectViewer;
+import daris.web.client.gui.project.ProjectViewerGUI;
 import daris.web.client.gui.study.StudyViewer;
 import daris.web.client.gui.subject.SubjectViewer;
 import daris.web.client.gui.widget.DStyles;
@@ -49,7 +46,7 @@ import daris.web.client.model.study.Study;
 import daris.web.client.model.subject.Subject;
 import daris.web.client.util.StringUtils;
 
-public class DObjectViewer<T extends DObject> extends ValidatedInterfaceComponent {
+public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceComponent {
 
     public static final int HEADER_HEIGHT = ListGridHeader.HEIGHT;
     public static final Image HEADER_BACKGROUND_IMAGE = new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
@@ -68,7 +65,7 @@ public class DObjectViewer<T extends DObject> extends ValidatedInterfaceComponen
 
     private VerticalPanel _interfaceVP;
 
-    protected DObjectViewer(T o) {
+    protected DObjectViewerGUI(T o) {
         _o = o;
 
         _vp = new VerticalPanel();
@@ -265,10 +262,10 @@ public class DObjectViewer<T extends DObject> extends ValidatedInterfaceComponen
     }
 
     @SuppressWarnings("rawtypes")
-    public static DObjectViewer create(DObject object) {
+    public static DObjectViewerGUI create(DObject object) {
         switch (object.type()) {
         case PROJECT:
-            return new ProjectViewer((Project) object);
+            return new ProjectViewerGUI((Project) object);
         case SUBJECT:
             return new SubjectViewer((Subject) object);
         case EX_METHOD:

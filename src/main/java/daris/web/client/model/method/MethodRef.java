@@ -4,36 +4,67 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.object.ObjectRef;
 
-public class MethodRef extends ObjectRef<Method>{
+public class MethodRef extends ObjectRef<Method> {
 
-    @Override
-    protected void resolveServiceArgs(XmlStringWriter w) {
-        // TODO Auto-generated method stub
-        
-    }
+    private String _cid;
+    private String _name;
+    private String _description;
 
-    @Override
-    protected String resolveServiceName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public MethodRef(String cid, String name, String description) {
 
-    @Override
-    protected Method instantiate(XmlElement xe) throws Throwable {
-        // TODO Auto-generated method stub
-        return null;
+        _cid = cid;
+        _name = name;
+        _description = description;
     }
 
     @Override
     public String referentTypeName() {
-        // TODO Auto-generated method stub
-        return null;
+
+        return Method.TYPE_NAME;
+    }
+
+    public String citeableId() {
+        return _cid;
+    }
+
+    public String name() {
+
+        return _name;
+    }
+
+    public String description() {
+
+        return _description;
+    }
+
+    @Override
+    public String toString() {
+
+        return _cid + ": " + _name;
+    }
+
+    @Override
+    protected void resolveServiceArgs(XmlStringWriter w) {
+        w.add("cid", _cid);
+        w.add("expand", true);
+    }
+
+    @Override
+    protected String resolveServiceName() {
+        return "om.pssd.method.describe";
+    }
+
+    @Override
+    protected Method instantiate(XmlElement xe) throws Throwable {
+        Method method = new Method(xe.element("method"));
+        _name = method.name();
+        _description = method.description();
+        return method;
     }
 
     @Override
     public String idToString() {
-        // TODO Auto-generated method stub
-        return null;
+        return _cid;
     }
 
 }

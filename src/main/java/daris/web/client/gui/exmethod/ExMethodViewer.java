@@ -1,9 +1,9 @@
 package daris.web.client.gui.exmethod;
 
-import daris.web.client.gui.object.DObjectViewer;
+import daris.web.client.gui.object.DObjectViewerGUI;
 import daris.web.client.model.exmethod.ExMethod;
 
-public class ExMethodViewer extends DObjectViewer<ExMethod>{
+public class ExMethodViewer extends DObjectViewerGUI<ExMethod>{
 
     public ExMethodViewer(ExMethod o) {
         super(o);

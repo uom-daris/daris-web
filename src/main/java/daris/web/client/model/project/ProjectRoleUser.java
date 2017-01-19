@@ -1,0 +1,81 @@
+package daris.web.client.model.project;
+
+import arc.mf.client.util.ObjectUtil;
+import arc.mf.client.xml.XmlElement;
+
+public class ProjectRoleUser implements Comparable<ProjectRoleUser> {
+
+    private String _roleId;
+    private String _roleName;
+    private ProjectRole _role;
+    private DataUse _dataUse;
+
+    public ProjectRoleUser(XmlElement rme) {
+
+        _roleId = rme.value("@id");
+        _roleName = rme.value("@member");
+        _role = ProjectRole.fromString(rme.value("@role"));
+        _dataUse = DataUse.fromString(rme.value("@data-use"));
+    }
+
+    public String name() {
+
+        return _roleName;
+    }
+
+    public String id() {
+        return _roleId;
+    }
+
+    public ProjectRole role() {
+
+        return _role;
+    }
+
+    public DataUse dataUse() {
+
+        return _dataUse;
+    }
+
+    public String toHTML() {
+
+        String html = "<table><thead><tr><th align=\"center\" colspan=\"2\">Role Member</th></tr><thead>";
+        html += "<tbody>";
+        html += "<tr><td><b>id:</b></td><td>" + _roleId + "</td></tr>";
+        html += "<tr><td><b>name:</b></td><td>" + _roleName + "</td></tr>";
+        html += "<tr><td><b>role:</b></td><td>" + _role + "</td></tr>";
+        if (_dataUse != null) {
+            html += "<tr><td><b>data-use:</b></td><td>" + _dataUse + "</td></tr>";
+        }
+        html += "</tbody></table>";
+        return html;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == null) {
+            return false;
+        }
+        if (o instanceof ProjectRoleUser) {
+            ProjectRoleUser prm = (ProjectRoleUser) o;
+            return _roleName.equals(prm.name()) && _role.equals(prm.role())
+                    && ObjectUtil.equals(_dataUse, prm.dataUse());
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(ProjectRoleUser o) {
+        if (o == null) {
+            return 1;
+        }
+        if (_role.ordinal() > o.role().ordinal()) {
+            return 1;
+        }
+        if (_role.ordinal() < o.role().ordinal()) {
+            return -1;
+        }
+        return _roleName.compareTo(o.name());
+    }
+}
