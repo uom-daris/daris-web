@@ -5,6 +5,9 @@ import java.util.List;
 import com.google.gwt.user.client.History;
 
 import arc.gui.gwt.object.ObjectDetailedView;
+import arc.gui.gwt.style.Style;
+import arc.gui.gwt.style.StyleSet;
+import arc.gui.gwt.style.dom.CSSOutputStream;
 import arc.gui.gwt.widget.ContainerWidget;
 import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.panel.HorizontalSplitPanel;

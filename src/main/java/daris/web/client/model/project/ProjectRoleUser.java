@@ -2,20 +2,40 @@ package daris.web.client.model.project;
 
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.client.xml.XmlElement;
+import daris.web.client.model.user.RoleUser;
 
 public class ProjectRoleUser implements Comparable<ProjectRoleUser> {
 
     private String _roleId;
     private String _roleName;
-    private ProjectRole _role;
+    private ProjectRoleType _role;
     private DataUse _dataUse;
 
     public ProjectRoleUser(XmlElement rme) {
 
         _roleId = rme.value("@id");
         _roleName = rme.value("@member");
-        _role = ProjectRole.fromString(rme.value("@role"));
+        _role = ProjectRoleType.fromString(rme.value("@role"));
         _dataUse = DataUse.fromString(rme.value("@data-use"));
+    }
+
+    private ProjectRoleUser(String roleId, String roleName, ProjectRoleType role, DataUse dataUse) {
+        _roleId = roleId;
+        _roleName = roleName;
+        _role = role;
+        _dataUse = dataUse;
+    }
+
+    public ProjectRoleUser(String roleName, ProjectRoleType role, DataUse dataUse) {
+        this(null, roleName, role, dataUse);
+    }
+
+    public ProjectRoleUser(RoleUser ru, ProjectRoleType role, DataUse dataUse) {
+        this(ru.id(), ru.name(), role, dataUse);
+    }
+
+    public ProjectRoleUser(RoleUser ru) {
+        this(ru.id(), ru.name(), ProjectRoleType.MEMBER, DataUse.UNSPECIFIED);
     }
 
     public String name() {
@@ -27,14 +47,22 @@ public class ProjectRoleUser implements Comparable<ProjectRoleUser> {
         return _roleId;
     }
 
-    public ProjectRole role() {
+    public ProjectRoleType role() {
 
         return _role;
+    }
+
+    public void setRole(ProjectRoleType role) {
+        _role = role;
     }
 
     public DataUse dataUse() {
 
         return _dataUse;
+    }
+
+    public void setDataUse(DataUse dataUse) {
+        _dataUse = dataUse;
     }
 
     public String toHTML() {
@@ -77,5 +105,9 @@ public class ProjectRoleUser implements Comparable<ProjectRoleUser> {
             return -1;
         }
         return _roleName.compareTo(o.name());
+    }
+
+    public ProjectRoleUser copy() {
+        return new ProjectRoleUser(_roleId, _roleName, _role, _dataUse);
     }
 }

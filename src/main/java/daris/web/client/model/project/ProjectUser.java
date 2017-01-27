@@ -10,7 +10,7 @@ import arc.mf.model.authentication.UserRef;
 public class ProjectUser implements Comparable<ProjectUser> {
 
     private UserRef _user;
-    private ProjectRole _role;
+    private ProjectRoleType _role;
     private DataUse _dataUse;
 
     public ProjectUser(XmlElement me) {
@@ -34,20 +34,24 @@ public class ProjectUser implements Comparable<ProjectUser> {
         if (userName != null) {
             _user.setPersonName(userName);
         }
-        _role = ProjectRole.fromString(me.value("@role"));
+        _role = ProjectRoleType.fromString(me.value("@role"));
         _dataUse = DataUse.fromString(me.value("@data-use"));
     }
 
-    public ProjectUser(UserRef user, ProjectRole role, DataUse dataUse) {
+    public ProjectUser(UserRef user, ProjectRoleType role, DataUse dataUse) {
 
         _user = user;
         assert role != null;
         _role = role;
-        if (_role.equals(ProjectRole.PROJECT_ADMINISTRATOR) || _role.equals(ProjectRole.SUBJECT_ADMINISTRATOR)) {
+        if (_role.equals(ProjectRoleType.PROJECT_ADMINISTRATOR) || _role.equals(ProjectRoleType.SUBJECT_ADMINISTRATOR)) {
             _dataUse = null;
         } else {
             _dataUse = dataUse;
         }
+    }
+
+    public ProjectUser(UserRef u) {
+        this(u, ProjectRoleType.MEMBER, DataUse.UNSPECIFIED);
     }
 
     public UserRef user() {
@@ -55,7 +59,7 @@ public class ProjectUser implements Comparable<ProjectUser> {
         return _user;
     }
 
-    public ProjectRole role() {
+    public ProjectRoleType role() {
 
         return _role;
     }
@@ -136,17 +140,21 @@ public class ProjectUser implements Comparable<ProjectUser> {
         return _user.actorName().compareTo(o.user().actorName());
     }
 
-    public void setRole(ProjectRole role) {
+    public void setRole(ProjectRoleType role) {
 
         _role = role;
     }
 
     public void setDataUse(DataUse dataUse) {
 
-        if (_role.equals(ProjectRole.PROJECT_ADMINISTRATOR) || _role.equals(ProjectRole.SUBJECT_ADMINISTRATOR)) {
+        if (_role.equals(ProjectRoleType.PROJECT_ADMINISTRATOR) || _role.equals(ProjectRoleType.SUBJECT_ADMINISTRATOR)) {
             _dataUse = null;
         } else {
             _dataUse = dataUse;
         }
+    }
+
+    public ProjectUser copy() {
+        return new ProjectUser(_user, _role, _dataUse);
     }
 }

@@ -16,6 +16,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/daris_16.png")
     ImageResource daris_16();
 
+    @Source("resource/delete_12x16.png")
+    ImageResource delete_12x16();
+
     @Source("resource/document_32.png")
     ImageResource document_32();
 
@@ -30,6 +33,9 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/folder_enter_32.png")
     ImageResource folder_enter_32();
+
+    @Source("resource/group_20.png")
+    ImageResource group_20();
 
     @Source("resource/image_32.png")
     ImageResource image_32();

@@ -54,7 +54,7 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
     public static final String INTERFACE_TAB_NAME = "Interface";
     public static final String METADATA_TAB_NAME = "Metadata";
-    public static final String ATTACHMENT_TAB_NAME = "Attachment";
+    public static final String ATTACHMENT_TAB_NAME = "Attachments";
 
     private T _o;
     private VerticalPanel _vp;
@@ -223,6 +223,14 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
     @Override
     public Widget gui() {
         return _vp;
+    }
+
+    protected BaseWidget widget() {
+        return _vp;
+    }
+
+    protected arc.gui.window.Window window() {
+        return _vp.window();
     }
 
     protected void activateTab(String name) {
