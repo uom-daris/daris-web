@@ -80,11 +80,14 @@ public class AttachmentListGrid extends ContainerWidget {
                 } else {
                     _nbe = entries.size();
                 }
-                updateButtons();
+                if (_o.editable()) {
+                    updateButtons();
+                }
             }
         };
         _list.fitToParent();
         _vp.add(_list);
+
         initListGrid();
 
         if (_o.editable()) {
