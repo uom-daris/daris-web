@@ -24,7 +24,7 @@ public class UserDescribe extends ObjectMessage<List<UserRef>> {
     }
 
     public UserDescribe(DomainRef domain, String user) {
-        this(domain, domain == null ? true : (domain.name().equals("system") ? false : true), user);
+        this(domain, domain == null ? false : (domain.name().equals("system") ? false : true), user);
     }
 
     public UserDescribe(DomainRef domain) {
@@ -36,7 +36,7 @@ public class UserDescribe extends ObjectMessage<List<UserRef>> {
     }
 
     public UserDescribe() {
-        this(null, true, null);
+        this(null, false, null);
     }
 
     @Override
