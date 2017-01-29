@@ -28,6 +28,7 @@ import arc.gui.gwt.widget.paging.PagingListener;
 import arc.gui.gwt.widget.panel.AbsolutePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
+import arc.gui.gwt.widget.table.Table.Row;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.object.CollectionResolveHandler;
 import arc.mf.object.ObjectMessageResponse;
@@ -197,22 +198,19 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
                     @Override
                     public BaseWidget format(DObjectRef o, Integer nbc) {
-                        if (nbc != null && nbc >= 0) {
-                            HTML html = new HTML(Integer.toString(nbc));
-                            html.setFontSize(FONT_SIZE);
-                            html.setFontFamily("Roboto,Helvetica,sans-serif");
-                            html.setFontWeight(FontWeight.BOLD);
-                            if (!o.isDataset() && o.numberOfChildren() != 0) {
-                                html.setCursor(Cursor.POINTER);
-                            }
-                            html.setTextAlign(TextAlign.CENTER);
-                            html.setVerticalAlign(VerticalAlign.MIDDLE);
-                            html.element().getStyle().setLineHeight(MIN_ROW_HEIGHT, Unit.PX);
-                            html.setHeight(MIN_ROW_HEIGHT);
-                            html.setWidth100();
-                            return html;
+                        HTML html = (nbc == null || nbc < 0) ? new HTML() : new HTML(Integer.toString(nbc));
+                        html.setFontSize(FONT_SIZE);
+                        html.setFontFamily("Roboto,Helvetica,sans-serif");
+                        html.setFontWeight(FontWeight.BOLD);
+                        if (!o.isDataset() && o.numberOfChildren() != 0) {
+                            html.setCursor(Cursor.POINTER);
                         }
-                        return null;
+                        html.setTextAlign(TextAlign.CENTER);
+                        html.setVerticalAlign(VerticalAlign.MIDDLE);
+                        html.element().getStyle().setLineHeight(MIN_ROW_HEIGHT, Unit.PX);
+                        html.setHeight(MIN_ROW_HEIGHT);
+                        html.setWidth100();
+                        return html;
                     }
                 }).setWidth(120);
 
@@ -420,19 +418,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                 _img = new arc.gui.gwt.widget.image.Image(IMG_DOCUMENT);
             } else {
                 _img = new arc.gui.gwt.widget.image.Image(IMG_FOLDER_ENTER);
-                if (o.numberOfChildren() > 0) {
-                    String childrenType = o.childTypeName();
-                    if (childrenType != null) {
-                        if (childrenType.endsWith("y")) {
-                            childrenType = childrenType.substring(0, childrenType.length() - 1) + "ies";
-                        } else {
-                            childrenType = childrenType + "s";
-                        }
-                    }
-                    _img.setTitle("contains " + o.numberOfChildren() + " " + childrenType + ". Double-click to open.");
-                } else {
-                    _img.setTitle("may contain " + o.childTypeName() + ". Double-click to open.");
-                }
+                _img.setTitle(toolTipFor(o));
             }
             _img.setPosition(Position.ABSOLUTE);
             _img.element().getStyle().setProperty("margin", "auto");
@@ -444,6 +430,48 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             initWidget(_ap);
         }
 
+        private static String toolTipFor(DObjectRef o) {
+            if (o.numberOfChildren() > 0) {
+                String childrenType = o.childTypeName();
+                if (childrenType != null) {
+                    if (childrenType.endsWith("y")) {
+                        childrenType = childrenType.substring(0, childrenType.length() - 1) + "ies";
+                    } else {
+                        childrenType = childrenType + "s";
+                    }
+                }
+                return "contains " + o.numberOfChildren() + " " + childrenType + ". Double-click to open.";
+            } else {
+                return "may contain " + o.childTypeName() + ". Double-click to open.";
+            }
+        }
+
+        public void update(DObjectRef o) {
+            if (!o.isDataset()) {
+                _img.setTitle(toolTipFor(o));
+            }
+        }
+
+    }
+
+    public void refreshRow(DObjectRef object) {
+        object.reset();
+        object.resolve(o -> {
+            Row row = _list.rowFor(object);
+            // col 0: icon
+            ObjectIcon icon = (ObjectIcon) row.cell(0).widget();
+            icon.update(object);
+            // col 2: name
+            HTML name = (HTML) row.cell(2).widget();
+            name.setHTML(object.name());
+            // col 3: nbc
+            HTML nbc = (HTML) row.cell(3).widget();
+            if (object.numberOfChildren() < 0) {
+                nbc.clear();
+            } else {
+                nbc.setHTML(Integer.toString(object.numberOfChildren()));
+            }
+        });
     }
 
 }

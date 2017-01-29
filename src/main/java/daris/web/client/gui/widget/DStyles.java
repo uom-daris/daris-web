@@ -19,5 +19,8 @@ public class DStyles {
     public static final int MENU_BUTTON_SPACING = 5;
     public static final int MENU_BUTTON_FONT_SIZE = 13;
     public static final Colour MENU_BUTTON_HOVER_COLOR = RGB.GREY_CCC;
+    
+    public static final int LIST_GRID_CELL_FONT_SIZE = 11;
+    public static final int LIST_GRID_MIN_ROW_HEIGHT = 28;
 
 }

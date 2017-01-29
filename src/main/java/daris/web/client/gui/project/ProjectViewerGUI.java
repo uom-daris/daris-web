@@ -23,6 +23,7 @@ import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.EnumerationType;
+import daris.web.client.gui.DObjectExplorer;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectViewerGUI;
 import daris.web.client.gui.project.user.ProjectUserDialog;
@@ -45,6 +46,10 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
 
     public ProjectViewerGUI(Project o) {
         super(o);
+    }
+
+    @Override
+    protected void updateOtherTabs() {
         updateUserTab();
     }
 
@@ -101,7 +106,7 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
         } else {
             vp.add(userList);
         }
-        
+
         if (project.editable()) {
             ButtonBar bb = new ButtonBar(Position.BOTTOM, Alignment.CENTER);
             bb.setHeight(32);
@@ -110,7 +115,9 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
             button.addClickHandler(e -> {
                 new ProjectUserDialog(project).show(window(), executed -> {
                     if (executed) {
-                        // TODO refresh
+                        System.out.println("executed");
+                    } else {
+                        System.out.println("not executed");
                     }
                 });
             });

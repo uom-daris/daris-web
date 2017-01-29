@@ -56,6 +56,14 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
     public static final String METADATA_TAB_NAME = "Metadata";
     public static final String ATTACHMENT_TAB_NAME = "Attachments";
 
+    public static Map<String, Integer> _activeTabIds = new LinkedHashMap<String, Integer>() {
+        private static final long serialVersionUID = 1L;
+
+        protected boolean removeEldestEntry(Map.Entry<String, Integer> eldest) {
+            return size() > 1000;
+        }
+    };
+
     private T _o;
     private VerticalPanel _vp;
     private TabPanel _tp;
@@ -83,7 +91,11 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
         title.setTextShadow(0, 1, 1, RGB.WHITE);
         _vp.add(title);
 
-        _tp = new TabPanel();
+        _tp = new TabPanel() {
+            protected void activated(int id) {
+                _activeTabIds.put(_o.citeableId(), id);
+            }
+        };
         _tp.fitToParent();
 
         _vp.add(_tp);
@@ -97,7 +109,17 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
         updateAttachmentTab();
 
-        activateTab(INTERFACE_TAB_NAME);
+        updateOtherTabs();
+
+        Integer activeTabId = _activeTabIds.get(_o.citeableId());
+        if (activeTabId != null) {
+            _tp.setActiveTabById(activeTabId);
+        } else {
+            activateTab(INTERFACE_TAB_NAME);
+        }
+    }
+
+    protected void updateOtherTabs() {
 
     }
 
@@ -233,13 +255,6 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
         return _vp.window();
     }
 
-    protected void activateTab(String name) {
-        Integer tabId = _tabIds.get(name);
-        if (tabId != null) {
-            _tp.setActiveTabById(tabId);
-        }
-    }
-
     protected void putTab(String name, String description, BaseWidget w) {
         if (_tabIds.containsKey(name)) {
             _tp.setTabContent(_tabIds.get(name), w);
@@ -267,6 +282,13 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
             sb.append(": ").append(o.name());
         }
         return sb.toString();
+    }
+
+    protected void activateTab(String name) {
+        Integer tabId = _tabIds.get(name);
+        if (tabId != null) {
+            _tp.setActiveTabById(tabId);
+        }
     }
 
     @SuppressWarnings("rawtypes")

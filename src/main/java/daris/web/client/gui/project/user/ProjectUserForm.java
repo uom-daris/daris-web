@@ -33,7 +33,7 @@ import arc.mf.model.authentication.User;
 import arc.mf.model.authentication.UserRef;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.user.RoleUserListGrid;
-import daris.web.client.gui.user.UserSelect;
+import daris.web.client.gui.user.UserListGrid;
 import daris.web.client.gui.widget.DStyles;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.ProjectRoleType;
@@ -47,19 +47,15 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         void changed(List<ProjectUser> user, List<ProjectRoleUser> roleUsers);
     }
 
-    public static final int LIST_GRID_CELL_FONT_SIZE = 11;
-
-    public static final int LIST_GRID_MIN_ROW_HEIGHT = 28;
-
     public static final arc.gui.image.Image ICON_DELETE = new arc.gui.image.Image(
             Resource.INSTANCE.delete_12x16().getSafeUri().asString(), 12, 16);
 
     private static HTML createCellHtml(String value) {
         HTML html = value == null ? new HTML() : new HTML(value);
-        html.setHeight(LIST_GRID_MIN_ROW_HEIGHT);
+        html.setHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
         html.setFontFamily(DStyles.FONT_FAMILY);
-        html.setFontSize(LIST_GRID_CELL_FONT_SIZE);
-        html.element().getStyle().setLineHeight(LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+        html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
+        html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
         return html;
     }
 
@@ -156,7 +152,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
     private ListGrid<ProjectRoleUser> _roleUserList;
 
     private TabPanel _tpRight;
-    private UserSelect _availableUserList;
+    private UserListGrid _availableUserList;
     private RoleUserListGrid _availableRoleUserList;
 
     private HTML _hint;
@@ -258,7 +254,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _roleUserList.setHeight100();
         _roleUserList.setMultiSelect(false);
         _roleUserList.setEmptyMessage("");
-        _roleUserList.setMinRowHeight(LIST_GRID_MIN_ROW_HEIGHT);
+        _roleUserList.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _roleUserList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectRoleUser, ProjectRoleUser>() {
 
             @Override
@@ -291,7 +287,8 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                         combo.setInitialValue(role.toString(), role);
                         combo.addChangeListener(cb -> {
                             pru.setRole(cb.value());
-                            ComboBox<DataUse> dataUseCombo = (ComboBox<DataUse>) _roleUserList.rowFor(pru).cell(3).widget();
+                            ComboBox<DataUse> dataUseCombo = (ComboBox<DataUse>) _roleUserList.rowFor(pru).cell(3)
+                                    .widget();
                             if (pru.role() == ProjectRoleType.GUEST || pru.role() == ProjectRoleType.MEMBER) {
                                 dataUseCombo.setValue(DataUse.SPECIFIC.toString(), DataUse.SPECIFIC);
                                 dataUseCombo.enable();
@@ -384,7 +381,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _userList.fitToParent();
         _userList.setMultiSelect(false);
         _userList.setEmptyMessage("");
-        _userList.setMinRowHeight(LIST_GRID_MIN_ROW_HEIGHT);
+        _userList.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _userList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectUser, ProjectUser>() {
 
             @Override
@@ -551,7 +548,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
     private void showAvailableUsers() {
 
         if (_availableUserList == null) {
-            _availableUserList = new UserSelect();
+            _availableUserList = new UserListGrid();
         }
         _tpRight.removeAll();
         _tpRight.addTab("Avaiable DaRIS Users", null, _availableUserList);

@@ -37,7 +37,8 @@ public class DaRIS implements EntryPoint, SessionHandler {
             Session.initialize(this);
         } else {
             Session.initializeForPlugin();
-            // TODO: install as desktop application...
+            Session.addSessionHandler(this);
+            sessionCreated(true);
         }
     }
 
@@ -55,52 +56,58 @@ public class DaRIS implements EntryPoint, SessionHandler {
         ShoppingEvents.initialize();
 
         /*
-         * Enable drag and drop
-         */
-        DragAndDrop.initialize();
-
-        /*
          * Subscribes to system event channel
          */
         SystemEventChannel.subscribe();
 
-        /*
-         * show gui
-         */
-        RootPanel.add(DObjectExplorer.get());
-
-        /*
-         * Fire current history state
-         */
         if (Plugin.isStandaloneApplication()) {
+
+            /*
+             * Enable drag and drop
+             */
+            DragAndDrop.initialize();
+
+            /*
+             * show gui
+             */
+            RootPanel.add(DObjectExplorer.get());
+
+            /*
+             * Fire current history state
+             */
             History.fireCurrentHistoryState();
+        } else {
+            // TODO: install as adesktop plugin application...
         }
     }
 
     @Override
     public void sessionExpired() {
-        /*
-         * stop listening to system events
-         */
-        SystemEventChannel.unsubscribe(Session.created());
 
-        /*
-         * 
-         */
-        RootPanel.remove(DObjectExplorer.get());
+        if (Plugin.isStandaloneApplication()) {
+            /*
+             * stop listening to system events
+             */
+            SystemEventChannel.unsubscribe(Session.created());
+
+            RootPanel.remove(DObjectExplorer.get());
+        }
     }
 
     @Override
     public void sessionTerminated() {
-        /*
-         * stop listening to system events
-         */
-        SystemEventChannel.unsubscribe(Session.created());
 
         /*
          * 
          */
-        RootPanel.remove(DObjectExplorer.get());
+        if (Plugin.isStandaloneApplication()) {
+            /*
+             * stop listening to system events
+             */
+            SystemEventChannel.unsubscribe(Session.created());
+
+            RootPanel.remove(DObjectExplorer.get());
+        }
     }
 
 }

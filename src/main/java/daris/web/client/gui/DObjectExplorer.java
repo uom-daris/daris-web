@@ -5,15 +5,18 @@ import java.util.List;
 import com.google.gwt.user.client.History;
 
 import arc.gui.gwt.object.ObjectDetailedView;
-import arc.gui.gwt.style.Style;
-import arc.gui.gwt.style.StyleSet;
-import arc.gui.gwt.style.dom.CSSOutputStream;
 import arc.gui.gwt.widget.ContainerWidget;
 import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.panel.HorizontalSplitPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.mf.client.plugin.Plugin;
+import arc.mf.client.util.DynamicBoolean;
+import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
+import arc.mf.event.Filter;
+import arc.mf.event.Subscriber;
+import arc.mf.event.SystemEvent;
+import arc.mf.event.SystemEventChannel;
 import arc.mf.object.ObjectResolveHandler;
 import daris.web.client.gui.DObjectListGrid.ParentUpdateListener;
 import daris.web.client.gui.widget.DMenuButton;
@@ -23,8 +26,9 @@ import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectPath;
 import daris.web.client.model.object.DObjectPathRef;
 import daris.web.client.model.object.DObjectRef;
+import daris.web.client.model.object.event.DObjectEvent;
 
-public class DObjectExplorer extends ContainerWidget {
+public class DObjectExplorer extends ContainerWidget implements Subscriber {
 
     public static final arc.gui.image.Image ICON_DARIS = new arc.gui.image.Image(
             Resource.INSTANCE.daris_16().getSafeUri().asString(), 14, 14);
@@ -125,6 +129,8 @@ public class DObjectExplorer extends ContainerWidget {
                 }
             });
         }
+
+        SystemEventChannel.add(this);
     }
 
     private void initMenuButtons() {
@@ -170,6 +176,12 @@ public class DObjectExplorer extends ContainerWidget {
                 display(path.list(true, false), path.child());
             }
         });
+    }
+
+    public void refreshDetailedView() {
+        DObjectRef o = _list.selected();
+        o.reset();
+        _dv.reloadAndDisplayObject(o);
     }
 
     private void display(List<DObjectRef> parents, DObjectRef object) {
@@ -225,6 +237,33 @@ public class DObjectExplorer extends ContainerWidget {
             _instance = new DObjectExplorer();
         }
         return _instance;
+    }
+
+    @Override
+    public List<Filter> systemEventFilters() {
+        DObjectRef o = _list.selected();
+        if (o == null) {
+            return null;
+        }
+        return ListUtil.list(new Filter("pssd-object", o.citeableId(), DynamicBoolean.TRUE));
+    }
+
+    @Override
+    public void process(SystemEvent se) {
+        DObjectEvent de = (DObjectEvent) se;
+        DObjectRef selected = _list.selected();
+        if (de.action() == DObjectEvent.Action.MODIFY) {
+            if (de.matchesObject(_list.selected())) {
+                _list.refreshRow(selected);
+                _dv.reloadAndDisplayObject(selected);
+            }
+        } else if (de.action() == DObjectEvent.Action.CREATE) {
+            // TODO
+        } else if (de.action() == DObjectEvent.Action.DESTROY) {
+            // TODO
+        } else {
+            // TODO
+        }
     }
 
 }

@@ -36,12 +36,13 @@ public class ProjectUserSet extends ObjectMessage<Null> {
 
     @Override
     protected void messageServiceArgs(XmlWriter w) {
+        w.add("cid", _projectCid);
         if (_users != null) {
             for (ProjectUser u : _users) {
                 w.push("user");
                 w.add("domain", u.user().domain().name());
                 w.add("user", u.user().name());
-                if (u.user().domain().authority() != null) {
+                if (u.user().domain().authority() != null && u.user().domain().authority().name() != null) {
                     w.add("authority", new String[] { "protocol", u.user().domain().authority().protocol() },
                             u.user().domain().authority().name());
                 }
