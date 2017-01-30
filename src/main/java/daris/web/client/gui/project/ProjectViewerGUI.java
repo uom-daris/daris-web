@@ -29,6 +29,7 @@ import daris.web.client.gui.object.DObjectViewerGUI;
 import daris.web.client.gui.project.user.ProjectUserDialog;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.Project;
@@ -115,9 +116,7 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
             button.addClickHandler(e -> {
                 new ProjectUserDialog(project).show(window(), executed -> {
                     if (executed) {
-                        System.out.println("executed");
-                    } else {
-                        System.out.println("not executed");
+                        MessageBox.show(320, 40, widget(), MessageBox.Position.CENTER, "Updating project users...", 5);
                     }
                 });
             });
