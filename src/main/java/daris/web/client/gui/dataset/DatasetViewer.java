@@ -12,7 +12,7 @@ public class DatasetViewer extends DObjectViewerGUI<Dataset>{
     
     public static DatasetViewer create(Dataset dataset) {
         // TODO:
-        return null;
+        return new DatasetViewer(dataset);
     }
 
 }

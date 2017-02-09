@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import arc.gui.ValidatedInterfaceComponent;
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
+import arc.gui.form.FieldGroup;
 import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
@@ -28,18 +29,20 @@ import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.dtype.ConstantType;
+import arc.mf.dtype.DocType;
 import arc.mf.dtype.ListOfType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
 import daris.web.client.gui.dataset.DatasetViewer;
-import daris.web.client.gui.exmethod.ExMethodViewer;
+import daris.web.client.gui.exmethod.ExMethodViewerGUI;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.project.ProjectViewerGUI;
 import daris.web.client.gui.study.StudyViewer;
-import daris.web.client.gui.subject.SubjectViewer;
+import daris.web.client.gui.subject.SubjectViewerGUI;
 import daris.web.client.gui.widget.DStyles;
 import daris.web.client.model.dataset.Dataset;
 import daris.web.client.model.exmethod.ExMethod;
+import daris.web.client.model.object.ContentInfo;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.project.Project;
 import daris.web.client.model.study.Study;
@@ -232,6 +235,10 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
             interfaceForm.add(filename);
         }
 
+        if (_o.content() != null) {
+            addContentInfoFieldGroup(interfaceForm, _o.content());
+        }
+
     }
 
     protected void appendToInterfaceForm(Form interfaceForm) {
@@ -284,6 +291,31 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
         return sb.toString();
     }
 
+    private static void addContentInfoFieldGroup(Form form, ContentInfo content) {
+        FieldGroup group = new FieldGroup(new FieldDefinition("Content", "data", DocType.DEFAULT, null, null, 0, 1));
+
+        Field<String> size = new Field<String>(
+                new FieldDefinition("Size", "size", StringType.DEFAULT, content.size() + " bytes", null, 1, 1));
+        size.setValue(content.humanReadableSize());
+        group.add(size);
+
+        Field<String> type = new Field<String>(new FieldDefinition("Type", "type", StringType.DEFAULT,
+                content.ext() != null ? ("File name extension: ." + content.ext()) : null, null, 1, 1));
+        if (content.ext() != null) {
+            type.setValue(content.type() + "   (." + content.ext() + ")");
+        } else {
+            type.setValue(content.type());
+        }
+        group.add(type);
+
+        Field<String> csum = new Field<String>(
+                new FieldDefinition("Checksum", "csum", StringType.DEFAULT, "CRC32 checksum.", null, 1, 1));
+        csum.setValue(content.csum());
+        group.add(csum);
+
+        form.add(group);
+    }
+
     protected void activateTab(String name) {
         Integer tabId = _tabIds.get(name);
         if (tabId != null) {
@@ -297,9 +329,9 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
         case PROJECT:
             return new ProjectViewerGUI((Project) object);
         case SUBJECT:
-            return new SubjectViewer((Subject) object);
+            return new SubjectViewerGUI((Subject) object);
         case EX_METHOD:
-            return new ExMethodViewer((ExMethod) object);
+            return new ExMethodViewerGUI((ExMethod) object);
         case STUDY:
             return new StudyViewer((Study) object);
         case DATASET:

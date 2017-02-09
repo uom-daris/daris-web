@@ -3,6 +3,7 @@ package daris.web.client.model.object;
 import java.util.Collection;
 
 import arc.mf.client.xml.XmlElement;
+import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.dataset.Dataset;
 import daris.web.client.model.exmethod.ExMethod;
 import daris.web.client.model.project.Project;
@@ -52,6 +53,8 @@ public abstract class DObject {
 
     private Collection<String> _tags;
 
+    private ContentInfo _content;
+
     /**
      * 
      * @param oe
@@ -95,6 +98,11 @@ public abstract class DObject {
             }
         }
         _tags = oe.values("tag");
+
+        XmlElement ce = oe.element("data");
+        if (ce != null) {
+            _content = new ContentInfo(ce);
+        }
 
     }
 
@@ -164,6 +172,18 @@ public abstract class DObject {
         return _proute;
     }
 
+    public ContentInfo content() {
+        return _content;
+    }
+
+    public boolean hasContent() {
+        return _content != null;
+    }
+
+    public String parentCiteableId() {
+        return CiteableIdUtils.parent(_citeableId);
+    }
+
     public static DObject create(XmlElement oe) {
         DObject.Type type = DObject.Type.fromString(oe.value("@type"));
         switch (type) {
@@ -176,7 +196,7 @@ public abstract class DObject {
         case STUDY:
             return new Study(oe);
         case DATASET:
-            return new Dataset(oe);
+            return Dataset.create(oe);
         default:
             throw new AssertionError("Unknown object type: " + oe.value("@type"));
         }

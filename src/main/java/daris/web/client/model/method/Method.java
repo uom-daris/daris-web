@@ -9,7 +9,7 @@ public class Method {
 
     public static final String TYPE_NAME = "method";
 
-    private static Step instantiateStep(XmlElement se) throws Throwable {
+    private static Step instantiateStep(XmlElement se) {
 
         int id;
         try {
@@ -74,7 +74,7 @@ public class Method {
 
     }
 
-    private static List<Step> instantiateSteps(List<XmlElement> ses) throws Throwable {
+    private static List<Step> instantiateSteps(List<XmlElement> ses) {
 
         if (ses == null) {
             return null;
@@ -98,7 +98,7 @@ public class Method {
     private List<Step> _steps;
     private String _author;
 
-    public Method(XmlElement xe) throws Throwable {
+    public Method(XmlElement xe) {
         _cid = xe.value("id");
         if (_cid == null) {
             _cid = xe.value("@id");

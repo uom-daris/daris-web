@@ -23,7 +23,6 @@ import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.EnumerationType;
-import daris.web.client.gui.DObjectExplorer;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectViewerGUI;
 import daris.web.client.gui.project.user.ProjectUserDialog;
@@ -40,7 +39,6 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
 
     public static final String USER_TAB_NAME = "Users";
 
-    public static final int LIST_GRID_MIN_ROW_HEIGHT = 28;
 
     public static final arc.gui.image.Image ICON_USER = new arc.gui.image.Image(
             Resource.INSTANCE.group_20().getSafeUri().asString(), 16, 16);
@@ -130,7 +128,7 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
         ListGrid<ProjectUser> list = new ListGrid<ProjectUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(LIST_GRID_MIN_ROW_HEIGHT);
+        list.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
         WidgetFormatter<ProjectUser, String> formatter = new WidgetFormatter<ProjectUser, String>() {
 
             @Override
@@ -166,7 +164,7 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
         ListGrid<ProjectRoleUser> list = new ListGrid<ProjectRoleUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(LIST_GRID_MIN_ROW_HEIGHT);
+        list.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
         WidgetFormatter<ProjectRoleUser, String> formatter = new WidgetFormatter<ProjectRoleUser, String>() {
 
             @Override
@@ -201,8 +199,8 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
             HTML html = new HTML(value);
             html.setFontSize(11);
             html.setFontFamily(DStyles.FONT_FAMILY);
-            html.setHeight(LIST_GRID_MIN_ROW_HEIGHT);
-            html.element().getStyle().setLineHeight(LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+            html.setHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+            html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
             return html;
         }
         return null;
