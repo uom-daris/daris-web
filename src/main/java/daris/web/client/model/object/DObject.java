@@ -180,6 +180,10 @@ public abstract class DObject {
         return _content != null;
     }
 
+    public boolean hasArchiveContent() {
+        return hasContent() && _content.isSupportedArchive();
+    }
+
     public String parentCiteableId() {
         return CiteableIdUtils.parent(_citeableId);
     }

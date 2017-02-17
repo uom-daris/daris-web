@@ -33,11 +33,11 @@ import arc.mf.dtype.DocType;
 import arc.mf.dtype.ListOfType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
-import daris.web.client.gui.dataset.DatasetViewer;
+import daris.web.client.gui.dataset.DatasetViewerGUI;
 import daris.web.client.gui.exmethod.ExMethodViewerGUI;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.project.ProjectViewerGUI;
-import daris.web.client.gui.study.StudyViewer;
+import daris.web.client.gui.study.StudyViewerGUI;
 import daris.web.client.gui.subject.SubjectViewerGUI;
 import daris.web.client.gui.widget.DStyles;
 import daris.web.client.model.dataset.Dataset;
@@ -58,6 +58,7 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
     public static final String INTERFACE_TAB_NAME = "Interface";
     public static final String METADATA_TAB_NAME = "Metadata";
     public static final String ATTACHMENT_TAB_NAME = "Attachments";
+    public static final String ARCHIVE_CONTENT_TAB_NAME = "Archive Contents";
 
     public static Map<String, Integer> _activeTabIds = new LinkedHashMap<String, Integer>() {
         private static final long serialVersionUID = 1L;
@@ -112,6 +113,10 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
         updateAttachmentTab();
 
+        if (_o.hasArchiveContent()) {
+            updateArchiveContentTab();
+        }
+
         updateOtherTabs();
 
         Integer activeTabId = _activeTabIds.get(_o.citeableId());
@@ -124,25 +129,6 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
     protected void updateOtherTabs() {
 
-    }
-
-    private void updateAttachmentTab() {
-        AttachmentListGrid attachmentList = new AttachmentListGrid(_o);
-        putTab(ATTACHMENT_TAB_NAME, "Attachments", attachmentList);
-    }
-
-    private void updateMetadataTab() {
-
-        if (_o.metadata() == null) {
-            removeTab(METADATA_TAB_NAME);
-            return;
-        }
-        Form metadataForm = XmlMetaForm.formFor(_o.metadata(), FormEditMode.READ_ONLY);
-        metadataForm.setMarginTop(10);
-        metadataForm.setMarginLeft(10);
-        metadataForm.setWidth100();
-        metadataForm.render();
-        putTab(METADATA_TAB_NAME, "Metadata", new ScrollPanel(metadataForm, ScrollPolicy.AUTO));
     }
 
     private void updateInterfaceTab() {
@@ -174,6 +160,29 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
         putTab(INTERFACE_TAB_NAME, "Interface", new ScrollPanel(_interfaceVP, ScrollPolicy.AUTO));
 
+    }
+
+    private void updateMetadataTab() {
+
+        if (_o.metadata() == null) {
+            removeTab(METADATA_TAB_NAME);
+            return;
+        }
+        Form metadataForm = XmlMetaForm.formFor(_o.metadata(), FormEditMode.READ_ONLY);
+        metadataForm.setMarginTop(10);
+        metadataForm.setMarginLeft(10);
+        metadataForm.setWidth100();
+        metadataForm.render();
+        putTab(METADATA_TAB_NAME, "Metadata", new ScrollPanel(metadataForm, ScrollPolicy.AUTO));
+    }
+
+    private void updateAttachmentTab() {
+        AttachmentListGrid attachmentList = new AttachmentListGrid(_o);
+        putTab(ATTACHMENT_TAB_NAME, "Attachments", attachmentList);
+    }
+
+    private void updateArchiveContentTab() {
+        // TODO
     }
 
     protected void prependToInterfaceVP(VerticalPanel interfaceVP) {
@@ -333,9 +342,9 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
         case EX_METHOD:
             return new ExMethodViewerGUI((ExMethod) object);
         case STUDY:
-            return new StudyViewer((Study) object);
+            return new StudyViewerGUI((Study) object);
         case DATASET:
-            return DatasetViewer.create((Dataset) object);
+            return DatasetViewerGUI.create((Dataset) object);
         default:
             throw new AssertionError("Unknown object type: " + object.type());
         }
