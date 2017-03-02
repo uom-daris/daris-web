@@ -3,25 +3,39 @@ package daris.web.client.gui.archive;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style.Unit;
+
 import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.ContainerWidget;
 import arc.gui.gwt.widget.HTML;
+import arc.gui.gwt.widget.button.Button;
+import arc.gui.gwt.widget.button.ButtonBar;
+import arc.gui.gwt.widget.button.ButtonBar.Alignment;
+import arc.gui.gwt.widget.button.ButtonBar.Position;
 import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.paging.PagingControl;
 import arc.gui.gwt.widget.paging.PagingListener;
+import arc.gui.gwt.widget.panel.AbsolutePanel;
 import arc.gui.gwt.widget.panel.HorizontalSplitPanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.object.CollectionResolveHandler;
+import daris.web.client.gui.Resource;
+import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DStyles;
 import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
+import daris.web.client.model.archive.messages.ArchiveContentGet;
+import daris.web.client.util.SizeUtil;
 
 public class ArchiveViewerGUI extends ContainerWidget implements PagingListener {
+
+    public static final arc.gui.image.Image ICON_DOWNLOAD = new arc.gui.image.Image(
+            Resource.INSTANCE.down_16().getSafeUri().asString(), 16, 16);
 
     private ArchiveEntryCollectionRef _arc;
 
@@ -80,16 +94,41 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
         _list.setLoadingMessage("");
         _list.setCursorSize(_arc.defaultPagingSize());
         _list.fitToParent();
-        _list.addColumnDefn("idx", "idx", "Ordinal index").setWidth(50);
-        _list.addColumnDefn("name", "name", "File name/path.").setMinWidth(250);
-        _list.addColumnDefn("size", "size (bytes)", "File size", new WidgetFormatter<ArchiveEntry, Long>() {
+        _list.addColumnDefn("idx", "Index", "Ordinal index", new WidgetFormatter<ArchiveEntry, Integer>() {
 
             @Override
-            public BaseWidget format(ArchiveEntry ae, final Long size) {
-                HTML html = new HTML(size >= 0 ? Long.toString(size) : "");
+            public BaseWidget format(ArchiveEntry ae, Integer idx) {
+                HTML html = new HTML(String.valueOf(idx));
+                html.setFontFamily(DStyles.FONT_FAMILY);
+                html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
+                html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
                 return html;
             }
-        }).setWidth(100);
+        }).setWidth(50);
+        _list.addColumnDefn("name", "Name", "File name/path.", new WidgetFormatter<ArchiveEntry, String>() {
+
+            @Override
+            public BaseWidget format(ArchiveEntry ae, String name) {
+                HTML html = new HTML(name);
+                html.setFontFamily(DStyles.FONT_FAMILY);
+                html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
+                return html;
+            }
+        }).setWidth(350);
+        _list.addColumnDefn("size", "Size", "File size", new WidgetFormatter<ArchiveEntry, Long>() {
+
+            @Override
+            public BaseWidget format(ArchiveEntry ae, Long size) {
+                HTML html = new HTML(size >= 0 ? SizeUtil.getHumanReadableSize(size, true) : "");
+                html.setFontFamily(DStyles.FONT_FAMILY);
+                html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
+                html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+                if (size != null && size >= 0) {
+                    html.setToolTip(Long.toString(size) + " bytes");
+                }
+                return html;
+            }
+        }).setWidth(150);
         // _list.addColumnDefn("idx", "download", "Download", new
         // WidgetFormatter<ArchiveEntry, Integer>() {
         //
@@ -116,7 +155,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
         _detailSP = new SimplePanel();
         _detailSP.fitToParent();
 
-        HorizontalSplitPanel hsp = new HorizontalSplitPanel();
+        HorizontalSplitPanel hsp = new HorizontalSplitPanel(3);
         hsp.fitToParent();
 
         hsp.add(listVP);
@@ -158,7 +197,58 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
             _detailSP.clear();
             return;
         }
-        // TODO:
+        VerticalPanel vp = new VerticalPanel();
+        vp.fitToParent();
+
+        if (_selected.isViewableImage()) {
+            ArchiveEntryImagePanel imagePanel = new ArchiveEntryImagePanel(_arc, _selected);
+            imagePanel.fitToParent();
+            vp.add(imagePanel);
+        }
+
+        AbsolutePanel infoPanel = createInfoPanel(_selected);
+        vp.add(infoPanel);
+
+        ButtonBar bb = new ButtonBar(Position.BOTTOM, Alignment.CENTER);
+        Button button = ButtonUtil.createButton(ICON_DOWNLOAD, "Download", "Download " + _selected.fileName(), true);
+        button.addClickHandler(e -> {
+            new ArchiveContentGet(_arc, _selected).send();
+        });
+        bb.add(button);
+        bb.setHeight(32);
+        vp.add(bb);
+
+        _detailSP.setContent(vp);
+    }
+
+    private static AbsolutePanel createInfoPanel(ArchiveEntry ae) {
+        String tdStyle = "font-family:" + DStyles.FONT_FAMILY + "; font-size:" + DStyles.LIST_GRID_CELL_FONT_SIZE
+                + "px; border: 1px inset #ddd;";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<div style=\"position:absolute; top:50%; left:50%; transform:translateX(-50%) translateY(-50%);\">");
+        sb.append(
+                "<table cellspacing=\"0\" cellpadding=\"5\" border=\"1\" style=\"border-collapse: collapse; border: 1px inset #ddd\">");
+        sb.append("<tr><th align=\"right\" style=\"" + tdStyle + "\">Index:</th><td style=\"" + tdStyle + "\">"
+                + ae.ordinal() + "</td></tr>");
+        sb.append("<tr><th align=\"right\" style=\"" + tdStyle + "\">Name:</th><td style=\"" + tdStyle + "\">"
+                + ae.name() + "</td></tr>");
+        sb.append("<tr><th align=\"right\" style=\"" + tdStyle + "\">Size:</th><td style=\"" + tdStyle + "\">"
+                + ae.size() + " bytes"
+                + (ae.size() > 1000 ? (" (" + SizeUtil.getHumanReadableSize(ae.size(), true) + ")") : "")
+                + "</td></tr>");
+        sb.append("</table>");
+        sb.append("<div>");
+        HTML html = new HTML(sb.toString());
+        AbsolutePanel ap = new AbsolutePanel();
+        if (ae.isViewableImage()) {
+            ap.setHeight(100);
+            ap.setWidth100();
+        } else {
+            ap.fitToParent();
+        }
+        ap.add(html);
+
+        return ap;
     }
 
 }

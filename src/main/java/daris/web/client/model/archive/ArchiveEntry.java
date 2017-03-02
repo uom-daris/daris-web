@@ -47,4 +47,12 @@ public class ArchiveEntry {
         }
         return _name.substring(idx + 1);
     }
+
+    public boolean isViewableImage() {
+
+        String ext = fileExtension();
+        return ext != null && ("png".equalsIgnoreCase(ext) || "jpg".equalsIgnoreCase(ext)
+                || "jpeg".equalsIgnoreCase(ext) || "gif".equalsIgnoreCase(ext) || "bmp".equalsIgnoreCase(ext)
+                || "tif".equalsIgnoreCase(ext) || "tiff".equalsIgnoreCase(ext) || "dcm".equalsIgnoreCase(ext));
+    }
 }

@@ -33,6 +33,7 @@ import arc.mf.dtype.DocType;
 import arc.mf.dtype.ListOfType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
+import daris.web.client.gui.archive.ArchiveViewerGUI;
 import daris.web.client.gui.dataset.DatasetViewerGUI;
 import daris.web.client.gui.exmethod.ExMethodViewerGUI;
 import daris.web.client.gui.form.XmlMetaForm;
@@ -40,6 +41,7 @@ import daris.web.client.gui.project.ProjectViewerGUI;
 import daris.web.client.gui.study.StudyViewerGUI;
 import daris.web.client.gui.subject.SubjectViewerGUI;
 import daris.web.client.gui.widget.DStyles;
+import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.dataset.Dataset;
 import daris.web.client.model.exmethod.ExMethod;
 import daris.web.client.model.object.ContentInfo;
@@ -182,7 +184,8 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
     }
 
     private void updateArchiveContentTab() {
-        // TODO
+        ArchiveViewerGUI archiveViewer = new ArchiveViewerGUI(new ArchiveEntryCollectionRef(_o));
+        putTab(ARCHIVE_CONTENT_TAB_NAME, "Archive Content", archiveViewer);
     }
 
     protected void prependToInterfaceVP(VerticalPanel interfaceVP) {
