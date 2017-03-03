@@ -27,6 +27,9 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/down_20.png")
     ImageResource down_20();
+    
+    @Source("resource/download_16.png")
+    ImageResource download_16();
 
     @Source("resource/folder_32.png")
     ImageResource folder_32();
@@ -42,6 +45,9 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/launch_16.png")
     ImageResource launch_16();
+
+    @Source("resource/right_16.png")
+    ImageResource right_16();
 
     @Source("resource/sub_16.png")
     ImageResource sub_16();
