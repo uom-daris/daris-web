@@ -95,7 +95,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                  */
                 if (entries != null && !entries.isEmpty()) {
                     DObjectRef selected = _selectedMap.get(_parent);
-                    if (selected == null) {
+                    if (selected == null && _toSelect == null) {
                         select(0);
                     } else {
                         int selectedIdx = -1;
@@ -109,7 +109,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                                 selectedIdx = i;
                             }
                         }
-                        if (toSelectIdx >= 0) {
+                        if (toSelectIdx >= 0 && toSelectIdx != selectedIdx) {
                             clearSelections();
                             select(toSelectIdx);
                         } else if (selectedIdx >= 0) {
@@ -324,8 +324,8 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
             @Override
             public void responded(Long idx) {
+                _toSelect = object;
                 if (idx != null && idx > 0) {
-                    _toSelect = object;
                     gotoOffset(idx - 1);
                 } else {
                     gotoOffset(0);
