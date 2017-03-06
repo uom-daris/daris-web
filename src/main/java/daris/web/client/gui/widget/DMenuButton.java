@@ -17,7 +17,7 @@ import daris.web.client.gui.Resource;
 public class DMenuButton extends HTML {
 
     public static arc.gui.image.Image DOWN = new arc.gui.image.Image(
-            Resource.INSTANCE.down_20().getSafeUri().asString(), 20, 20);
+            Resource.INSTANCE.down20().getSafeUri().asString(), 20, 20);
 
     private Menu _menu;
     private boolean _showingMenu;

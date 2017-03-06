@@ -35,7 +35,7 @@ import daris.web.client.util.SizeUtil;
 public class ArchiveViewerGUI extends ContainerWidget implements PagingListener {
 
     public static final arc.gui.image.Image ICON_DOWNLOAD = new arc.gui.image.Image(
-            Resource.INSTANCE.download_16().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.download16().getSafeUri().asString(), 16, 16);
 
     private ArchiveEntryCollectionRef _arc;
 

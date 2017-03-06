@@ -31,10 +31,10 @@ import daris.web.client.model.object.event.DObjectEvent;
 public class DObjectExplorer extends ContainerWidget implements Subscriber {
 
     public static final arc.gui.image.Image ICON_DARIS = new arc.gui.image.Image(
-            Resource.INSTANCE.daris_16().getSafeUri().asString(), 14, 14);
+            Resource.INSTANCE.daris16().getSafeUri().asString(), 14, 14);
 
     public static final arc.gui.image.Image ICON_ACTION = new arc.gui.image.Image(
-            Resource.INSTANCE.launch_16().getSafeUri().asString(), 12, 12);
+            Resource.INSTANCE.launch16().getSafeUri().asString(), 12, 12);
 
     private VerticalPanel _vp;
 

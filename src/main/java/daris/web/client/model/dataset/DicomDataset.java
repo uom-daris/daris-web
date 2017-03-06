@@ -5,6 +5,8 @@ import arc.mf.client.xml.XmlElement;
 
 public class DicomDataset extends DerivedDataset {
 
+    public static final String ASSET_MIME_TYPE = "dicom/series";
+
     private int _size;
     private String _modality;
 
@@ -37,15 +39,7 @@ public class DicomDataset extends DerivedDataset {
     }
 
     public String papayaViewerUrl() {
-        return getPapayaViewerUrl(this);
-    }
-
-    public String simpleViewerUrl() {
-        return getSimpleViewerUrl(this);
-    }
-
-    public static String getPapayaViewerUrl(DicomDataset ds) {
-        if (ds.hasContent() && RemoteServer.haveSession()) {
+        if (hasContent() && RemoteServer.haveSession()) {
             StringBuilder sb = new StringBuilder();
             sb.append(com.google.gwt.user.client.Window.Location.getProtocol());
             sb.append("//");
@@ -53,15 +47,15 @@ public class DicomDataset extends DerivedDataset {
             sb.append("/daris/dicom.mfjp?_skey=");
             sb.append(RemoteServer.sessionId());
             sb.append("&module=view&id=");
-            sb.append(ds.assetId());
+            sb.append(assetId());
             return sb.toString();
         } else {
             return null;
         }
     }
 
-    public static String getSimpleViewerUrl(DicomDataset ds) {
-        if (ds.hasContent() && RemoteServer.haveSession()) {
+    public String simpleViewerUrl() {
+        if (hasContent() && RemoteServer.haveSession()) {
             StringBuilder sb = new StringBuilder();
             sb.append(com.google.gwt.user.client.Window.Location.getProtocol());
             sb.append("//");
@@ -69,7 +63,7 @@ public class DicomDataset extends DerivedDataset {
             sb.append("/daris/dicom.mfjp?_skey=");
             sb.append(RemoteServer.sessionId());
             sb.append("&module=simpleview&id=");
-            sb.append(ds.assetId());
+            sb.append(assetId());
             return sb.toString();
         } else {
             return null;

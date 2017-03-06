@@ -48,7 +48,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
     }
 
     public static final arc.gui.image.Image ICON_DELETE = new arc.gui.image.Image(
-            Resource.INSTANCE.delete_12x16().getSafeUri().asString(), 12, 16);
+            Resource.INSTANCE.delete12x16().getSafeUri().asString(), 12, 16);
 
     private static HTML createCellHtml(String value) {
         HTML html = value == null ? new HTML() : new HTML(value);

@@ -396,11 +396,11 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
     }
 
     public static final arc.gui.image.Image IMG_FOLDER = new arc.gui.image.Image(
-            Resource.INSTANCE.folder_32().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.folder32().getSafeUri().asString(), 16, 16);
     public static final arc.gui.image.Image IMG_FOLDER_ENTER = new arc.gui.image.Image(
-            Resource.INSTANCE.folder_enter_32().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.folderEnter32().getSafeUri().asString(), 16, 16);
     public static final arc.gui.image.Image IMG_DOCUMENT = new arc.gui.image.Image(
-            Resource.INSTANCE.document_32().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.document32().getSafeUri().asString(), 16, 16);
 
     private static class ObjectIcon extends ContainerWidget {
 

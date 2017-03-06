@@ -48,13 +48,13 @@ import daris.web.client.model.object.messages.ObjectDetach;
 public class AttachmentListGrid extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_ADD = new arc.gui.image.Image(
-            Resource.INSTANCE.add_16().getSafeUri().asString(), 12, 12);
+            Resource.INSTANCE.add16().getSafeUri().asString(), 12, 12);
 
     public static final arc.gui.image.Image ICON_REMOVE = new arc.gui.image.Image(
-            Resource.INSTANCE.sub_16().getSafeUri().asString(), 12, 12);
+            Resource.INSTANCE.sub16().getSafeUri().asString(), 12, 12);
 
     public static final arc.gui.image.Image ICON_CLEAR = new arc.gui.image.Image(
-            Resource.INSTANCE.cross_16().getSafeUri().asString(), 12, 12);
+            Resource.INSTANCE.cross16().getSafeUri().asString(), 12, 12);
 
     public static final int FONT_SIZE = 11;
 

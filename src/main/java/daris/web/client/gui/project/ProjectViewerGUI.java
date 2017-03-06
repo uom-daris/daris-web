@@ -41,7 +41,7 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
 
 
     public static final arc.gui.image.Image ICON_USER = new arc.gui.image.Image(
-            Resource.INSTANCE.group_20().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.group20().getSafeUri().asString(), 16, 16);
 
     public ProjectViewerGUI(Project o) {
         super(o);

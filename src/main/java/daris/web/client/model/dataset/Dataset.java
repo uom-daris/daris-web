@@ -41,8 +41,10 @@ public abstract class Dataset extends DObject {
         String sourceType = oe.value("source/type");
         if ("derivation".equals(sourceType)) {
             String mimeType = oe.value("type");
-            if ("dicom/series".equals(mimeType)) {
+            if (DicomDataset.ASSET_MIME_TYPE.equals(mimeType)) {
                 return new DicomDataset(oe);
+            } else if (NiftiDataset.ASSET_MIME_TYPE.equals(mimeType)) {
+                return new NiftiDataset(oe);
             } else {
                 return new DerivedDataset(oe);
             }
