@@ -2,6 +2,7 @@ package daris.web.client.model.object;
 
 import java.util.Collection;
 
+import arc.mf.client.RemoteServer;
 import arc.mf.client.xml.XmlElement;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.dataset.Dataset;
@@ -174,6 +175,32 @@ public abstract class DObject {
 
     public ContentInfo content() {
         return _content;
+    }
+
+    public String contentDownloadUrl() {
+        if (!hasContent()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(com.google.gwt.user.client.Window.Location.getProtocol());
+        sb.append("//");
+        sb.append(com.google.gwt.user.client.Window.Location.getHost());
+        sb.append("/mflux/content.mfjp?_skey=");
+        sb.append(RemoteServer.sessionId());
+        sb.append("&disposition=attachment&id=");
+        sb.append(assetId());
+        if (filename() != null) {
+            sb.append("&filename=" + filename());
+        } else {
+            sb.append("&filename=" + citeableId());
+            if ((this instanceof Dataset) && MimeTypes.NIFTI_SERIES.equals(((Dataset) this).mimeType())) {
+                sb.append(".nii");
+            }
+            if (content().ext() != null) {
+                sb.append("." + content().ext());
+            }
+        }
+        return sb.toString();
     }
 
     public boolean hasContent() {

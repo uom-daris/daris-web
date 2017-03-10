@@ -36,4 +36,8 @@ public class DMenuButtonBar extends ContainerWidget {
         return menuButton;
     }
 
+    public DMenuButton addMenuButton(String label, arc.gui.image.Image icon) {
+        return addMenuButton(label, icon, null);
+    }
+
 }

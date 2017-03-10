@@ -2,6 +2,7 @@ package daris.web.client.gui;
 
 import arc.gui.object.register.SystemObjectGUIRegistry;
 import arc.mf.model.authentication.UserRef;
+import daris.web.client.gui.object.DObjectGUI;
 import daris.web.client.gui.user.RoleUserGUI;
 import daris.web.client.gui.user.UserGUI;
 import daris.web.client.model.object.DObjectRef;
