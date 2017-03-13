@@ -3,7 +3,6 @@ package daris.web.client.model.object.messages;
 import java.util.List;
 
 import arc.mf.client.Output;
-import arc.mf.client.util.ListUtil;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import arc.mf.object.Null;
@@ -14,14 +13,6 @@ public class ObjectAttachmentGet extends ObjectMessage<Null> {
 
     private String _cid;
     private List<Attachment> _attachments;
-
-    public ObjectAttachmentGet(String cid) {
-        _cid = cid;
-    }
-
-    public ObjectAttachmentGet(String cid, Attachment attachment) {
-        this(cid, ListUtil.list(attachment));
-    }
 
     public ObjectAttachmentGet(String cid, List<Attachment> attachments) {
         _cid = cid;

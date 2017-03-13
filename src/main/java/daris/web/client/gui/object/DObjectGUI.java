@@ -2,7 +2,6 @@ package daris.web.client.gui.object;
 
 import arc.gui.gwt.dnd.DragWidget;
 import arc.gui.gwt.dnd.DropHandler;
-import arc.gui.gwt.widget.dialog.Dialog;
 import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.gui.object.SelectedObjectSet;
@@ -14,20 +13,20 @@ import arc.gui.window.Window;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.collection.action.CollectionArchiveDownloadAction;
 import daris.web.client.gui.collection.action.CollectionArchiveShareAction;
+import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.model.object.DObjectRef;
+import daris.web.client.model.object.menu.MenuPreConditions;
 import daris.web.client.util.DownloadUtil;
 
 public class DObjectGUI implements ObjectGUI {
 
     public static final DObjectGUI INSTANCE = new DObjectGUI();
 
-    public static final arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
+    public static arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
             Resource.INSTANCE.download16().getSafeUri().asString(), 16, 16);
-
-    public static final arc.gui.image.Image ICON_DOWNLOAD2 = new arc.gui.image.Image(
+    public static arc.gui.image.Image ICON_DOWNLOAD2 = new arc.gui.image.Image(
             Resource.INSTANCE.downloadDark16().getSafeUri().asString(), 16, 16);
-
-    public static final arc.gui.image.Image ICON_SHARE = new arc.gui.image.Image(
+    public static arc.gui.image.Image ICON_SHARE = new arc.gui.image.Image(
             Resource.INSTANCE.share16().getSafeUri().asString(), 16, 16);
 
     @Override
@@ -50,51 +49,43 @@ public class DObjectGUI implements ObjectGUI {
         }
         DObjectRef o = (DObjectRef) object;
 
-        Menu menu = new Menu();
+        DObjectMenu menu = new DObjectMenu(o) {
 
-        /*
-         * download content
-         */
-        if (o.isDataset() || (o.referent() != null && o.referent().hasContent())) {
-            ActionEntry downloadContentAE = new ActionEntry(ICON_DOWNLOAD1, "Download content", () -> {
-                o.resolve(oo -> {
-                    if (oo.hasContent()) {
-                        DownloadUtil.download(oo.contentDownloadUrl());
-                    } else {
-                        Dialog.warn(window, "Error", "No content found for " + oo.type() + " " + oo.citeableId() + ".",
-                                succeeded -> {
-
-                                });
-                    }
-                });
-            });
-            downloadContentAE.disable();
-            o.resolve(oo -> {
-                if (!oo.hasContent()) {
-                    downloadContentAE.softDisable("No content found.");
-                } else {
-                    downloadContentAE.enable();
+            @Override
+            protected void updateMenuItems(Menu menu, MenuPreConditions pc) {
+                if (pc.contentExists()) {
+                    /*
+                     * download content
+                     */
+                    menu.add(new ActionEntry(ICON_DOWNLOAD1, "Download content", () -> {
+                        o.resolve(oo -> {
+                            DownloadUtil.download(oo.contentDownloadUrl());
+                        });
+                    }));
                 }
-            });
-            menu.add(downloadContentAE);
-        }
 
-        /*
-         * download as archive
-         */
-        ActionEntry archiveDownloadAE = new ActionEntry(ICON_DOWNLOAD2, "Download as archive...", () -> {
-            new CollectionArchiveDownloadAction(o, window).execute();
-        });
-        menu.add(archiveDownloadAE);
+                if (pc.numberOfDatasets() > 0) {
+                    /*
+                     * download as archive
+                     */
+                    menu.add(new ActionEntry(ICON_DOWNLOAD2, "Download as archive...", () -> {
+                        new CollectionArchiveDownloadAction(o, window).execute();
+                    }));
+                    /*
+                     * share url
+                     */
+                    menu.add(new ActionEntry(ICON_SHARE, "Share archive URL...", () -> {
+                        new CollectionArchiveShareAction(o, window).execute();
+                    }));
+                }
 
-        /*
-         * share url
-         */
-        ActionEntry archiveShareAE = new ActionEntry(ICON_SHARE, "Share archive URL...", () -> {
-            new CollectionArchiveShareAction(o, window).execute();
-        });
-        menu.add(archiveShareAE);
-
+                if (pc.numberOfDicomDatasets() > 0) {
+                    /*
+                     * dicom send
+                     */
+                }
+            }
+        };
         return menu;
     }
 

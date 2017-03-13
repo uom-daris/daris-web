@@ -25,7 +25,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TextTypeFormItem implements FormItem {
+@SuppressWarnings("rawtypes")
+public class TextTypeFormItem implements FormItem { // NO_UCD (unused code)
 
     public static enum Presentation {
         SCROLLING, AUTO_RESIZE;
@@ -209,6 +210,7 @@ public class TextTypeFormItem implements FormItem {
         }
 
         text.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @SuppressWarnings("unchecked")
             public void onValueChange(ValueChangeEvent<String> event) {
                 String v = event.getValue();
 
@@ -240,6 +242,7 @@ public class TextTypeFormItem implements FormItem {
         text.enableValueMonitoring();
 
         form.addRenderListener(f, new FormItemListener() {
+            @SuppressWarnings("incomplete-switch")
             public void itemPropertyChanged(arc.gui.form.FormItem f, arc.gui.form.FormItem.Property property) {
 
                 switch (property) {

@@ -42,6 +42,7 @@ import daris.web.client.model.object.Attachment;
 import daris.web.client.model.object.AttachmentRef;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.messages.ObjectAttach;
+import daris.web.client.model.object.messages.ObjectAttachmentGet;
 import daris.web.client.model.object.messages.ObjectAttachmentList;
 import daris.web.client.model.object.messages.ObjectDetach;
 
@@ -49,6 +50,9 @@ public class AttachmentListGrid extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_ADD = new arc.gui.image.Image(
             Resource.INSTANCE.add16().getSafeUri().asString(), 12, 12);
+
+    public static final arc.gui.image.Image ICON_DOWNLOAD = new arc.gui.image.Image(
+            Resource.INSTANCE.download16().getSafeUri().asString(), 12, 12);
 
     public static final arc.gui.image.Image ICON_REMOVE = new arc.gui.image.Image(
             Resource.INSTANCE.sub16().getSafeUri().asString(), 12, 12);
@@ -61,6 +65,7 @@ public class AttachmentListGrid extends ContainerWidget {
     public static final int MIN_ROW_HEIGHT = 22;
 
     private DObject _o;
+    private List<Attachment> _data;
 
     private VerticalPanel _vp;
     private ListGrid<Attachment> _list;
@@ -132,6 +137,7 @@ public class AttachmentListGrid extends ContainerWidget {
 
                     @Override
                     public void responded(List<Attachment> as) {
+                        _data = as;
                         if (as != null && !as.isEmpty()) {
                             List<ListGridEntry<Attachment>> es = new Vector<ListGridEntry<Attachment>>(as.size());
                             for (Attachment a : as) {
@@ -245,6 +251,17 @@ public class AttachmentListGrid extends ContainerWidget {
         ButtonBar bb = new ButtonBar(Position.BOTTOM, Alignment.CENTER);
         bb.setHeight(32);
         _bbSP.setContent(bb);
+        if (_data != null && !_data.isEmpty()) {
+            Button downloadButton = ButtonUtil.createButton(ICON_DOWNLOAD, "Download",
+                    "Download " + ((_list.selections() != null && !_list.selections().isEmpty()) ? "selected" : "all")
+                            + " attachments.",
+                    true);
+            downloadButton.setWidth(100);
+            downloadButton.addClickHandler(e -> {
+                new ObjectAttachmentGet(_o.citeableId(), _list.selections()).send();
+            });
+            bb.add(downloadButton);
+        }
         if (_list.haveSelections()) {
             Button removeButton = ButtonUtil.createButton(ICON_REMOVE, "Remove", "Remove selected attachments", true);
             removeButton.setWidth(100);

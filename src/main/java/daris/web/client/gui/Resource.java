@@ -13,6 +13,12 @@ public interface Resource extends ClientBundle {
     @Source("resource/add_16.png")
     ImageResource add16();
 
+    @Source("resource/alert_16.png")
+    ImageResource alert16();
+
+    @Source("resource/check_16.png")
+    ImageResource check16();
+
     @Source("resource/cross_16.png")
     ImageResource cross16();
 
@@ -36,6 +42,9 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/download_dark_16.png")
     ImageResource downloadDark16();
+
+    @Source("resource/error_16.png")
+    ImageResource error16();
 
     @Source("resource/exclamation_16.png")
     ImageResource exclamation16();
@@ -64,6 +73,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/launch_16.png")
     ImageResource launch16();
 
+    @Source("resource/loading_16.gif")
+    ImageResource loading16();
+
     @Source("resource/loading_56.gif")
     ImageResource loading56();
 
@@ -78,5 +90,11 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/sub_16.png")
     ImageResource sub16();
+
+    @Source("resource/suspended_16.gif")
+    ImageResource suspended16();
+
+    @Source("resource/waiting_16.gif")
+    ImageResource waiting16();
 
 }
