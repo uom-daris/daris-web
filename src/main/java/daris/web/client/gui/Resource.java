@@ -79,6 +79,18 @@ public interface Resource extends ClientBundle {
     @Source("resource/loading_56.gif")
     ImageResource loading56();
 
+    @Source("resource/loading_bar_128x15.gif")
+    ImageResource loadingBar();
+
+    @Source("resource/loading_bar_aborted_128x15.png")
+    ImageResource loadingBarAborted();
+
+    @Source("resource/loading_bar_completed_128x15.png")
+    ImageResource loadingBarCompleted();
+
+    @Source("resource/loading_bar_pending_128x15.png")
+    ImageResource loadingBarPending();
+
     @Source("resource/right_16.png")
     ImageResource right16();
 

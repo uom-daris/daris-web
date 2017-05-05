@@ -39,7 +39,6 @@ import arc.mf.model.service.BackgroundServiceSet;
 import arc.mf.object.CollectionResolveHandler;
 import arc.mf.session.ServiceResponseHandler;
 import arc.mf.session.Session;
-import daris.web.client.gui.widget.ProgressBar;
 import daris.web.client.util.DateTimeUtil;
 
 public class BackgroundServiceManager {
@@ -64,14 +63,12 @@ public class BackgroundServiceManager {
         _list = new ListGrid<BackgroundService>(ScrollPolicy.AUTO) {
             @Override
             protected void preLoad() {
-                _selected = (_list.selections() != null
-                        && !_list.selections().isEmpty())
-                                ? _list.selections().get(0) : null;
+                _selected = (_list.selections() != null && !_list.selections().isEmpty()) ? _list.selections().get(0)
+                        : null;
             }
 
             @Override
-            protected void postLoad(long start, long end, long total,
-                    List<ListGridEntry<BackgroundService>> entries) {
+            protected void postLoad(long start, long end, long total, List<ListGridEntry<BackgroundService>> entries) {
                 if (entries != null && !entries.isEmpty()) {
                     if (_selected == null) {
                         select(entries.size() - 1);
@@ -106,17 +103,14 @@ public class BackgroundServiceManager {
             public void load(Filter f, final long start, final long end,
                     final DataLoadHandler<ListGridEntry<BackgroundService>> lh) {
                 _services.reset();
-                _services.resolve(start, end,
-                        new CollectionResolveHandler<BackgroundService>() {
+                _services.resolve(start, end, new CollectionResolveHandler<BackgroundService>() {
 
                     @Override
-                    public void resolved(List<BackgroundService> bss)
-                            throws Throwable {
+                    public void resolved(List<BackgroundService> bss) throws Throwable {
                         if (bss != null && !bss.isEmpty()) {
                             List<ListGridEntry<BackgroundService>> es = new ArrayList<ListGridEntry<BackgroundService>>();
                             for (BackgroundService bs : bss) {
-                                ListGridEntry<BackgroundService> e = new ListGridEntry<BackgroundService>(
-                                        bs);
+                                ListGridEntry<BackgroundService> e = new ListGridEntry<BackgroundService>(bs);
                                 e.set("id", bs.id());
                                 e.set("name", bs.name());
                                 e.set("description", bs.description());
@@ -125,8 +119,7 @@ public class BackgroundServiceManager {
                                 e.set("endTime", bs.endTime());
                                 es.add(e);
                             }
-                            lh.loaded(start, end, es.size(), es,
-                                    DataLoadAction.REPLACE);
+                            lh.loaded(start, end, es.size(), es, DataLoadAction.REPLACE);
                             return;
                         }
                         lh.loaded(0, 0, 0, null, null);
@@ -138,33 +131,42 @@ public class BackgroundServiceManager {
         _list.addColumnDefn("id", "Task id").setWidth(60);
         _list.addColumnDefn("name", "Name").setWidth(120);
         _list.addColumnDefn("description", "Description").setWidth(180);
-        _list.addColumnDefn("state", "State", null,
+        _list.addColumnDefn("state", "State", null, new WidgetFormatter<BackgroundService, BackgroundService.State>() {
+
+            @Override
+            public BaseWidget format(BackgroundService bs, State state) {
+                return stateGuiFor(state);
+            }
+        }).setWidth(110);
+        // @formatter:off
+//        _list.addColumnDefn("state", "Progress", null,
+//                new WidgetFormatter<BackgroundService, State>() {
+//
+//                    @Override
+//                    public BaseWidget format(BackgroundService bs,
+//                            State state) {
+//                        return progressGuiFor(bs);
+//                    }
+//                }).setWidth(300);
+        // @formatter:on
+        _list.addColumnDefn("state", "Execution Time", null,
                 new WidgetFormatter<BackgroundService, BackgroundService.State>() {
 
                     @Override
-                    public BaseWidget format(BackgroundService bs,
-                            State state) {
-                        return stateGuiFor(state);
+                    public BaseWidget format(BackgroundService bso, State state) {
+                        if (bso.executionTime() > 0) {
+                            return new HTML(DateTimeUtil.convertSecondsToHumanReadableTime(bso.executionTime()));
+                        }
+                        return null;
                     }
-                }).setWidth(110);
-        _list.addColumnDefn("state", "Progress", null,
-                new WidgetFormatter<BackgroundService, State>() {
+                }).setWidth(120);
+        _list.addColumnDefn("state", "Message", null, new WidgetFormatter<BackgroundService, State>() {
 
-                    @Override
-                    public BaseWidget format(BackgroundService bs,
-                            State state) {
-                        return progressGuiFor(bs);
-                    }
-                }).setWidth(300);
-        _list.addColumnDefn("state", "Message", null,
-                new WidgetFormatter<BackgroundService, State>() {
-
-                    @Override
-                    public BaseWidget format(BackgroundService bs,
-                            State state) {
-                        return messageGuiFor(_win, bs);
-                    }
-                }).setWidth(350);
+            @Override
+            public BaseWidget format(BackgroundService bs, State state) {
+                return messageGuiFor(_win, bs);
+            }
+        }).setWidth(350);
         _list.addColumnDefn("startTime", "Start time").setWidth(150);
         _list.addColumnDefn("endTime", "End time").setWidth(150);
         _list.setMultiSelect(false);
@@ -222,15 +224,13 @@ public class BackgroundServiceManager {
     }
 
     private void updateButtonBar(final BackgroundService bs) {
-        ButtonBar bb = new ButtonBar(ButtonBar.Position.BOTTOM,
-                ButtonBar.Alignment.CENTER);
+        ButtonBar bb = new ButtonBar(ButtonBar.Position.BOTTOM, ButtonBar.Alignment.CENTER);
         if (bs != null) {
             if (!bs.finished() && bs.canAbort()) {
                 bb.addButton("Abort").addClickHandler(new ClickHandler() {
 
                     @Override
-                    public void onClick(
-                            com.google.gwt.event.dom.client.ClickEvent event) {
+                    public void onClick(com.google.gwt.event.dom.client.ClickEvent event) {
                         bs.abort();
                     }
                 });
@@ -239,8 +239,7 @@ public class BackgroundServiceManager {
                 bb.addButton("Suspend").addClickHandler(new ClickHandler() {
 
                     @Override
-                    public void onClick(
-                            com.google.gwt.event.dom.client.ClickEvent event) {
+                    public void onClick(com.google.gwt.event.dom.client.ClickEvent event) {
                         bs.suspend();
                     }
                 });
@@ -249,8 +248,7 @@ public class BackgroundServiceManager {
                 bb.addButton("Delete").addClickHandler(new ClickHandler() {
 
                     @Override
-                    public void onClick(
-                            com.google.gwt.event.dom.client.ClickEvent event) {
+                    public void onClick(com.google.gwt.event.dom.client.ClickEvent event) {
                         bs.destroy();
                     }
                 });
@@ -266,12 +264,10 @@ public class BackgroundServiceManager {
                     w.add("include", "completed");
                     w.add("include", "aborted");
                     w.add("include", "failed");
-                    Session.execute("service.background.destroy", w.document(),
-                            new ServiceResponseHandler() {
+                    Session.execute("service.background.destroy", w.document(), new ServiceResponseHandler() {
 
                         @Override
-                        public void processResponse(XmlElement xe,
-                                List<Output> outputs) throws Throwable {
+                        public void processResponse(XmlElement xe, List<Output> outputs) throws Throwable {
                             // DO NOTHING..
                         }
                     });
@@ -290,8 +286,7 @@ public class BackgroundServiceManager {
         _bbSP.setContent(bb);
     }
 
-    private static void displayError(arc.gui.window.Window owner,
-            BackgroundService bs) {
+    private static void displayError(arc.gui.window.Window owner, BackgroundService bs) {
         TextArea ta = new TextArea();
         ta.fitToParent();
         ta.setReadOnly(true);
@@ -302,8 +297,7 @@ public class BackgroundServiceManager {
             title.append("name: ").append(bs.name()).append("; ");
         }
         title.append("task_id: ").append(bs.id()).append("]");
-        DialogProperties dp = new DialogProperties(Type.ERROR, title.toString(),
-                ta);
+        DialogProperties dp = new DialogProperties(Type.ERROR, title.toString(), ta);
         dp.setCancelLabel(null); // no cancel button;
         dp.setButtonLabel("Dismiss");
         dp.setSize(800, 500);
@@ -313,43 +307,39 @@ public class BackgroundServiceManager {
     static BaseWidget stateGuiFor(State state) {
         StringBuilder sb = new StringBuilder();
         sb.append("<img style=\"vertical-align:middle\" src=\"")
-                .append(BackgroundServiceMonitor.iconForState(state).path())
-                .append("\">").append(state);
+                .append(BackgroundServiceMonitor.iconForState(state).path()).append("\">").append(state);
         HTML html = new HTML(sb.toString());
         html.setFontSize(11);
         return html;
     }
 
-    static BaseWidget progressGuiFor(BackgroundService bso) {
+    // @formatter:off
+//    static BaseWidget progressGuiFor(BackgroundService bso) {
+//
+//        ProgressBar pb = new ProgressBar();
+//        pb.setWidth(280);
+//        if (bso.state() == State.EXECUTING) {
+//            String execTime = "[" + DateTimeUtil.convertSecondsToHumanReadableTime(bso.executionTime()) + "]";
+//            if (bso.numberSubOperationsCompleted() > 0 && bso.totalOperations() > 0) {
+//                double progress = (double) bso.subOperationsCompleted() / (double) bso.totalOperations();
+//                int percent = (int) (progress * 100);
+//                pb.setProgress(bso.numberSubOperationsCompleted(), bso.totalOperations(),
+//                        percent + "%" + " " + execTime);
+//            } else {
+//                pb.setMessage(execTime);
+//            }
+//        } else {
+//            if (bso.state() == State.COMPLETED) {
+//                pb.setProgress(100, 100, bso.state().name().toLowerCase());
+//            } else {
+//                pb.setMessage(bso.state().name().toLowerCase());
+//            }
+//        }
+//        return pb;
+//    }
+    // @formatter:on
 
-        ProgressBar pb = new ProgressBar();
-        pb.setWidth(280);
-        if (bso.state() == State.EXECUTING) {
-            String execTime = "[" + DateTimeUtil
-                    .convertSecondsToHumanReadableTime(bso.executionTime())
-                    + "]";
-            if (bso.numberSubOperationsCompleted() > 0
-                    && bso.totalOperations() > 0) {
-                double progress = (double) bso.subOperationsCompleted()
-                        / (double) bso.totalOperations();
-                int percent = (int) (progress * 100);
-                pb.setProgress(bso.numberSubOperationsCompleted(),
-                        bso.totalOperations(), percent + "%" + " " + execTime);
-            } else {
-                pb.setMessage(execTime);
-            }
-        } else {
-            if (bso.state() == State.COMPLETED) {
-                pb.setProgress(100, 100, bso.state().name().toLowerCase());
-            } else {
-                pb.setMessage(bso.state().name().toLowerCase());
-            }
-        }
-        return pb;
-    }
-
-    static BaseWidget messageGuiFor(final arc.gui.window.Window owner,
-            final BackgroundService bs) {
+    static BaseWidget messageGuiFor(final arc.gui.window.Window owner, final BackgroundService bs) {
 
         if (bs.error() != null) {
             Button errorButton = new Button("Error");

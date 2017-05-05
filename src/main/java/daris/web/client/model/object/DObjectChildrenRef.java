@@ -101,5 +101,10 @@ public class DObjectChildrenRef extends OrderedCollectionRef<DObjectRef> {
     public DObjectRef parent() {
         return _parent;
     }
+    
+    @Override
+    public boolean supportsPaging() {
+        return true;
+    }
 
 }

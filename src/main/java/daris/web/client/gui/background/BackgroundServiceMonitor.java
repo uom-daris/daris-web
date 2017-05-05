@@ -1,5 +1,6 @@
 package daris.web.client.gui.background;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
@@ -8,6 +9,7 @@ import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.button.ButtonBar;
 import arc.gui.gwt.widget.button.ButtonBar.Alignment;
 import arc.gui.gwt.widget.button.ButtonBar.Position;
+import arc.gui.gwt.widget.panel.AbsolutePanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.window.Window;
@@ -19,7 +21,6 @@ import arc.mf.model.service.BackgroundService;
 import arc.mf.model.service.messages.DestroyRequestResponse;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.widget.MessageBox;
-import daris.web.client.gui.widget.ProgressBar;
 import daris.web.client.util.DateTimeUtil;
 
 public class BackgroundServiceMonitor implements arc.mf.model.service.BackgroundServiceMonitorHandler {
@@ -40,6 +41,15 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
             Resource.INSTANCE.alert16().getSafeUri().asString(), 16, 16);
     private static final arc.gui.image.Image ICON_FAILED = new arc.gui.image.Image(
             Resource.INSTANCE.error16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image LOADING_BAR = new arc.gui.image.Image(
+            Resource.INSTANCE.loadingBar().getSafeUri().asString(), 128, 15);
+    public static final arc.gui.image.Image LOADING_BAR_PENDING = new arc.gui.image.Image(
+            Resource.INSTANCE.loadingBarPending().getSafeUri().asString(), 128, 15);
+    public static final arc.gui.image.Image LOADING_BAR_ABORTED = new arc.gui.image.Image(
+            Resource.INSTANCE.loadingBarAborted().getSafeUri().asString(), 128, 15);
+    public static final arc.gui.image.Image LOADING_BAR_COMPLETED = new arc.gui.image.Image(
+            Resource.INSTANCE.loadingBarCompleted().getSafeUri().asString(), 128, 15);
 
     private long _id;
     private arc.mf.model.service.BackgroundServiceMonitor _m;
@@ -117,22 +127,28 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
         detail.setBorder(1, RGB.GREY_EEE);
         vp.add(detail);
 
-        if (bso.numberSubOperationsCompleted() > 0 && bso.totalOperations() > 0) {
-            ProgressBar pb = new ProgressBar();
-            pb.setWidth100();
-            pb.setHeight(18);
-            vp.add(pb);
-            pb.setMarginLeft(20);
-            pb.setMarginRight(20);
-            pb.setMarginBottom(20);
-            // TODO test
-            long completed = bso.numberSubOperationsCompleted();
-            long total = bso.totalOperations();
-            if (completed > total) {
-                completed = total;
-            }
-            pb.setProgress(completed, total, "" + completed + " / " + total);
-        }
+        // @formatter:off
+//        if (bso.numberSubOperationsCompleted() > 0 && bso.totalOperations() > 0) {
+//            ProgressBar pb = new ProgressBar();
+//            pb.setWidth100();
+//            pb.setHeight(18);
+//            vp.add(pb);
+//            pb.setMarginLeft(20);
+//            pb.setMarginRight(20);
+//            pb.setMarginBottom(20);
+//            long completed = bso.numberSubOperationsCompleted();
+//            long total = bso.totalOperations();
+//            if (completed > total) {
+//                completed = total;
+//            }
+//            pb.setProgress(completed, total, "" + completed + " / " + total);
+//        }
+        // @formatter:on
+        AbsolutePanel progressAP = new AbsolutePanel();
+        progressAP.setHeight(40);
+        progressAP.setWidth100();
+        vp.add(progressAP);
+        progressAP.add(progressImageFor(bso));
 
         ButtonBar bb = buttonBarFor(bso);
         vp.add(bb);
@@ -183,16 +199,18 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
                     "<tr><td style=\"width:25%;text-align:right;font-weight:bold;\">Current activity:</td><td style=\"text-align:left;\">")
                     .append(bs.currentActivity()).append("</td></tr>");
         }
-        if (bs.numberSubOperationsCompleted() > 0 && bs.totalOperations() > 0) {
-            long completed = bs.numberSubOperationsCompleted();
-            long total = bs.totalOperations();
-            if (completed > total) {
-                completed = total;
-            }
-            sb.append(
-                    "<tr><td style=\"width:25%;text-align:right;font-weight:bold;\">Completed:</td><td style=\"text-align:left;\">")
-                    .append(completed).append("/").append(total).append("</td></tr>");
-        }
+        // @formatter:off
+//        if (bs.numberSubOperationsCompleted() > 0 && bs.totalOperations() > 0) {
+//            long completed = bs.numberSubOperationsCompleted();
+//            long total = bs.totalOperations();
+//            if (completed > total) {
+//                completed = total;
+//            }
+//            sb.append(
+//                    "<tr><td style=\"width:25%;text-align:right;font-weight:bold;\">Completed:</td><td style=\"text-align:left;\">")
+//                    .append(completed).append("/").append(total).append("</td></tr>");
+//        }
+        // @formatter:on
         if (bs.error() != null) {
             sb.append(
                     "<tr><td style=\"width:25%;text-align:right;font-weight:bold;\">Error:</td><td style=\"text-align:left;\">")
@@ -208,6 +226,32 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
         }
         sb.append("</table>");
         return sb.toString();
+    }
+
+    private static arc.gui.gwt.widget.image.Image progressImageFor(BackgroundService bs) {
+        arc.gui.image.Image i = null;
+        switch (bs.state()) {
+        case PENDING:
+            i = LOADING_BAR_PENDING;
+            break;
+        case EXECUTING:
+            i = LOADING_BAR;
+            break;
+        case COMPLETED:
+            i = LOADING_BAR_COMPLETED;
+            break;
+        default:
+            i = LOADING_BAR_ABORTED;
+            break;
+        }
+        arc.gui.gwt.widget.image.Image img = new arc.gui.gwt.widget.image.Image(i, 256, 15);
+        img.setPosition(Style.Position.ABSOLUTE);
+        img.setTop(0);
+        img.setBottom(0);
+        img.setRight(0);
+        img.setLeft(0);
+        img.element().getStyle().setProperty("margin", "auto");
+        return img;
     }
 
     private ButtonBar buttonBarFor(final BackgroundService bs) {

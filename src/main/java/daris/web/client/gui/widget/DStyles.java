@@ -5,7 +5,7 @@ import arc.gui.gwt.colour.RGB;
 
 public class DStyles {
 
-    public static final String FONT_FAMILY = "Roboto,Helvetica,sans-serif";
+    public static final String FONT_FAMILY = "Helvetica,sans-serif";
 
     public static final int NAV_BUTTON_BAR_HEIGHT = 32;
     public static final Colour NAV_BUTTON_BAR_BORDER_COLOUR = new RGB(0xf4, 0xf4, 0xf4);
