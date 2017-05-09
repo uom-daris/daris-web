@@ -218,6 +218,7 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
 
     public void list(String parentCid) {
         if (parentCid == null) {
+            _navBar.update(null);
             _list.setParentObject(null);
             return;
         }
