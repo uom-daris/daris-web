@@ -16,8 +16,8 @@ import daris.web.client.util.StringUtils;
 
 public class DNavButton extends HTML {
 
-    DNavButton(DObjectRef o, ClickHandler ch) {
-        super(o == null ? "Home" : labelFor(o));
+    DNavButton(DObjectRef o, String label, ClickHandler ch) {
+        super(o == null ? label : labelFor(o));
         setFontFamily(DStyles.FONT_FAMILY);
         setFontSize(DStyles.NAV_BUTTON_FONT_SIZE);
         setFontWeight(FontWeight.BOLD);

@@ -11,9 +11,13 @@ import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import daris.web.client.gui.DObjectExplorer;
+import daris.web.client.gui.Resource;
 import daris.web.client.model.object.DObjectRef;
 
 public class DNavButtonBar extends ContainerWidget {
+
+    public static final arc.gui.image.Image LOADING_ICON = new arc.gui.image.Image(
+            Resource.INSTANCE.loading16().getSafeUri().asString(), 56, 56);
 
     private static class Separator extends HTML {
         Separator() {
@@ -28,6 +32,7 @@ public class DNavButtonBar extends ContainerWidget {
     private DObjectExplorer _explorer;
     private SimplePanel _sp;
     private HorizontalPanel _hp;
+    private arc.gui.gwt.widget.image.Image _loadingIcon;
 
     public DNavButtonBar(DObjectExplorer explorer) {
 
@@ -41,6 +46,9 @@ public class DNavButtonBar extends ContainerWidget {
         _hp.setSpacing(DStyles.NAV_BUTTON_SPACING);
         _hp.setHeight(DStyles.NAV_BUTTON_BAR_HEIGHT);
 
+        _loadingIcon = new arc.gui.gwt.widget.image.Image(LOADING_ICON, 16, 16);
+        _hp.add(_loadingIcon);
+
         _sp.setContent(_hp);
 
         initWidget(_sp);
@@ -48,13 +56,18 @@ public class DNavButtonBar extends ContainerWidget {
     }
 
     protected DNavButton addButton(DObjectRef o, ClickHandler ch) {
-        DNavButton button = new DNavButton(o, ch);
+        DNavButton button = new DNavButton(o, o == null ? "Home" : null, ch);
         _hp.add(button);
         return button;
     }
 
     protected void addSeparator() {
         _hp.add(new Separator());
+    }
+
+    public void setBusyLoading() {
+        _hp.removeAll();
+        _hp.add(new DNavButton(null, "loading...", null));
     }
 
     public void update(List<DObjectRef> parents) {

@@ -150,9 +150,8 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             }
         });
         _list.setEmptyMessage("");
-        _list.setLoadingMessage("");
+        _list.setLoadingMessage("loading...");
         _list.setCursorSize(_pageSize);
-
         _list.addColumnDefn("nbc", "", null, new WidgetFormatter<DObjectRef, Integer>() {
 
             @Override
@@ -219,6 +218,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             @Override
             public void doubleClicked(DObjectRef o, DoubleClickEvent event) {
                 if (!o.isDataset()) {
+                    setBusyLoading();
                     _selectedMap.put(_parent, o);
                     setParentObject(o);
                 }
@@ -474,4 +474,9 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         });
     }
 
+    public void setBusyLoading() {
+        if (_list != null) {
+            _list.setBusyLoading();
+        }
+    }
 }

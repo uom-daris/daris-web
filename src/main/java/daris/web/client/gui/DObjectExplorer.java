@@ -14,6 +14,7 @@ import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.gui.object.SelectedObjectSet;
 import arc.mf.client.plugin.Plugin;
+import arc.mf.client.util.Action;
 import arc.mf.client.util.DynamicBoolean;
 import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
@@ -22,6 +23,7 @@ import arc.mf.event.Subscriber;
 import arc.mf.event.SystemEvent;
 import arc.mf.event.SystemEventChannel;
 import arc.mf.object.ObjectResolveHandler;
+import arc.mf.session.Session;
 import daris.web.client.gui.DObjectListGrid.ParentUpdateListener;
 import daris.web.client.gui.object.DObjectGUI;
 import daris.web.client.gui.widget.DMenuButton;
@@ -114,6 +116,7 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
 
             @Override
             public void parentUpdated(DObjectRef parent) {
+                _navBar.setBusyLoading();
                 if (parent == null) {
                     _navBar.update(null);
                     return;
@@ -157,14 +160,15 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
          * daris menu
          */
         Menu darisMenu = new Menu();
-        // TODO
-        darisMenu.add(new ActionEntry(ICON_ABOUT, "About DaRIS", null));
+        darisMenu.add(new ActionEntry(ICON_ABOUT, "About DaRIS", () -> {
+            new AboutDialog().show(window());
+        }));
         darisMenu.addSeparator();
-        // TODO
         darisMenu.add(new ActionEntry(ICON_PREFERENCES, "Preferences...", null));
         darisMenu.addSeparator();
-        // TODO
-        darisMenu.add(new ActionEntry(ICON_EXIT, "Log Out", null));
+        darisMenu.add(new ActionEntry(ICON_EXIT, "Log Out", () -> {
+            Session.logoff(true);
+        }));
 
         _menuBar.addMenuButton("DaRIS", ICON_DARIS, darisMenu);
 
@@ -217,6 +221,8 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
     }
 
     public void list(String parentCid) {
+        _navBar.setBusyLoading();
+        _list.setBusyLoading();
         if (parentCid == null) {
             _navBar.update(null);
             _list.setParentObject(null);
