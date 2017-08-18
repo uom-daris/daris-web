@@ -14,7 +14,6 @@ import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.gui.object.SelectedObjectSet;
 import arc.mf.client.plugin.Plugin;
-import arc.mf.client.util.Action;
 import arc.mf.client.util.DynamicBoolean;
 import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;

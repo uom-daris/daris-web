@@ -91,14 +91,26 @@ public interface Resource extends ClientBundle {
     @Source("resource/loading_bar_pending_128x15.png")
     ImageResource loadingBarPending();
 
+    @Source("resource/options_16.png")
+    ImageResource options16();
+
+    @Source("resource/order_asc_16.png")
+    ImageResource orderAsc16();
+
+    @Source("resource/order_desc_16.png")
+    ImageResource orderDesc16();
+
     @Source("resource/right_16.png")
     ImageResource right16();
 
-    @Source("resource/share_16.png")
-    ImageResource share16();
+    @Source("resource/search_16.png")
+    ImageResource search16();
 
     @Source("resource/settings_16.png")
     ImageResource settings16();
+
+    @Source("resource/share_16.png")
+    ImageResource share16();
 
     @Source("resource/sub_16.png")
     ImageResource sub16();

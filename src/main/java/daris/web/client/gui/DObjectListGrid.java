@@ -2,6 +2,7 @@ package daris.web.client.gui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,17 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
+import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.ContainerWidget;
 import arc.gui.gwt.widget.HTML;
+import arc.gui.gwt.widget.button.ImageButton;
 import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.format.WidgetFormatter;
+import arc.gui.gwt.widget.image.LinearGradient;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.list.ListGridRowDoubleClickHandler;
@@ -26,6 +32,7 @@ import arc.gui.gwt.widget.list.ListGridRowEnterHandler;
 import arc.gui.gwt.widget.paging.PagingControl;
 import arc.gui.gwt.widget.paging.PagingListener;
 import arc.gui.gwt.widget.panel.AbsolutePanel;
+import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.gui.gwt.widget.table.Table.Row;
@@ -33,16 +40,24 @@ import arc.mf.client.util.ObjectUtil;
 import arc.mf.object.CollectionResolveHandler;
 import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.model.object.DObjectChildrenRef;
+import daris.web.client.model.object.DObjectChildrenRef.SortKey;
 import daris.web.client.model.object.DObjectRef;
+import daris.web.client.model.object.SortOrder;
+import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.messages.DObjectChildCursorFromGet;
 import daris.web.client.util.StringUtils;
 
 public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     public static final int DEFAULT_PAGE_SIZE = 100;
+    public static final SortKey DEFAULT_SORT_KEY = SortKey.CID;
+    public static final SortOrder DEFAULT_SORT_ORDER = SortOrder.ASC;
     public static final int MAX_MAP_ENTRIES = 100;
     public static final int MIN_ROW_HEIGHT = 28;
     public static final int FONT_SIZE = 11;
+
+    public static final arc.gui.image.Image ICON_OPTIONS = new arc.gui.image.Image(
+            Resource.INSTANCE.options16().getSafeUri().asString(), 12, 12);
 
     public static interface ParentUpdateListener {
         void parentUpdated(DObjectRef parent);
@@ -51,14 +66,22 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
     private DObjectRef _parent;
     private LinkedHashMap<DObjectRef, DObjectChildrenRef> _childrenMap;
     private LinkedHashMap<DObjectRef, DObjectRef> _selectedMap;
+    private HashMap<DObjectRef, SimpleObjectFilter> _filters;
+    private SortKey _sortKey;
+    private SortOrder _sortOrder;
     private List<DObjectRef> _childrenInCurrentPage;
 
     private DObjectRef _toSelect;
 
     private VerticalPanel _vp;
 
+    private VerticalPanel _listVP;
     private ListGrid<DObjectRef> _list;
+    private DObjectListGridViewOptionsForm _viewOptionsForm;
+
     private PagingControl _pc;
+
+    private ImageButton _optionsButton;
 
     private List<SelectionHandler<DObjectRef>> _shs;
     private List<ParentUpdateListener> _puls;
@@ -82,9 +105,16 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                 return size() > MAX_MAP_ENTRIES;
             }
         };
+        _filters = new HashMap<DObjectRef, SimpleObjectFilter>();
+        _sortKey = SortKey.CID;
+        _sortOrder = SortOrder.ASC;
 
         _vp = new VerticalPanel();
         _vp.fitToParent();
+
+        _listVP = new VerticalPanel();
+        _listVP.fitToParent();
+        _vp.add(_listVP);
 
         _list = new ListGrid<DObjectRef>(ScrollPolicy.AUTO) {
 
@@ -235,11 +265,33 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             }
         });
 
-        _vp.add(_list);
+        _listVP.add(_list);
+
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.setHeight(PagingControl.DEFAULT_HEIGHT);
+        hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        hp.setBackgroundImage(new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM, RGB.GREY_AAA, RGB.GREY_777));
+        hp.setWidth100();
+        hp.setPaddingRight(2);
 
         _pc = new PagingControl(_pageSize);
         _pc.addPagingListener(this);
-        _vp.add(_pc);
+        hp.add(_pc);
+
+        hp.addSpacer(10);
+
+        _optionsButton = new ImageButton(ICON_OPTIONS);
+        _optionsButton.addClickHandler(event -> {
+            if (_viewOptionsForm != null) {
+                hideViewOptionsForm();
+            } else {
+                showViewOptionsForm();
+            }
+        });
+        hp.add(_optionsButton);
+
+        _vp.add(hp);
 
         initWidget(_vp);
 
@@ -266,10 +318,23 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     DObjectChildrenRef childrenRef() {
         DObjectChildrenRef c = _childrenMap.get(_parent);
+        SimpleObjectFilter filter = _filters.get(_parent);
         if (c == null) {
-            c = new DObjectChildrenRef(_parent);
+            c = new DObjectChildrenRef(_parent, filter, _sortKey, _sortOrder);
             c.setPageSize(_pageSize);
+            _pc.setPageSize(_pageSize);
             _childrenMap.put(_parent, c);
+        } else {
+            if (filter != null) {
+                c.setFilter(_filters.get(_parent));
+            } else {
+                c.removeAllFilters();
+            }
+            c.setSortKey(_sortKey);
+            c.setSortOrder(_sortOrder);
+            c.setPageSize(_pageSize);
+            c.reset();
+            _pc.setPageSize(_pageSize);
         }
         return c;
     }
@@ -479,4 +544,31 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             _list.setBusyLoading();
         }
     }
+
+    private void showViewOptionsForm() {
+        hideViewOptionsForm();
+        _viewOptionsForm = new DObjectListGridViewOptionsForm(_filters.get(_parent), _sortKey, _sortOrder, _pageSize);
+        _viewOptionsForm.addUpdateListener((filter, sortKey, sortOrder, pageSize) -> {
+            _filters.put(_parent, filter);
+            _sortKey = sortKey;
+            _sortOrder = sortOrder;
+            _pageSize = pageSize;
+            gotoOffset(0);
+            _viewOptionsForm.hide();
+            _viewOptionsForm = null;
+        });
+        _viewOptionsForm.setCloseHandler(() -> {
+            _listVP.remove(_viewOptionsForm.gui());
+        });
+        _listVP.add(_viewOptionsForm.gui());
+
+    }
+
+    private void hideViewOptionsForm() {
+        if (_viewOptionsForm != null) {
+            _listVP.remove(_viewOptionsForm.gui());
+            _viewOptionsForm = null;
+        }
+    }
+
 }
