@@ -136,4 +136,33 @@ public class CiteableIdUtils {
         return 0;
     }
 
+    public static boolean isParent(String parent, String child) {
+        if (parent != null && child != null) {
+            return child.startsWith(parent + ".");
+        }
+        return false;
+    }
+
+    public static boolean isChild(String child, String parent) {
+        return isParent(parent, child);
+    }
+
+    public static boolean isSibling(String cid1, String cid2) {
+        if (cid1 != null && cid2 != null) {
+            int depth1 = depth(cid1);
+            int depth2 = depth(cid2);
+            if (depth1 == depth2) {
+                if (depth1 <= 1) {
+                    return true;
+                } else {
+                    return isParent(parent(cid1), cid2);
+                }
+            }
+            return false;
+        } else if (cid1 == null && cid2 == null) {
+            return true;
+        }
+        return false;
+    }
+
 }

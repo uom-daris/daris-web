@@ -87,10 +87,11 @@ public class DNavButtonBar extends ContainerWidget {
                 DObjectRef p = parents.get(i);
                 addSeparator();
                 addButton(p, (i != nbParents - 1) ? (event -> {
-                    _explorer.list(p);
+                    _explorer.list(p, false);
                 }) : null);
             }
         }
     }
+
 
 }

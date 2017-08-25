@@ -14,7 +14,6 @@ import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.gui.object.SelectedObjectSet;
 import arc.mf.client.plugin.Plugin;
-import arc.mf.client.util.DynamicBoolean;
 import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.event.Filter;
@@ -116,14 +115,10 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
             @Override
             public void parentUpdated(DObjectRef parent) {
                 _navBar.setBusyLoading();
-                if (parent == null) {
-                    _navBar.update(null);
-                    return;
-                }
-                new DObjectPathRef(parent).resolve(new ObjectResolveHandler<DObjectPath>() {
-
-                    @Override
-                    public void resolved(DObjectPath path) {
+                resolveObjectPath(parent, path -> {
+                    if (path == null) {
+                        _navBar.update(null);
+                    } else {
                         _navBar.update(path.list(true, false));
                         updateHistoryToken(path.object(), path.child());
                     }
@@ -138,10 +133,10 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
                 String token = e.getValue();
                 if (token != null && token.startsWith("list_")) {
                     String cid = token.substring(5);
-                    list(cid);
+                    list(cid, false);
                 } else if (token != null && token.startsWith("view_")) {
                     String cid = token.substring(5);
-                    view(cid);
+                    view(cid, false);
                 } else {
                     if (!"list".equals(token)) {
                         History.replaceItem("list", false);
@@ -194,44 +189,57 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
         }
     }
 
-    public void view(String cid) {
-        new DObjectPathRef(cid).resolve(new ObjectResolveHandler<DObjectPath>() {
-
-            @Override
-            public void resolved(DObjectPath path) {
-                display(path.parents(), path.object());
-            }
+    public void view(String cid, boolean refresh) {
+        if (refresh) {
+            // _list.childrenRef().reset();
+        }
+        resolveObjectPath(cid, path -> {
+            display(path.parents(), path.object(), refresh);
         });
     }
 
-    public void view(DObjectRef o) {
-        view(o.citeableId());
+    public void view(DObjectRef o, boolean refresh) {
+        view(o.citeableId(), refresh);
     }
 
     /**
      * List projects.
      */
     public void list() {
-        list((String) null);
+        list((String) null, false);
     }
 
-    public void list(DObjectRef parent) {
-        list(parent == null ? null : parent.citeableId());
+    public void list(DObjectRef parent, boolean refresh) {
+        list(parent == null ? null : parent.citeableId(), refresh);
     }
 
-    public void list(String parentCid) {
+    public void list(String parentCid, boolean refresh) {
         _navBar.setBusyLoading();
         _list.setBusyLoading();
-        if (parentCid == null) {
-            _navBar.update(null);
-            _list.setParentObject(null);
+        resolveObjectPath(parentCid, path -> {
+            if (path == null) {
+                _navBar.update(null);
+                _list.setParentObject(null);
+            } else {
+                display(path.list(true, false), path.child(), refresh);
+            }
+        });
+    }
+
+    private void resolveObjectPath(DObjectRef o, ObjectResolveHandler<DObjectPath> rh) {
+        resolveObjectPath(o == null ? null : o.citeableId(), rh);
+    }
+
+    private void resolveObjectPath(String cid, ObjectResolveHandler<DObjectPath> rh) {
+        if (cid == null) {
+            if (rh != null) {
+                rh.resolved(null);
+            }
             return;
         }
-        new DObjectPathRef(parentCid).resolve(new ObjectResolveHandler<DObjectPath>() {
-
-            @Override
-            public void resolved(DObjectPath path) {
-                display(path.list(true, false), path.child());
+        new DObjectPathRef(cid).resolve(path -> {
+            if (rh != null) {
+                rh.resolved(path);
             }
         });
     }
@@ -242,10 +250,15 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
         _dv.reloadAndDisplayObject(o);
     }
 
-    private void display(List<DObjectRef> parents, DObjectRef object) {
+    private void display(List<DObjectRef> parents, DObjectRef object, boolean refresh) {
         _navBar.update(parents);
         DObjectRef directParent = (parents == null || parents.isEmpty()) ? null : parents.get(parents.size() - 1);
-        _list.seekTo(directParent, object);
+        if (object != null) {
+            _list.seekTo(directParent, object, refresh);
+        } else {
+            _list.setParentObject(directParent);
+            _list.gotoOffset(0);
+        }
         if (Plugin.isStandaloneApplication()) {
             // update history token if needed
             updateHistoryToken(directParent, object);
@@ -323,29 +336,134 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
 
     @Override
     public List<Filter> systemEventFilters() {
-        DObjectRef o = _list.selected();
-        if (o == null) {
-            return null;
+        return ListUtil.list(new Filter(DObjectEvent.SYSTEM_EVENT_NAME, null));
+    }
+
+    private void handleEvent(DObjectEvent de) {
+        DObjectEvent.Action action = de.action();
+        String ecid = de.citeableId();
+
+        DObjectRef so = _list.selected();
+        DObjectRef po = _list.parentObject();
+
+        switch (action) {
+        case MODIFY:
+            if (de.matchesObject(so)) {
+                if (_list.isInCurrentPage(so)) {
+                    _list.refreshRow(so);
+                }
+                _dv.reloadAndDisplayObject(so);
+            } else if (de.isParentOf(so)) {
+                resolveObjectPath(_list.parentObject(), path -> {
+                    _navBar.update(path.list(true, false));
+                });
+            }
+            break;
+        case CREATE:
+            if (po == null) {
+                if (CiteableIdUtils.isProject(ecid)) {
+                    if (!_list.isCurrentPageFull()) {
+                        list((DObjectRef) null, true);
+                    }
+                } else if (CiteableIdUtils.isSubject(ecid)) {
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (_list.isInCurrentPage(o)) {
+                        _list.refreshRow(o);
+                    }
+                }
+            } else {
+                if (de.isDirectChildOf(po)) {
+                    if (!_list.isCurrentPageFull()) {
+                        if (so != null) {
+                            view(so, true);
+                        } else {
+                            list(po, true);
+                        }
+                    }
+                } else if (de.isGrandChildOf(po)) {
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (_list.isInCurrentPage(o)) {
+                        _list.refreshRow(o);
+                    }
+                }
+            }
+            break;
+        case DESTROY:
+            if (po == null) {
+                if (CiteableIdUtils.isProject(ecid)) {
+                    _list.collectionRemoved(ecid);
+                    if (_list.isInCurrentPage(ecid)) {
+                        list((DObjectRef) null, true);
+                    }
+                } else if (CiteableIdUtils.isSubject(ecid)) {
+                    _list.collectionRemoved(ecid);
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (_list.isInCurrentPage(o)) {
+                        _list.refreshRow(o);
+                    }
+                }
+            } else {
+                if (de.isDirectChildOf(so)) {
+                    _list.collectionRemoved(ecid);
+                    if (_list.isInCurrentPage(so)) {
+                        _list.refreshRow(so);
+                    }
+                } else if (de.isGrandChildOf(po)) {
+                    _list.collectionRemoved(ecid);
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (_list.isInCurrentPage(o)) {
+                        _list.refreshRow(o);
+                    }
+                } else {
+                    if (de.isDirectChildOf(po)) {
+                        if (de.matchesObject(so)) {
+                            _list.collectionRemoved(ecid);
+                        }
+                        list(po, true);
+                    } else if (de.matchesObject(po) || de.isParentOf(po)) {
+                        _list.collectionRemoved(ecid);
+                        resolveNearestExistingParent(ecid, pid -> {
+                            list(pid, true);
+                        });
+                    }
+                }
+            }
+            break;
+        default:
+            break;
         }
-        return ListUtil.list(new Filter("pssd-object", o.citeableId(), DynamicBoolean.TRUE));
+
     }
 
     @Override
     public void process(SystemEvent se) {
         DObjectEvent de = (DObjectEvent) se;
-        DObjectRef selected = _list.selected();
-        if (de.action() == DObjectEvent.Action.MODIFY) {
-            if (de.matchesObject(_list.selected())) {
-                _list.refreshRow(selected);
-                _dv.reloadAndDisplayObject(selected);
+        DObjectEvent.isRelavent(de, relavent -> {
+            if (relavent) {
+                handleEvent(de);
             }
-        } else if (de.action() == DObjectEvent.Action.CREATE) {
-            // TODO
-        } else if (de.action() == DObjectEvent.Action.DESTROY) {
-            // TODO
-        } else {
-            // TODO
+        });
+    }
+
+    private void resolveNearestExistingParent(String cid, ObjectResolveHandler<String> rh) {
+        String pid = cid == null ? null : CiteableIdUtils.parent(cid);
+        if (pid == null) {
+            if (rh != null) {
+                rh.resolved(null);
+            }
+            return;
         }
+        Session.execute("asset.exists", "<cid>" + pid + "</cid>", (xe, outputs) -> {
+            boolean exists = xe.booleanValue("exists");
+            if (!exists) {
+                _list.collectionRemoved(pid);
+                resolveNearestExistingParent(pid, rh);
+            } else {
+                if (rh != null) {
+                    rh.resolved(pid);
+                }
+            }
+        });
     }
 
 }

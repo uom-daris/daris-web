@@ -1,9 +1,12 @@
 package daris.web.client.model.object.event;
 
-import arc.mf.client.util.ObjectUtil;
+import java.util.Collection;
+
 import arc.mf.client.xml.XmlElement;
 import arc.mf.event.Filter;
 import arc.mf.event.SystemEvent;
+import arc.mf.object.ObjectMessageResponse;
+import arc.mf.session.Session;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectRef;
@@ -57,26 +60,10 @@ public class DObjectEvent extends SystemEvent {
 
     @Override
     public boolean matches(Filter f) {
-
         if (!type().equals(f.type())) {
             return false;
         }
-        switch (_action) {
-        case CREATE:
-        case DESTROY:
-            if (f.object() == null) {
-                // local object type: repository
-                // event object type = project?
-                return CiteableIdUtils.isProject(object());
-            } else {
-                return CiteableIdUtils.isDirectParent(f.object(), object());
-            }
-        case MODIFY:
-        case MEMBERS:
-            return ObjectUtil.equals(f.object(), object());
-        default:
-            return ObjectUtil.equals(f.object(), object());
-        }
+        return true;
     }
 
     public String toString() {
@@ -92,6 +79,62 @@ public class DObjectEvent extends SystemEvent {
             }
         }
         return false;
+    }
+
+    public boolean isParentOf(Object o) {
+        if (o != null) {
+            String cid = null;
+            if (o instanceof DObjectRef) {
+                cid = ((DObjectRef) o).citeableId();
+            } else if (o instanceof DObject) {
+                cid = ((DObject) o).citeableId();
+            }
+            if (cid != null) {
+                return cid.startsWith(citeableId() + ".");
+            }
+        }
+        return false;
+    }
+
+    public boolean isDirectChildOf(DObjectRef parentObject) {
+        if (parentObject != null) {
+            String pid = parentObject.citeableId();
+            return CiteableIdUtils.isDirectChild(citeableId(), pid);
+        }
+        return false;
+    }
+
+    public boolean isGrandChildOf(DObjectRef parentObject) {
+        if (parentObject != null) {
+            return CiteableIdUtils.parent(citeableId(), 2).equals(parentObject.citeableId());
+        }
+        return false;
+    }
+
+    public static void isRelavent(DObjectEvent de, ObjectMessageResponse<Boolean> rh) {
+        if (de.action() == Action.DESTROY) {
+            Session.execute("asset.query",
+                    "<where>model='om.pssd.project'</where><action>get-cid</action><size>infinity</size>",
+                    (xe, outputs) -> {
+                        String ecid = de.citeableId();
+                        Collection<String> cids = xe.values("cid");
+                        if (cids != null) {
+                            for (String cid : cids) {
+                                if (ecid.startsWith(cid + ".") || ecid.equals(cid)) {
+                                    rh.responded(true);
+                                    return;
+                                }
+                            }
+                        }
+                        rh.responded(false);
+                    });
+        } else {
+            Session.execute("asset.query", "<where>cid='" + de.object() + "'</where><action>count</action>",
+                    (xe, outputs) -> {
+                        int count = xe.intValue("value");
+                        rh.responded(count > 0);
+                    });
+        }
     }
 
 }
