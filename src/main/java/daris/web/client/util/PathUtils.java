@@ -16,7 +16,7 @@ public class PathUtils {
         return trimLeadingSlash(trimTrailingSlash(str));
     }
 
-    public static String relativePath(String path, String basePath) {
+    public static String getRelativePath(String path, String basePath) {
         if (path == null || path.isEmpty() || basePath == null || basePath.isEmpty()) {
             return path;
         }
@@ -30,6 +30,21 @@ public class PathUtils {
         } else {
             return path;
         }
+    }
+
+    public static String getParentPath(String path) {
+        if (path == null || path.isEmpty() || "/".equals(path)) {
+            return null;
+        }
+        path = trimTrailingSlash(path);
+        int i = path.lastIndexOf('/');
+        if (i == -1) {
+            return null;
+        }
+        if (i == 0) {
+            return "/";
+        }
+        return path.substring(0, i);
     }
 
 }

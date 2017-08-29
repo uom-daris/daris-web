@@ -34,9 +34,8 @@ public class ProgressBar extends ContainerWidget {
         _progressSP = new SimplePanel();
         _progressSP.setWidth(0);
         _progressSP.setHeight100();
-        _progressSP.setBackgroundImage(
-                new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
-                        new RGB(0xef, 0x60, 0x23), new RGB(0xff, 0x70, 0x33)));
+        _progressSP.setBackgroundImage(new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
+                new RGB(0xef, 0x60, 0x23), new RGB(0xff, 0x70, 0x33)));
 
         _totalSP = new SimplePanel();
         _totalSP.fitToParent();
@@ -59,11 +58,12 @@ public class ProgressBar extends ContainerWidget {
         initWidget(_ap);
     }
 
-    public void setMessage(String msg) {
+    public ProgressBar setMessage(String msg) {
         if (!ObjectUtils.equals(msg, _msg.html())) {
             _msg.setHTML(msg);
             doLayoutChildren();
         }
+        return this;
     }
 
     /**
@@ -72,7 +72,7 @@ public class ProgressBar extends ContainerWidget {
      * @param p
      *            Should be in the range [0,1]
      */
-    public void setProgress(double progress, String msg) {
+    public ProgressBar setProgress(double progress, String msg) {
         if (progress < 0.0) {
             progress = 0.0;
         }
@@ -84,10 +84,12 @@ public class ProgressBar extends ContainerWidget {
             _msg.setHTML(msg);
             doLayoutChildren();
         }
+        return this;
     }
 
-    public void setProgress(long progress, long total, String msg) {
+    public ProgressBar setProgress(long progress, long total, String msg) {
         setProgress((double) progress / (double) total, msg);
+        return this;
     }
 
     /**
@@ -96,8 +98,9 @@ public class ProgressBar extends ContainerWidget {
      * @param p
      *            Should be in the range [0,1]
      */
-    public void setProgress(double progress) {
+    public ProgressBar setProgress(double progress) {
         setProgress(progress, "");
+        return this;
     }
 
     protected void doLayoutChildren() {

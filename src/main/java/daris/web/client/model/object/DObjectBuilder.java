@@ -1,13 +1,62 @@
 package daris.web.client.model.object;
 
-public interface DObjectBuilder {
+import arc.mf.client.xml.XmlElement;
 
-    void setName(String name);
+public abstract class DObjectBuilder {
 
-    void setDescription(String description);
+    private String _name;
+    private String _description;
+    private String _type;
+    private boolean _allowIncompleteMeta;
+    private boolean _allowInvalidMeta;
+    private XmlElement _metadata;
 
-    void setAllowIncompleteMeta(boolean allowIncompleteMeta);
+    public void setName(String name) {
+        _name = name;
+    }
 
-    void setAllowInvalidMeta(boolean allowInvalidMeta);
+    public String name() {
+        return _name;
+    }
+
+    public void setType(String type) {
+        _type = type;
+    }
+
+    public String type() {
+        return _type;
+    }
+
+    public void setDescription(String description) {
+        _description = description;
+    }
+
+    public String description() {
+        return _description;
+    }
+
+    public void setAllowIncompleteMeta(boolean allowIncompleteMeta) {
+        _allowIncompleteMeta = allowIncompleteMeta;
+    }
+
+    public boolean allowIncompleteMeta() {
+        return _allowIncompleteMeta;
+    }
+
+    public void setAllowInvalidMeta(boolean allowInvalidMeta) {
+        _allowInvalidMeta = allowInvalidMeta;
+    }
+
+    public boolean allowInvalidMeta() {
+        return _allowInvalidMeta;
+    }
+
+    public XmlElement metadata() {
+        return _metadata;
+    }
+
+    public void setMetadata(XmlElement metadata) {
+        _metadata = metadata;
+    }
 
 }

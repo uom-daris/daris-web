@@ -13,6 +13,7 @@ import arc.gui.window.Window;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.collection.action.CollectionArchiveDownloadAction;
 import daris.web.client.gui.collection.action.CollectionArchiveShareAction;
+import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
 import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.menu.MenuPreConditions;
@@ -53,6 +54,10 @@ public class DObjectGUI implements ObjectGUI {
 
             @Override
             protected void updateMenuItems(Menu menu, MenuPreConditions pc) {
+                if (o.isStudy()) {
+                    menu.add(new ActionEntry("Create Primary Dataset",
+                            new PrimaryDatasetCreateAction(o, null, window, 1000, 500)));
+                }
                 if (pc.contentExists()) {
                     /*
                      * download content
@@ -84,6 +89,7 @@ public class DObjectGUI implements ObjectGUI {
                      * dicom send
                      */
                 }
+
             }
         };
         return menu;

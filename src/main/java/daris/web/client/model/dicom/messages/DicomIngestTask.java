@@ -2,11 +2,17 @@ package daris.web.client.model.dicom.messages;
 
 import java.util.List;
 
+import arc.mf.client.file.LocalFile;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
-import daris.web.client.model.object.upload.FileSetUploadTask;
+import daris.web.client.model.object.upload.FileUploadTask;
 
-public class DicomIngestTask extends FileSetUploadTask<List<String>> {
+public class DicomIngestTask extends FileUploadTask<List<String>> {
+
+    protected DicomIngestTask(List<LocalFile> files) {
+        super(files);
+        // TODO Auto-generated constructor stub
+    }
 
     @Override
     protected String consumeServiceName() {
