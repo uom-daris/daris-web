@@ -1,6 +1,7 @@
 package daris.web.client.model.object.upload;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,7 +9,6 @@ import arc.mf.client.Output;
 import arc.mf.client.RemoteServer;
 import arc.mf.client.ResponseHandler;
 import arc.mf.client.ServiceRequest;
-import arc.mf.client.file.FileHandler;
 import arc.mf.client.file.LocalFile;
 import arc.mf.client.util.ListUtil;
 import arc.mf.client.xml.XmlElement;
@@ -16,7 +16,6 @@ import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.client.xml.XmlWriter;
 import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.model.archive.ArchiveType;
-import daris.web.client.util.PathUtils;
 
 public abstract class FileUploadTask<T> {
 
@@ -26,16 +25,6 @@ public abstract class FileUploadTask<T> {
 
     public static enum State {
         INITIAL, UPLOADING, CONSUMING, ABORTED, SUCCEEDED, FAILED
-    }
-
-    public static class FileEntry {
-        public final LocalFile file;
-        public final String dstPath;
-
-        FileEntry(LocalFile file, String dstPath) {
-            this.file = file;
-            this.dstPath = dstPath;
-        }
     }
 
     private static long _idGen = 1;
@@ -59,19 +48,11 @@ public abstract class FileUploadTask<T> {
     private ServiceRequest _sr;
     private Throwable _thrown;
 
-    protected FileUploadTask(List<LocalFile> files) {
+    protected FileUploadTask(Collection<FileEntry> files) {
         _id = nextId();
         _entries = new LinkedList<FileEntry>();
         if (files != null && !files.isEmpty()) {
-            int n = files.size();
-            for (int i = 0; i < n; i++) {
-                LocalFile file = files.get(i);
-                if (i == 0 && n == 1 && file.isDirectory()) {
-                    add(file, file.path());
-                } else {
-                    add(file, PathUtils.getParentPath(file.path()));
-                }
-            }
+            _entries.addAll(files);
         }
         _tmpDir = null;
         _uploaded = 0;
@@ -99,28 +80,6 @@ public abstract class FileUploadTask<T> {
 
     public ArchiveType archiveType() {
         return _atype;
-    }
-
-    public void add(LocalFile f, String basePath) {
-        if (f.isDirectory()) {
-            f.files(null, 0, Integer.MAX_VALUE, new FileHandler() {
-
-                @Override
-                public void process(long start, long end, long total, List<LocalFile> files) {
-                    if (files != null) {
-                        for (LocalFile file : files) {
-                            if (file.isDirectory()) {
-                                add(file, basePath);
-                            } else {
-                                _entries.add(new FileEntry(file, PathUtils.getRelativePath(file.path(), basePath)));
-                            }
-                        }
-                    }
-                }
-            });
-        } else {
-            _entries.add(new FileEntry(f, PathUtils.getRelativePath(f.path(), basePath)));
-        }
     }
 
     public void addListener(Listener l) {
@@ -159,13 +118,13 @@ public abstract class FileUploadTask<T> {
                 setState(State.CONSUMING, true);
                 XmlStringWriter w = new XmlStringWriter();
                 consumeServiceArgs(w);
-                _sr = RemoteServer.execute(null, consumeServiceName(), w.document(),
-                        ListUtil.list(_entries.get(0).file), 0, /* ProgressHandler */null, new ResponseHandler() {
+                _sr = RemoteServer.execute(null, consumeServiceName(), w.document(), ListUtil.list(_uploading), 0,
+                        /* ProgressHandler */null, new ResponseHandler() {
 
                             @Override
                             public void processResponse(XmlElement xe, List<Output> outputs) {
                                 if (rh != null) {
-                                    rh.responded(FileUploadTask.this.instantiate(xe));
+                                    rh.responded(instantiate(xe));
                                 }
                                 _uploaded++;
                                 setState(State.SUCCEEDED, true);

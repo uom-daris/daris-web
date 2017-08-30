@@ -46,6 +46,9 @@ public class PrimaryDatasetCreator extends DatasetCreator {
             w.add("id", subjectId());
             w.pop();
         }
+        if (numberOfFiles() == 1 && archiveType() == null) {
+            w.add("filename", files().get(0).file.name());
+        }
     }
 
 }

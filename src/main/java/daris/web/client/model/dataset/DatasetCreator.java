@@ -7,6 +7,7 @@ import arc.mf.client.file.LocalFile;
 import daris.web.client.model.archive.ArchiveType;
 import daris.web.client.model.object.DObjectCreator;
 import daris.web.client.model.object.DObjectRef;
+import daris.web.client.model.object.upload.FileEntry;
 
 public abstract class DatasetCreator extends DObjectCreator {
 
@@ -14,12 +15,12 @@ public abstract class DatasetCreator extends DObjectCreator {
     private String _lctype;
     private String _methodId;
     private String _methodStep;
-    private List<LocalFile> _files;
+    private List<FileEntry> _files;
     private ArchiveType _atype;
 
     public DatasetCreator(DObjectRef parent) {
         super(parent);
-        _files = new ArrayList<LocalFile>();
+        _files = new ArrayList<FileEntry>();
     }
 
     public String contentType() {
@@ -38,39 +39,31 @@ public abstract class DatasetCreator extends DObjectCreator {
         _lctype = lctype;
     }
 
-    public void setFiles(List<LocalFile> files) {
-        if (files == null || files.isEmpty()) {
-            _files.clear();
-        } else {
-            _files.addAll(files);
-        }
+    public void addFile(LocalFile file, String dstPath) {
+        assert !file.isDirectory();
+        addFile(new FileEntry(file, dstPath));
     }
 
-    public boolean addFile(LocalFile file) {
-        if (!contains(file)) {
-            _files.add(file);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean contains(LocalFile file) {
+    public void addFile(FileEntry file) {
         if (file != null) {
-            for (LocalFile f : _files) {
-                if (f.path() != null && f.path().equals(file.path())) {
-                    return true;
-                }
+            assert !file.file.isDirectory();
+            _files.add(file);
+            if (_files.size() > 1 && _atype == null) {
+                _atype = ArchiveType.AAR;
             }
         }
-        return false;
     }
 
-    public List<LocalFile> files() {
+    public List<FileEntry> files() {
         return _files;
     }
 
     public boolean hasFiles() {
         return _files != null && !_files.isEmpty();
+    }
+
+    public int numberOfFiles() {
+        return _files == null ? 0 : _files.size();
     }
 
     public ArchiveType archiveType() {

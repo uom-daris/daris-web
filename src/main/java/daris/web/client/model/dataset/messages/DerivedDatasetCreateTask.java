@@ -1,11 +1,11 @@
 package daris.web.client.model.dataset.messages;
 
-import java.util.List;
+import java.util.Collection;
 
-import arc.mf.client.file.LocalFile;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import daris.web.client.model.object.DObjectRef;
+import daris.web.client.model.object.upload.FileEntry;
 import daris.web.client.model.object.upload.FileUploadTask;
 
 public class DerivedDatasetCreateTask extends FileUploadTask<DObjectRef> {
@@ -13,7 +13,7 @@ public class DerivedDatasetCreateTask extends FileUploadTask<DObjectRef> {
     private String _name;
     private String _description;
 
-    public DerivedDatasetCreateTask(List<LocalFile> files, String name, String description) {
+    public DerivedDatasetCreateTask(Collection<FileEntry> files, String name, String description) {
         super(files);
         _name = name;
         _description = description;
