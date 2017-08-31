@@ -3,6 +3,8 @@ package daris.web.client.gui.dataset.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style.TextAlign;
+
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
@@ -13,8 +15,11 @@ import arc.gui.gwt.dnd.DropCheck;
 import arc.gui.gwt.dnd.DropHandler;
 import arc.gui.gwt.dnd.DropListener;
 import arc.gui.gwt.widget.BaseWidget;
+import arc.gui.gwt.widget.HTML;
+import arc.gui.gwt.widget.image.LinearGradient;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
+import arc.gui.gwt.widget.list.ListGridHeader;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.client.file.FileHandler;
@@ -38,16 +43,37 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
             Resource.INSTANCE.document32().getSafeUri().asString(), 16, 16);
 
     private ListGrid<FileEntry> _fileList;
+    private HTML _fileListStatus;
+    private int _addingFiles = 0;
 
     protected DatasetCreateForm(T dc) {
         super(dc);
     }
 
     protected void addToContainer(VerticalPanel container) {
+        VerticalPanel vp = new VerticalPanel();
+        vp.setHeight(170);
+        vp.setWidth100();
+
         _fileList = new ListGrid<FileEntry>(ScrollPolicy.AUTO);
         initFileList();
+        vp.add(_fileList);
+
+        _fileListStatus = new HTML();
+        _fileListStatus.setWidth100();
+        _fileListStatus.setHeight(20);
+        _fileListStatus.setFontSize(10);
+        _fileListStatus.setPaddingRight(15);
+        _fileListStatus.setTextAlign(TextAlign.RIGHT);
+        _fileListStatus.setPaddingTop(3);
+        _fileListStatus.setBackgroundImage(new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
+                ListGridHeader.HEADER_COLOUR_LIGHT, ListGridHeader.HEADER_COLOUR_DARK));
+        _fileListStatus.setHTML("" + creator.numberOfFiles() + " files.");
+        vp.add(_fileListStatus);
+
+        container.add(vp);
+
         updateFileList();
-        container.add(_fileList);
     }
 
     protected void addToInterfaceForm(Form interfaceForm) {
@@ -75,8 +101,7 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
     private void initFileList() {
 
-        _fileList.setHeight(150);
-        _fileList.setWidth100();
+        _fileList.fitToParent();
         _fileList.setEmptyMessage("No files. Drag and drop files or directories here!");
         _fileList.enableDropTarget(false);
         _fileList.setDropHandler(new DropHandler() {
@@ -114,9 +139,11 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
                     : new arc.gui.gwt.widget.image.Image(ICON_FILE);
         }).setWidth(20);
         _fileList.addColumnDefn("path", "File").setWidth(800);
+        _fileList.setMultiSelect(true);
     }
 
     private void addDirectory(LocalFile dir, String base) {
+        _addingFiles++;
         dir.files(Filter.FILES, 0, Integer.MAX_VALUE, new FileHandler() {
             @Override
             public void process(long start, long end, long total, List<LocalFile> files) {
@@ -127,10 +154,12 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
                         }
                     }
                     updateFileList();
-                    notifyOfChangeInState();
                 }
+                _addingFiles--;
+                notifyOfChangeInState();
             }
         });
+        _addingFiles++;
         dir.files(Filter.DIRECTORIES, 0, Integer.MAX_VALUE, new FileHandler() {
             @Override
             public void process(long start, long end, long total, List<LocalFile> files) {
@@ -141,6 +170,8 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
                         }
                     }
                 }
+                _addingFiles--;
+                notifyOfChangeInState();
             }
         });
     }
@@ -155,6 +186,7 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
             entries.add(entry);
         }
         _fileList.setData(entries);
+        _fileListStatus.setHTML("" + creator.numberOfFiles() + " files.");
     }
 
     @Override
@@ -163,6 +195,9 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
         if (v.valid()) {
             if (!creator.hasFiles()) {
                 return new IsNotValid("No files added.");
+            }
+            if (_addingFiles > 0) {
+                return new IsNotValid("Adding files... Please wait...");
             }
         }
         return v;
