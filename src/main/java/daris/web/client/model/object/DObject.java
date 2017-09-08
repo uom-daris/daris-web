@@ -107,7 +107,7 @@ public abstract class DObject {
 
     }
 
-    public abstract DObject.Type type();
+    public abstract DObject.Type objectType();
 
     public String citeableId() {
         return _citeableId;

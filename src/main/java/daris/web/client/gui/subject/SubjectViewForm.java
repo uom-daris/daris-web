@@ -9,17 +9,17 @@ import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
 import daris.web.client.gui.form.XmlMetaForm;
-import daris.web.client.gui.object.DObjectViewerGUI;
+import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.subject.Subject;
 
-public class SubjectViewerGUI extends DObjectViewerGUI<Subject> {
+public class SubjectViewForm extends DObjectViewForm<Subject> {
 
     public static final String PRIVATE_METADATA_TAB_NAME = "Private Metadata";
     public static final String PUBLIC_METADATA_TAB_NAME = "Public Metadata";
 
-    public SubjectViewerGUI(Subject o) {
+    public SubjectViewForm(Subject o) {
         super(o);
     }
 

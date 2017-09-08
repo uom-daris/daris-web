@@ -1,11 +1,10 @@
-package daris.web.client.model.object.menu;
+package daris.web.client.model.object;
 
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.object.ObjectRef;
-import daris.web.client.model.object.DObjectRef;
 
-public class MenuPreConditionsRef extends ObjectRef<MenuPreConditions> {
+public class DObjectSummaryRef extends ObjectRef<DObjectSummary> {
 
     private DObjectRef _o;
 
@@ -13,8 +12,8 @@ public class MenuPreConditionsRef extends ObjectRef<MenuPreConditions> {
     private Integer _nbDatasets;
     private Integer _nbDicomDatasets;
 
-    public MenuPreConditionsRef(DObjectRef o) {
-        super(MenuPreConditions.menuPreConditionsFor(o));
+    public DObjectSummaryRef(DObjectRef o) {
+        super(DObjectSummary.summaryOf(o));
         _o = o;
         _contentExists = referent().contentExists();
         _nbDatasets = referent().numberOfDatasets();
@@ -68,7 +67,7 @@ public class MenuPreConditionsRef extends ObjectRef<MenuPreConditions> {
     }
 
     @Override
-    protected MenuPreConditions instantiate(XmlElement xe) throws Throwable {
+    protected DObjectSummary instantiate(XmlElement xe) throws Throwable {
 
         if (_contentExists == null) {
             _contentExists = xe.booleanValue(
@@ -82,7 +81,7 @@ public class MenuPreConditionsRef extends ObjectRef<MenuPreConditions> {
         if (_nbDicomDatasets == null) {
             _nbDicomDatasets = xe.intValue("reply[@service='daris.collection.dicom.dataset.count']/response/value");
         }
-        return new MenuPreConditions(_contentExists, _nbDatasets, _nbDicomDatasets);
+        return new DObjectSummary(_contentExists, _nbDatasets, _nbDicomDatasets);
     }
 
     @Override

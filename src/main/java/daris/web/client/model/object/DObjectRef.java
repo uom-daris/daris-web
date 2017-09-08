@@ -19,6 +19,8 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     private boolean _resolved = false;
 
+    private DObjectRef _parent = null;
+
     public DObjectRef(String citeableId, int numberOfChildren) {
         this(citeableId, null, null, null, numberOfChildren, false);
     }
@@ -152,7 +154,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public DObject.Type referentType() {
         if (referent() != null) {
-            return referent().type();
+            return referent().objectType();
         } else {
             return CiteableIdUtils.type(_citeableId);
         }
@@ -220,7 +222,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public boolean isProject() {
         if (referent() != null) {
-            return referent().type() == Type.PROJECT;
+            return referent().objectType() == Type.PROJECT;
         } else {
             return CiteableIdUtils.isProject(citeableId());
         }
@@ -228,7 +230,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public boolean isSubject() {
         if (referent() != null) {
-            return referent().type() == Type.SUBJECT;
+            return referent().objectType() == Type.SUBJECT;
         } else {
             return CiteableIdUtils.isSubject(citeableId());
         }
@@ -236,7 +238,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public boolean isExMethod() {
         if (referent() != null) {
-            return referent().type() == Type.EX_METHOD;
+            return referent().objectType() == Type.EX_METHOD;
         } else {
             return CiteableIdUtils.isExMethod(citeableId());
         }
@@ -244,7 +246,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public boolean isStudy() {
         if (referent() != null) {
-            return referent().type() == Type.STUDY;
+            return referent().objectType() == Type.STUDY;
         } else {
             return CiteableIdUtils.isStudy(citeableId());
         }
@@ -252,7 +254,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public boolean isDataset() {
         if (referent() != null) {
-            return referent().type() == Type.DATASET;
+            return referent().objectType() == Type.DATASET;
         } else {
             return CiteableIdUtils.isDataset(citeableId());
         }
@@ -283,6 +285,27 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
             return childType.toString();
         }
         return null;
+    }
+
+    public DObjectRef parent() {
+        if (isProject()) {
+            _parent = null;
+        } else {
+            if (_parent == null) {
+                _parent = new DObjectRef(CiteableIdUtils.parent(_citeableId), -1);
+            }
+        }
+        return _parent;
+    }
+
+    public void setParent(DObjectRef parent) {
+        if (parent == null) {
+            assert isProject();
+            _parent = null;
+            return;
+        }
+        assert CiteableIdUtils.isParent(parent.citeableId(), _citeableId);
+        _parent = parent;
     }
 
 }

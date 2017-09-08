@@ -9,7 +9,7 @@ import arc.gui.form.Form;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.StringType;
-import daris.web.client.gui.object.DObjectViewerGUI;
+import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.model.dataset.Dataset;
 import daris.web.client.model.dataset.DerivedDataset;
 import daris.web.client.model.dataset.DicomDataset;
@@ -17,14 +17,14 @@ import daris.web.client.model.dataset.NiftiDataset;
 import daris.web.client.model.dataset.PrimaryDataset;
 import daris.web.client.model.dataset.SourceType;
 
-public class DatasetViewerGUI extends DObjectViewerGUI<Dataset> {
+public class DatasetViewForm extends DObjectViewForm<Dataset> {
 
     public static final String PAPAYA_DICOM_VIEWER_TAB_NAME = "Papaya DICOM Viewer";
     public static final String SIMPLE_DICOM_VIEWER_TAB_NAME = "Simple DICOM Viewer";
     public static final String DICOM_STRUCTURED_REPORT_TAB_NAME = "DICOM Structure Report";
     public static final String NIFTI_VIEWER_TAB_NAME = "NIFTI Viewer";
 
-    protected DatasetViewerGUI(Dataset o) {
+    protected DatasetViewForm(Dataset o) {
         super(o);
     }
 
@@ -154,8 +154,8 @@ public class DatasetViewerGUI extends DObjectViewerGUI<Dataset> {
         putTab(NIFTI_VIEWER_TAB_NAME, "Papaya NIFTI Viewer", niftiViewer);
     }
 
-    public static DatasetViewerGUI create(Dataset dataset) {
-        return new DatasetViewerGUI(dataset);
+    public static DatasetViewForm create(Dataset dataset) {
+        return new DatasetViewForm(dataset);
     }
 
 }

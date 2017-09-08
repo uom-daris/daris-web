@@ -1,7 +1,8 @@
 package daris.web.client.model.dataset;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 import arc.mf.client.file.LocalFile;
 import daris.web.client.model.archive.ArchiveType;
@@ -11,16 +12,26 @@ import daris.web.client.model.object.upload.FileEntry;
 
 public abstract class DatasetCreator extends DObjectCreator {
 
+    private String _type;
     private String _ctype;
     private String _lctype;
     private String _methodId;
     private String _methodStep;
-    private List<FileEntry> _files;
+    private Map<String, FileEntry> _files;
+
     private ArchiveType _atype;
 
     public DatasetCreator(DObjectRef parent) {
         super(parent);
-        _files = new ArrayList<FileEntry>();
+        _files = new TreeMap<String, FileEntry>();
+    }
+
+    public String type() {
+        return _type;
+    }
+
+    public void setType(String type) {
+        _type = type;
     }
 
     public String contentType() {
@@ -47,15 +58,23 @@ public abstract class DatasetCreator extends DObjectCreator {
     public void addFile(FileEntry file) {
         if (file != null) {
             assert !file.file.isDirectory();
-            _files.add(file);
+            _files.put(file.dstPath, file);
             if (_files.size() > 1 && _atype == null) {
                 _atype = ArchiveType.AAR;
             }
         }
     }
 
-    public List<FileEntry> files() {
-        return _files;
+    public void setFiles(Map<String, FileEntry> files) {
+        if (files != null) {
+            _files = files;
+        } else {
+            _files.clear();
+        }
+    }
+
+    public Collection<FileEntry> files() {
+        return _files.values();
     }
 
     public boolean hasFiles() {
@@ -84,6 +103,10 @@ public abstract class DatasetCreator extends DObjectCreator {
 
     public void setMethod(String id, String step) {
         _methodId = id;
+        _methodStep = step;
+    }
+
+    public void setMethodStep(String step) {
         _methodStep = step;
     }
 

@@ -219,7 +219,7 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
         resolveObjectPath(parentCid, path -> {
             if (path == null) {
                 _navBar.update(null);
-                _list.setParentObject(null);
+                _list.setParentObject(null, refresh);
             } else {
                 display(path.list(true, false), path.child(), refresh);
             }
@@ -256,7 +256,7 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
         if (object != null) {
             _list.seekTo(directParent, object, refresh);
         } else {
-            _list.setParentObject(directParent);
+            _list.setParentObject(directParent, refresh);
             _list.gotoOffset(0);
         }
         if (Plugin.isStandaloneApplication()) {

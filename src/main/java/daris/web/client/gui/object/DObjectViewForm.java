@@ -34,12 +34,12 @@ import arc.mf.dtype.ListOfType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
 import daris.web.client.gui.archive.ArchiveViewerGUI;
-import daris.web.client.gui.dataset.DatasetViewerGUI;
-import daris.web.client.gui.exmethod.ExMethodViewerGUI;
+import daris.web.client.gui.dataset.DatasetViewForm;
+import daris.web.client.gui.exmethod.ExMethodViewForm;
 import daris.web.client.gui.form.XmlMetaForm;
-import daris.web.client.gui.project.ProjectViewerGUI;
-import daris.web.client.gui.study.StudyViewerGUI;
-import daris.web.client.gui.subject.SubjectViewerGUI;
+import daris.web.client.gui.project.ProjectViewForm;
+import daris.web.client.gui.study.StudyViewForm;
+import daris.web.client.gui.subject.SubjectViewForm;
 import daris.web.client.gui.widget.DStyles;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.dataset.Dataset;
@@ -51,7 +51,7 @@ import daris.web.client.model.study.Study;
 import daris.web.client.model.subject.Subject;
 import daris.web.client.util.StringUtils;
 
-public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceComponent {
+public class DObjectViewForm<T extends DObject> extends ValidatedInterfaceComponent {
 
     public static final int HEADER_HEIGHT = ListGridHeader.HEIGHT;
     public static final Image HEADER_BACKGROUND_IMAGE = new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
@@ -79,7 +79,7 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
     private VerticalPanel _interfaceVP;
 
-    protected DObjectViewerGUI(T o) {
+    protected DObjectViewForm(T o) {
         _o = o;
 
         _vp = new VerticalPanel();
@@ -203,19 +203,19 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
     private void addToInterfaceForm(Form interfaceForm) {
 
         Field<String> cid = new Field<String>(new FieldDefinition("ID", "cid", StringType.DEFAULT,
-                "Citeable id of the " + _o.type().toString() + ". (asset_id=" + _o.assetId() + ")", null, 1, 1));
+                "Citeable id of the " + _o.objectType().toString() + ". (asset_id=" + _o.assetId() + ")", null, 1, 1));
         cid.setValue(_o.citeableId());
         interfaceForm.add(cid);
 
         if (_o.name() != null) {
             Field<String> name = new Field<String>(new FieldDefinition("Name", "name", StringType.DEFAULT,
-                    "Name of the " + _o.type().toString() + ".", null, 0, 1));
+                    "Name of the " + _o.objectType().toString() + ".", null, 0, 1));
             name.setValue(_o.name());
             interfaceForm.add(name);
         }
 
         Field<String> namespace = new Field<String>(new FieldDefinition("Namespace", "namespace", StringType.DEFAULT,
-                "Asset namespace where the " + _o.type().toString() + " is located.", null, 1, 1));
+                "Asset namespace where the " + _o.objectType().toString() + " is located.", null, 1, 1));
         namespace.setValue(_o.namespace());
         interfaceForm.add(namespace);
 
@@ -229,7 +229,7 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
         if (_o.description() != null) {
             Field<String> description = new Field<String>(new FieldDefinition("Description", "description",
-                    TextType.DEFAULT, "Description about the " + _o.type().toString() + ".", null, 0, 1));
+                    TextType.DEFAULT, "Description about the " + _o.objectType().toString() + ".", null, 0, 1));
             FieldRenderOptions fro = new FieldRenderOptions();
             fro.addOption(TextFieldRenderOptions.AUTO_RESIZE, true);
             fro.setWidth100();
@@ -242,7 +242,7 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
         if (_o.filename() != null) {
             Field<String> filename = new Field<String>(
                     new FieldDefinition("Original File Name", "filename", StringType.DEFAULT,
-                            "Original file name of the " + _o.type().toString() + "'s content.", null, 0, 1));
+                            "Original file name of the " + _o.objectType().toString() + "'s content.", null, 0, 1));
             filename.setValue(_o.filename());
             interfaceForm.add(filename);
         }
@@ -295,7 +295,7 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
 
     private static String titleFor(DObject o) {
         StringBuilder sb = new StringBuilder();
-        sb.append(StringUtils.upperCaseFirst(o.type().toString()));
+        sb.append(StringUtils.upperCaseFirst(o.objectType().toString()));
         sb.append(" ").append(o.citeableId());
         if (o.name() != null) {
             sb.append(": ").append(o.name());
@@ -336,20 +336,20 @@ public class DObjectViewerGUI<T extends DObject> extends ValidatedInterfaceCompo
     }
 
     @SuppressWarnings("rawtypes")
-    public static DObjectViewerGUI create(DObject object) {
-        switch (object.type()) {
+    public static DObjectViewForm create(DObject object) {
+        switch (object.objectType()) {
         case PROJECT:
-            return new ProjectViewerGUI((Project) object);
+            return new ProjectViewForm((Project) object);
         case SUBJECT:
-            return new SubjectViewerGUI((Subject) object);
+            return new SubjectViewForm((Subject) object);
         case EX_METHOD:
-            return new ExMethodViewerGUI((ExMethod) object);
+            return new ExMethodViewForm((ExMethod) object);
         case STUDY:
-            return new StudyViewerGUI((Study) object);
+            return new StudyViewForm((Study) object);
         case DATASET:
-            return DatasetViewerGUI.create((Dataset) object);
+            return DatasetViewForm.create((Dataset) object);
         default:
-            throw new AssertionError("Unknown object type: " + object.type());
+            throw new AssertionError("Unknown object type: " + object.objectType());
         }
     }
 

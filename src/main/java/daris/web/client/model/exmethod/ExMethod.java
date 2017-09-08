@@ -77,7 +77,7 @@ public class ExMethod extends DObject {
     }
 
     @Override
-    public Type type() {
+    public Type objectType() {
         return DObject.Type.EX_METHOD;
     }
 

@@ -253,7 +253,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                 if (!o.isDataset()) {
                     setBusyLoading();
                     _selectedMap.put(_parent, o);
-                    setParentObject(o);
+                    setParentObject(o, true);
                 }
             }
         });
@@ -263,7 +263,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             @Override
             public void onEnter(DObjectRef o) {
                 if (!o.isDataset() && o.numberOfChildren() != 0) {
-                    setParentObject(o);
+                    setParentObject(o, true);
                 }
             }
         });
@@ -305,8 +305,8 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         return _parent;
     }
 
-    public void setParentObject(DObjectRef parent) {
-        if (!ObjectUtil.equals(parent, _parent)) {
+    public void setParentObject(DObjectRef parent, boolean refresh) {
+        if (refresh || !ObjectUtil.equals(parent, _parent)) {
             _list.clearSelections(true);
             _parent = parent;
             DObjectRef selected = _selectedMap.get(parent);

@@ -1,11 +1,11 @@
 package daris.web.client.gui.subject;
 
-import daris.web.client.gui.object.DObjectEditorGUI;
+import daris.web.client.gui.object.DObjectUpdateForm;
 import daris.web.client.model.subject.Subject;
 
-public class SubjectEditor extends DObjectEditorGUI<Subject>{
+public class SubjectUpdateForm extends DObjectUpdateForm<Subject>{
 
-    public SubjectEditor(Subject o) {
+    public SubjectUpdateForm(Subject o) {
         super(o);
         // TODO Auto-generated constructor stub
     }

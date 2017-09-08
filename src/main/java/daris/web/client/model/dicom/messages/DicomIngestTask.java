@@ -1,35 +1,37 @@
 package daris.web.client.model.dicom.messages;
 
 import java.util.Collection;
-import java.util.List;
 
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
+import daris.web.client.model.archive.ArchiveType;
 import daris.web.client.model.object.upload.FileEntry;
 import daris.web.client.model.object.upload.FileUploadTask;
 
-public class DicomIngestTask extends FileUploadTask<List<String>> {
+public class DicomIngestTask extends FileUploadTask<Void> {
 
-    protected DicomIngestTask(Collection<FileEntry> files) {
+    private DicomIngestSettings _settings;
+
+    public DicomIngestTask(DicomIngestSettings settings, Collection<FileEntry> files) {
         super(files);
-        // TODO Auto-generated constructor stub
+        setArchiveType(ArchiveType.AAR);
+        _settings = settings;
     }
 
     @Override
     protected String consumeServiceName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "dicom.ingest";
     }
 
     @Override
     protected void consumeServiceArgs(XmlWriter w) {
-        // TODO Auto-generated method stub
-
+        _settings.setArchiveType(ArchiveType.AAR);
+        _settings.setWait(false);
+        _settings.saveServiceArgs(w);
     }
 
     @Override
-    protected List<String> instantiate(XmlElement xe) {
-        // TODO Auto-generated method stub
+    protected Void instantiate(XmlElement xe) {
         return null;
     }
 

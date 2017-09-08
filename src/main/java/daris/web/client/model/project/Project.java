@@ -56,7 +56,7 @@ public class Project extends DObject {
     }
 
     @Override
-    public Type type() {
+    public Type objectType() {
         return DObject.Type.PROJECT;
     }
 

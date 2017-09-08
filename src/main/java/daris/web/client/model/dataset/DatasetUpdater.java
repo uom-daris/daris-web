@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import arc.mf.client.file.LocalFile;
-import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.DObjectUpdater;
 
-public abstract class DatasetUpdater extends DObjectUpdater {
+public abstract class DatasetUpdater<T extends Dataset> extends DObjectUpdater<T> {
 
     private String _type;
     private String _ctype;
@@ -15,7 +14,7 @@ public abstract class DatasetUpdater extends DObjectUpdater {
     private String _filename;
     private List<LocalFile> _files;
 
-    protected DatasetUpdater(DObjectRef obj) {
+    protected DatasetUpdater(T obj) {
         super(obj);
         _files = new ArrayList<LocalFile>();
     }
@@ -66,6 +65,11 @@ public abstract class DatasetUpdater extends DObjectUpdater {
 
     public void setFilename(String filename) {
         _filename = filename;
+    }
+
+    public static <T extends Dataset> DatasetUpdater<T> create(T dataset) {
+        // TODO:
+        return null;
     }
 
 }

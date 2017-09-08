@@ -6,10 +6,11 @@ public abstract class DObjectBuilder {
 
     private String _name;
     private String _description;
-    private String _type;
     private boolean _allowIncompleteMeta;
     private boolean _allowInvalidMeta;
     private XmlElement _metadata;
+    private XmlElement _metadataForEdit;
+    protected MetadataSetter metadataSetter;
 
     public void setName(String name) {
         _name = name;
@@ -17,14 +18,6 @@ public abstract class DObjectBuilder {
 
     public String name() {
         return _name;
-    }
-
-    public void setType(String type) {
-        _type = type;
-    }
-
-    public String type() {
-        return _type;
     }
 
     public void setDescription(String description) {
@@ -59,4 +52,15 @@ public abstract class DObjectBuilder {
         _metadata = metadata;
     }
 
+    public void setMetadataForEdit(XmlElement metadataForEdit) {
+        _metadataForEdit = metadataForEdit;
+    }
+
+    public XmlElement metadataForEdit() {
+        return _metadataForEdit;
+    }
+
+    public void setMetadataSetter(MetadataSetter metadataSetter) {
+        this.metadataSetter = metadataSetter;
+    }
 }

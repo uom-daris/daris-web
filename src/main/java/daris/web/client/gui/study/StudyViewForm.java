@@ -12,14 +12,14 @@ import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.DocType;
 import arc.mf.dtype.StringType;
 import daris.web.client.gui.form.XmlMetaForm;
-import daris.web.client.gui.object.DObjectViewerGUI;
+import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.model.study.Study;
 
-public class StudyViewerGUI extends DObjectViewerGUI<Study> {
+public class StudyViewForm extends DObjectViewForm<Study> {
 
     public static final String METHOD_METADATA_TAB_NAME = "Method Metadata";
 
-    public StudyViewerGUI(Study o) {
+    public StudyViewForm(Study o) {
         super(o);
     }
 

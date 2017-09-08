@@ -13,16 +13,22 @@ import arc.gui.window.Window;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.collection.action.CollectionArchiveDownloadAction;
 import daris.web.client.gui.collection.action.CollectionArchiveShareAction;
+import daris.web.client.gui.dataset.action.DerivedDatasetCreateAction;
 import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
 import daris.web.client.gui.object.menu.DObjectMenu;
+import daris.web.client.gui.project.action.ProjectCreateAction;
+import daris.web.client.gui.study.action.StudyCreateAction;
+import daris.web.client.gui.subject.action.SubjectCreateAction;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.model.object.menu.MenuPreConditions;
+import daris.web.client.model.object.DObjectSummary;
 import daris.web.client.util.DownloadUtil;
 
 public class DObjectGUI implements ObjectGUI {
 
     public static final DObjectGUI INSTANCE = new DObjectGUI();
 
+    public static arc.gui.image.Image ICON_CREATE = new arc.gui.image.Image(
+            Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
             Resource.INSTANCE.download16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DOWNLOAD2 = new arc.gui.image.Image(
@@ -48,48 +54,62 @@ public class DObjectGUI implements ObjectGUI {
         if (object == null) {
             return null;
         }
-        DObjectRef o = (DObjectRef) object;
-
-        DObjectMenu menu = new DObjectMenu(o) {
+        DObjectMenu menu = new DObjectMenu((DObjectRef) object) {
 
             @Override
-            protected void updateMenuItems(Menu menu, MenuPreConditions pc) {
-                if (o.isStudy()) {
-                    menu.add(new ActionEntry("Create Primary Dataset",
-                            new PrimaryDatasetCreateAction(o, null, window, 1000, 500)));
+            protected void updateMenuItems(DObjectMenu m, DObjectRef po, DObjectRef o, DObjectSummary os) {
+                if (po == null) {
+                    m.add(new ActionEntry(ICON_CREATE, "Create project...", new ProjectCreateAction(window, 0.7, 0.7)));
+                } else if (po.isProject()) {
+                    m.add(new ActionEntry(ICON_CREATE,
+                            "Create subject in " + po.referentTypeName() + " " + po.citeableId() + "...",
+                            new SubjectCreateAction(po, window, 0.7, 0.7)));
+                } else if (po.isExMethod()) {
+                    m.add(new ActionEntry(ICON_CREATE,
+                            "Create study in " + po.referentTypeName() + " " + po.citeableId() + "...",
+                            new StudyCreateAction(po, window, 0.7, 0.7)));
+                } else if (po.isStudy()) {
+                    m.add(new ActionEntry(ICON_CREATE,
+                            "Create primary dataset in " + po.referentTypeName() + " " + po.citeableId() + "...",
+                            new PrimaryDatasetCreateAction(o, window, 0.7, 0.7)));
+                    m.add(new ActionEntry(ICON_CREATE,
+                            "Create derived dataset in " + po.referentTypeName() + " " + po.citeableId() + "...",
+                            new DerivedDatasetCreateAction(o, null, window, 0.7, 0.7)));
                 }
-                if (pc.contentExists()) {
+                if (o == null) {
+                    return;
+                }
+                String typeAndId = o.referentTypeName() + " " + o.citeableId();
+                if (os.contentExists()) {
                     /*
                      * download content
                      */
-                    menu.add(new ActionEntry(ICON_DOWNLOAD1, "Download content", () -> {
+                    m.add(new ActionEntry(ICON_DOWNLOAD1, "Download " + typeAndId + " content", () -> {
                         o.resolve(oo -> {
                             DownloadUtil.download(oo.contentDownloadUrl());
                         });
                     }));
                 }
-
-                if (pc.numberOfDatasets() > 0) {
+                if (os.numberOfDatasets() > 0) {
                     /*
                      * download as archive
                      */
-                    menu.add(new ActionEntry(ICON_DOWNLOAD2, "Download as archive...", () -> {
+                    m.add(new ActionEntry(ICON_DOWNLOAD2, "Download " + typeAndId + " as archive...", () -> {
                         new CollectionArchiveDownloadAction(o, window).execute();
                     }));
                     /*
                      * share url
                      */
-                    menu.add(new ActionEntry(ICON_SHARE, "Share archive URL...", () -> {
+                    m.add(new ActionEntry(ICON_SHARE, "Share " + typeAndId + "...", () -> {
                         new CollectionArchiveShareAction(o, window).execute();
                     }));
                 }
 
-                if (pc.numberOfDicomDatasets() > 0) {
+                if (os.numberOfDicomDatasets() > 0) {
                     /*
                      * dicom send
                      */
                 }
-
             }
         };
         return menu;
@@ -119,11 +139,11 @@ public class DObjectGUI implements ObjectGUI {
         o.setForEdit(forEdit);
         if (forEdit) {
             o.resolveAndLock(oo -> {
-                dd.display(o, DObjectEditorGUI.create(oo).gui());
+                dd.display(o, DObjectUpdateForm.create(oo).gui());
             });
         } else {
             o.resolve(oo -> {
-                dd.display(o, DObjectViewerGUI.create(oo).gui());
+                dd.display(o, DObjectViewForm.create(oo).gui());
             });
         }
     }

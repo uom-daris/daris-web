@@ -1,15 +1,14 @@
-package daris.web.client.model.object.menu;
+package daris.web.client.model.object;
 
 import daris.web.client.model.dataset.DicomDataset;
-import daris.web.client.model.object.DObjectRef;
 
-public class MenuPreConditions {
+public class DObjectSummary {
 
     private Boolean _contentExists;
     private Integer _nbDatasets;
     private Integer _nbDicomDatasets;
 
-    MenuPreConditions(Boolean contentExists, Integer nbDatasets, Integer nbDicomDatasets) {
+    DObjectSummary(Boolean contentExists, Integer nbDatasets, Integer nbDicomDatasets) {
         _contentExists = contentExists;
         _nbDatasets = nbDatasets;
         _nbDicomDatasets = nbDicomDatasets;
@@ -27,7 +26,7 @@ public class MenuPreConditions {
         return _nbDicomDatasets;
     }
 
-    static MenuPreConditions menuPreConditionsFor(DObjectRef o) {
+    static DObjectSummary summaryOf(DObjectRef o) {
         Boolean contentExists = null;
         Integer nbDatasets = null;
         Integer nbDicomDatasets = null;
@@ -43,7 +42,7 @@ public class MenuPreConditions {
         if (o.referent() != null && (o.referent() instanceof DicomDataset)) {
             nbDicomDatasets = 1;
         }
-        return new MenuPreConditions(contentExists, nbDatasets, nbDicomDatasets);
+        return new DObjectSummary(contentExists, nbDatasets, nbDicomDatasets);
     }
 
 }

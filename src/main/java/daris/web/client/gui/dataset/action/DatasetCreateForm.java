@@ -1,84 +1,62 @@
 package daris.web.client.gui.dataset.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gwt.dom.client.Style.TextAlign;
-
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItem.Property;
 import arc.gui.form.FormItemListener;
-import arc.gui.gwt.dnd.DropCheck;
-import arc.gui.gwt.dnd.DropHandler;
-import arc.gui.gwt.dnd.DropListener;
-import arc.gui.gwt.widget.BaseWidget;
-import arc.gui.gwt.widget.HTML;
-import arc.gui.gwt.widget.image.LinearGradient;
-import arc.gui.gwt.widget.list.ListGrid;
-import arc.gui.gwt.widget.list.ListGridEntry;
-import arc.gui.gwt.widget.list.ListGridHeader;
 import arc.gui.gwt.widget.panel.VerticalPanel;
-import arc.gui.gwt.widget.scroll.ScrollPolicy;
-import arc.mf.client.file.FileHandler;
-import arc.mf.client.file.LocalFile;
-import arc.mf.client.file.LocalFile.Filter;
-import arc.mf.client.util.IsNotValid;
-import arc.mf.client.util.Validity;
+import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.EnumerationType;
-import daris.web.client.gui.Resource;
-import daris.web.client.gui.object.action.DObjectCreateForm;
+import daris.web.client.gui.dataset.FileForm;
+import daris.web.client.gui.object.DObjectCreateForm;
 import daris.web.client.model.dataset.DatasetCreator;
-import daris.web.client.model.object.upload.FileEntry;
-import daris.web.client.util.PathUtils;
 
 public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjectCreateForm<T> {
 
-    public static final arc.gui.image.Image ICON_DIRECTORY = new arc.gui.image.Image(
-            Resource.INSTANCE.folder16().getSafeUri().asString(), 16, 16);
-
-    public static final arc.gui.image.Image ICON_FILE = new arc.gui.image.Image(
-            Resource.INSTANCE.document32().getSafeUri().asString(), 16, 16);
-
-    private ListGrid<FileEntry> _fileList;
-    private HTML _fileListStatus;
-    private int _addingFiles = 0;
+    private FileForm _fileForm;
 
     protected DatasetCreateForm(T dc) {
         super(dc);
     }
 
     protected void addToContainer(VerticalPanel container) {
-        VerticalPanel vp = new VerticalPanel();
-        vp.setHeight(170);
-        vp.setWidth100();
-
-        _fileList = new ListGrid<FileEntry>(ScrollPolicy.AUTO);
-        initFileList();
-        vp.add(_fileList);
-
-        _fileListStatus = new HTML();
-        _fileListStatus.setWidth100();
-        _fileListStatus.setHeight(20);
-        _fileListStatus.setFontSize(10);
-        _fileListStatus.setPaddingRight(15);
-        _fileListStatus.setTextAlign(TextAlign.RIGHT);
-        _fileListStatus.setPaddingTop(3);
-        _fileListStatus.setBackgroundImage(new LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
-                ListGridHeader.HEADER_COLOUR_LIGHT, ListGridHeader.HEADER_COLOUR_DARK));
-        _fileListStatus.setHTML("" + creator.numberOfFiles() + " files.");
-        vp.add(_fileListStatus);
-
-        container.add(vp);
-
-        updateFileList();
+        _fileForm = new FileForm();
+        container.add(_fileForm.widget());
+        addMustBeValid(_fileForm);
+        _fileForm.addChangeListener(() -> {
+            if (_fileForm.valid().valid()) {
+                creator.setFiles(_fileForm.files());
+            }
+        });
     }
 
     protected void addToInterfaceForm(Form interfaceForm) {
 
+        Field<String> pid = new Field<String>(
+                new FieldDefinition("Parent Study", "pid", ConstantType.DEFAULT, null, null, 1, 1));
+        pid.setValue(creator.parentObject().citeableId(), false);
+        interfaceForm.add(pid);
+
         super.addToInterfaceForm(interfaceForm);
+
+        Field<String> type = new Field<String>(
+                new FieldDefinition("Type", "type", new EnumerationType<String>(), null, null, 0, 1));
+        type.addListener(new FormItemListener<String>() {
+
+            @Override
+            public void itemValueChanged(FormItem<String> f) {
+                creator.setType(f.value());
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<String> f, Property property) {
+
+            }
+        });
+        type.setInitialValue(this.creator.type(), false);
+        interfaceForm.add(type);
 
         Field<String> ctype = new Field<String>(
                 new FieldDefinition("Content Type", "ctype", new EnumerationType<String>(), null, null, 0, 1));
@@ -96,111 +74,6 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
         });
         ctype.setInitialValue(this.creator.contentType(), false);
         interfaceForm.add(ctype);
-
-    }
-
-    private void initFileList() {
-
-        _fileList.fitToParent();
-        _fileList.setEmptyMessage("No files. Drag and drop files or directories here!");
-        _fileList.enableDropTarget(false);
-        _fileList.setDropHandler(new DropHandler() {
-
-            @Override
-            public DropCheck checkCanDrop(Object data) {
-                if (data != null && (data instanceof LocalFile)) {
-                    return DropCheck.CAN;
-                } else {
-                    return DropCheck.CANNOT;
-                }
-            }
-
-            @Override
-            public void drop(BaseWidget target, List<Object> data, DropListener dl) {
-                if (data != null) {
-                    for (Object o : data) {
-                        if (o instanceof LocalFile) {
-                            LocalFile f = (LocalFile) o;
-                            if (f.isDirectory()) {
-                                addDirectory(f, PathUtils.trimLeadingSlash(f.path()));
-                            } else {
-                                creator.addFile(f, f.name());
-                                updateFileList();
-                                notifyOfChangeInState();
-                            }
-                        }
-                    }
-                }
-                dl.dropped(DropCheck.CAN);
-            }
-        });
-        _fileList.addColumnDefn("isDir", null, null, (f, isDir) -> {
-            return ((Boolean) isDir) ? new arc.gui.gwt.widget.image.Image(ICON_DIRECTORY)
-                    : new arc.gui.gwt.widget.image.Image(ICON_FILE);
-        }).setWidth(20);
-        _fileList.addColumnDefn("path", "File").setWidth(800);
-        _fileList.setMultiSelect(true);
-    }
-
-    private void addDirectory(LocalFile dir, String base) {
-        _addingFiles++;
-        dir.files(Filter.FILES, 0, Integer.MAX_VALUE, new FileHandler() {
-            @Override
-            public void process(long start, long end, long total, List<LocalFile> files) {
-                if (files != null && !files.isEmpty()) {
-                    for (LocalFile file : files) {
-                        if (!file.isDirectory()) {
-                            creator.addFile(file, base.isEmpty() ? file.name() : (base + "/" + file.name()));
-                        }
-                    }
-                    updateFileList();
-                }
-                _addingFiles--;
-                notifyOfChangeInState();
-            }
-        });
-        _addingFiles++;
-        dir.files(Filter.DIRECTORIES, 0, Integer.MAX_VALUE, new FileHandler() {
-            @Override
-            public void process(long start, long end, long total, List<LocalFile> files) {
-                if (files != null && !files.isEmpty()) {
-                    for (LocalFile file : files) {
-                        if (file.isDirectory()) {
-                            addDirectory(file, base.isEmpty() ? file.name() : (base + "/" + file.name()));
-                        }
-                    }
-                }
-                _addingFiles--;
-                notifyOfChangeInState();
-            }
-        });
-    }
-
-    private void updateFileList() {
-        List<FileEntry> files = creator.files();
-        List<ListGridEntry<FileEntry>> entries = new ArrayList<ListGridEntry<FileEntry>>();
-        for (FileEntry file : files) {
-            ListGridEntry<FileEntry> entry = new ListGridEntry<FileEntry>(file);
-            entry.set("path", file.dstPath);
-            entry.set("isDir", file.file.isDirectory());
-            entries.add(entry);
-        }
-        _fileList.setData(entries);
-        _fileListStatus.setHTML("" + creator.numberOfFiles() + " files.");
-    }
-
-    @Override
-    public Validity valid() {
-        Validity v = super.valid();
-        if (v.valid()) {
-            if (!creator.hasFiles()) {
-                return new IsNotValid("No files added.");
-            }
-            if (_addingFiles > 0) {
-                return new IsNotValid("Adding files... Please wait...");
-            }
-        }
-        return v;
     }
 
 }

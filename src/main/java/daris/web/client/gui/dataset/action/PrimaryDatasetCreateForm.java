@@ -22,6 +22,5 @@ public class PrimaryDatasetCreateForm extends DatasetCreateForm<PrimaryDatasetCr
             }
         }, FileUploadTaskManager.get());
         FileUploadTaskManager.get().show(((BaseWidget) gui()).window());
-
     }
 }

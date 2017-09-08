@@ -26,6 +26,12 @@ public class PrimaryDatasetCreator extends DatasetCreator {
     @Override
     public void serviceArgs(XmlWriter w) {
         w.add("pid", parentObject().citeableId());
+        if (allowIncompleteMeta()) {
+            w.add("allow-incomplete-meta", allowIncompleteMeta());
+        }
+        if (fillInIdNumber()) {
+            w.add("fillin", true);
+        }
         if (name() != null) {
             w.add("name", name());
         }
@@ -46,8 +52,16 @@ public class PrimaryDatasetCreator extends DatasetCreator {
             w.add("id", subjectId());
             w.pop();
         }
+        if (methodStep() != null) {
+            w.push("method");
+            w.add("step", methodStep());
+            if (methodId() != null) {
+                w.add("id", methodId());
+            }
+            w.pop();
+        }
         if (numberOfFiles() == 1 && archiveType() == null) {
-            w.add("filename", files().get(0).file.name());
+            w.add("filename", files().iterator().next().file.name());
         }
     }
 

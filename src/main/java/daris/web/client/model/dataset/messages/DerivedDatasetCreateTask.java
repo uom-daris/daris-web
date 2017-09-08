@@ -1,37 +1,28 @@
 package daris.web.client.model.dataset.messages;
 
-import java.util.Collection;
-
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
+import daris.web.client.model.dataset.DerivedDatasetCreator;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.model.object.upload.FileEntry;
 import daris.web.client.model.object.upload.FileUploadTask;
 
 public class DerivedDatasetCreateTask extends FileUploadTask<DObjectRef> {
 
-    private String _name;
-    private String _description;
+    private DerivedDatasetCreator _dc;
 
-    public DerivedDatasetCreateTask(Collection<FileEntry> files, String name, String description) {
-        super(files);
-        _name = name;
-        _description = description;
+    public DerivedDatasetCreateTask(DerivedDatasetCreator dc) {
+        super(dc.files());
+        _dc = dc;
     }
 
     @Override
     protected String consumeServiceName() {
-        return "om.pssd.dataset.derivation.create";
+        return _dc.serviceName();
     }
 
     @Override
     protected void consumeServiceArgs(XmlWriter w) {
-        if (_name != null) {
-            w.add("name", _name);
-        }
-        if (_description != null) {
-            w.add("description", _description);
-        }
+        _dc.serviceArgs(w);
     }
 
     @Override

@@ -24,7 +24,7 @@ import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.EnumerationType;
 import daris.web.client.gui.Resource;
-import daris.web.client.gui.object.DObjectViewerGUI;
+import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.gui.project.user.ProjectUserDialog;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DStyles;
@@ -35,7 +35,7 @@ import daris.web.client.model.project.Project;
 import daris.web.client.model.project.ProjectRoleUser;
 import daris.web.client.model.project.ProjectUser;
 
-public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
+public class ProjectViewForm extends DObjectViewForm<Project> {
 
     public static final String USER_TAB_NAME = "Users";
 
@@ -43,7 +43,7 @@ public class ProjectViewerGUI extends DObjectViewerGUI<Project> {
     public static final arc.gui.image.Image ICON_USER = new arc.gui.image.Image(
             Resource.INSTANCE.group20().getSafeUri().asString(), 16, 16);
 
-    public ProjectViewerGUI(Project o) {
+    public ProjectViewForm(Project o) {
         super(o);
     }
 

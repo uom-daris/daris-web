@@ -1,4 +1,4 @@
-package daris.web.client.gui.object.action;
+package daris.web.client.gui.object;
 
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.user.client.ui.Widget;
@@ -7,6 +7,7 @@ import arc.gui.ValidatedInterfaceComponent;
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
+import arc.gui.form.FormEditMode;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItem.Property;
 import arc.gui.form.FormItemListener;
@@ -19,7 +20,7 @@ import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.client.util.AsynchronousAction;
 import arc.mf.client.util.Validity;
-import arc.mf.dtype.EnumerationType;
+import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
 import daris.web.client.model.object.DObjectCreator;
@@ -63,12 +64,39 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
             }
         });
 
-        Form interfaceForm = new Form();
+        Form interfaceForm = new Form(FormEditMode.CREATE);
+        interfaceForm.setPaddingTop(15);
+        interfaceForm.setPaddingLeft(20);
+        interfaceForm.setPaddingRight(20);
         interfaceForm.fitToParent();
+        /*
+         * called by sub classes
+         */
         addToInterfaceForm(interfaceForm);
+        /*
+         * fill in
+         */
+        Field<Boolean> fillInField = new Field<Boolean>(
+                new FieldDefinition("Fill in ID Number", "Fill_in_ID_Number", BooleanType.DEFAULT_TRUE_FALSE,
+                        "Fill in/Reuse deleted citeable identifiers. Not recommended.", null, 0, 1));
+        fillInField.setInitialValue(creator.fillInIdNumber(), false);
+        fillInField.addListener(new FormItemListener<Boolean>() {
+
+            @Override
+            public void itemValueChanged(FormItem<Boolean> f) {
+                creator.setFillInIdNumber(f.value());
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<Boolean> f, Property property) {
+
+            }
+        });
+        interfaceForm.add(fillInField);
         interfaceForm.render();
         this.tabs.addTab("Interface", null, new ScrollPanel(interfaceForm, ScrollPolicy.AUTO));
         this.tabs.setActiveTab(0);
+        addMustBeValid(interfaceForm);
 
         notifyOfChangeInState();
     }
@@ -80,7 +108,7 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
     protected void addToInterfaceForm(Form interfaceForm) {
 
         Field<String> name = new Field<String>(
-                new FieldDefinition("Name", "name", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Name", "Name", StringType.DEFAULT, "Name", null, 0, 1));
         name.addListener(new FormItemListener<String>() {
 
             @Override
@@ -97,7 +125,7 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
         interfaceForm.add(name);
 
         Field<String> description = new Field<String>(
-                new FieldDefinition("Description", "description", TextType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Description", "Description", TextType.DEFAULT, "Description", null, 0, 1));
         description.addListener(new FormItemListener<String>() {
 
             @Override
@@ -112,23 +140,6 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
         });
         description.setInitialValue(this.creator.description(), false);
         interfaceForm.add(description);
-
-        Field<String> type = new Field<String>(
-                new FieldDefinition("Type", "type", new EnumerationType<String>(), null, null, 0, 1));
-        type.addListener(new FormItemListener<String>() {
-
-            @Override
-            public void itemValueChanged(FormItem<String> f) {
-                creator.setType(f.value());
-            }
-
-            @Override
-            public void itemPropertyChanged(FormItem<String> f, Property property) {
-
-            }
-        });
-        type.setInitialValue(this.creator.type(), false);
-        interfaceForm.add(type);
 
     }
 

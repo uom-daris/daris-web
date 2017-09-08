@@ -1,9 +1,9 @@
 package daris.web.client.gui.exmethod;
 
-import daris.web.client.gui.object.DObjectEditorGUI;
+import daris.web.client.gui.object.DObjectUpdateForm;
 import daris.web.client.model.exmethod.ExMethod;
 
-public class ExMethodEditor extends DObjectEditorGUI<ExMethod>{
+public class ExMethodEditor extends DObjectUpdateForm<ExMethod>{
 
     public ExMethodEditor(ExMethod o) {
         super(o);
