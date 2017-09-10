@@ -1,4 +1,4 @@
-package daris.web.client.gui.dataset.action;
+package daris.web.client.gui.dataset;
 
 import com.google.gwt.user.client.ui.Widget;
 

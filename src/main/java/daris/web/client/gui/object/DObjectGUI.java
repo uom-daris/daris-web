@@ -71,10 +71,10 @@ public class DObjectGUI implements ObjectGUI {
                 } else if (po.isStudy()) {
                     m.add(new ActionEntry(ICON_CREATE,
                             "Create primary dataset in " + po.referentTypeName() + " " + po.citeableId() + "...",
-                            new PrimaryDatasetCreateAction(o, window, 0.7, 0.7)));
+                            new PrimaryDatasetCreateAction(po, window, 0.7, 0.7)));
                     m.add(new ActionEntry(ICON_CREATE,
                             "Create derived dataset in " + po.referentTypeName() + " " + po.citeableId() + "...",
-                            new DerivedDatasetCreateAction(o, null, window, 0.7, 0.7)));
+                            new DerivedDatasetCreateAction(po, null, window, 0.7, 0.7)));
                 }
                 if (o == null) {
                     return;

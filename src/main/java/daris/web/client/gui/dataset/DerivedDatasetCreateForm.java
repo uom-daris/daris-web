@@ -1,4 +1,4 @@
-package daris.web.client.gui.dataset.action;
+package daris.web.client.gui.dataset;
 
 import java.util.Map;
 import java.util.Set;
@@ -6,8 +6,12 @@ import java.util.Set;
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
+import arc.gui.form.FormItem;
+import arc.gui.form.FormItem.Property;
+import arc.gui.form.FormItemListener;
 import arc.gui.gwt.widget.BaseWidget;
 import arc.mf.client.util.ActionListener;
+import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
 import daris.web.client.gui.object.upload.FileUploadTaskManager;
 import daris.web.client.model.dataset.DerivedDatasetCreator;
@@ -26,12 +30,28 @@ public class DerivedDatasetCreateForm extends DatasetCreateForm<DerivedDatasetCr
             Set<String> cids = inputs.keySet();
             for (String cid : cids) {
                 String vid = inputs.get(cid);
-                Field<String> inputField = new Field<String>(
-                        new FieldDefinition("Input", "input", ConstantType.DEFAULT, null, null, 0, 1));
+                Field<String> inputField = new Field<String>(new FieldDefinition("Input", "Input", ConstantType.DEFAULT,
+                        "Identifier of the input object.", null, 0, 1));
                 inputField.setValue(cid + "(vid=" + vid + ")", false);
                 interfaceForm.add(inputField);
             }
         }
+        Field<Boolean> processedField = new Field<Boolean>(new FieldDefinition("Processed",
+                BooleanType.DEFAULT_TRUE_FALSE, "Is the dataset processed?", null, 0, 1));
+        processedField.setInitialValue(creator.processed(), false);
+        processedField.addListener(new FormItemListener<Boolean>() {
+
+            @Override
+            public void itemValueChanged(FormItem<Boolean> f) {
+                creator.setProcessed(f.value());
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<Boolean> f, Property property) {
+
+            }
+        });
+        interfaceForm.add(processedField);
     }
 
     @Override

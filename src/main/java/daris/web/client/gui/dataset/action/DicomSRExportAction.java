@@ -3,6 +3,7 @@ package daris.web.client.gui.dataset.action;
 import arc.gui.dialog.DialogProperties;
 import arc.gui.gwt.widget.dialog.Dialog;
 import arc.mf.client.util.Action;
+import daris.web.client.gui.dataset.DicomSRExportForm;
 import daris.web.client.model.dataset.sr.StructuredReportRef;
 
 public class DicomSRExportAction implements Action {

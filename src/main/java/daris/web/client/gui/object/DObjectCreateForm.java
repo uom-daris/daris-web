@@ -108,7 +108,7 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
     protected void addToInterfaceForm(Form interfaceForm) {
 
         Field<String> name = new Field<String>(
-                new FieldDefinition("Name", "Name", StringType.DEFAULT, "Name", null, 0, 1));
+                new FieldDefinition("Name", "Name", StringType.DEFAULT, "Name", null, 1, 1));
         name.addListener(new FormItemListener<String>() {
 
             @Override

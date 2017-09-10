@@ -11,6 +11,7 @@ import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.model.exmethod.messages.ExMethodStudyStepFind;
 import daris.web.client.model.study.Study;
 
+// TODO remove.
 public class StepEnum implements DynamicEnumerationDataSource<StepItem> {
 
     private String _exMethodCid;

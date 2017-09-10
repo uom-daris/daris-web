@@ -1,4 +1,4 @@
-package daris.web.client.gui.dataset.action;
+package daris.web.client.gui.dataset;
 
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
@@ -9,9 +9,9 @@ import arc.gui.form.FormItemListener;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.EnumerationType;
-import daris.web.client.gui.dataset.FileForm;
 import daris.web.client.gui.object.DObjectCreateForm;
 import daris.web.client.model.dataset.DatasetCreator;
+import daris.web.client.model.object.TypeEnum;
 
 public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjectCreateForm<T> {
 
@@ -34,15 +34,15 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
     protected void addToInterfaceForm(Form interfaceForm) {
 
-        Field<String> pid = new Field<String>(
-                new FieldDefinition("Parent Study", "pid", ConstantType.DEFAULT, null, null, 1, 1));
+        Field<String> pid = new Field<String>(new FieldDefinition("Parent Study ID", "pid", ConstantType.DEFAULT,
+                "Identifier of the parent study.", null, 1, 1));
         pid.setValue(creator.parentObject().citeableId(), false);
         interfaceForm.add(pid);
 
         super.addToInterfaceForm(interfaceForm);
 
-        Field<String> type = new Field<String>(
-                new FieldDefinition("Type", "type", new EnumerationType<String>(), null, null, 0, 1));
+        Field<String> type = new Field<String>(new FieldDefinition("Type", "Type",
+                new EnumerationType<String>(new TypeEnum()), "MIME type of the object.", null, 0, 1));
         type.addListener(new FormItemListener<String>() {
 
             @Override
@@ -58,8 +58,8 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
         type.setInitialValue(this.creator.type(), false);
         interfaceForm.add(type);
 
-        Field<String> ctype = new Field<String>(
-                new FieldDefinition("Content Type", "ctype", new EnumerationType<String>(), null, null, 0, 1));
+        Field<String> ctype = new Field<String>(new FieldDefinition("Content Type", "Content_Type",
+                new EnumerationType<String>(new TypeEnum()), "MIME type of the content.", null, 0, 1));
         ctype.addListener(new FormItemListener<String>() {
 
             @Override

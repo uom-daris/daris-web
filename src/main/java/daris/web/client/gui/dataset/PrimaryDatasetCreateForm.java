@@ -1,4 +1,4 @@
-package daris.web.client.gui.dataset.action;
+package daris.web.client.gui.dataset;
 
 import arc.gui.gwt.widget.BaseWidget;
 import arc.mf.client.util.ActionListener;

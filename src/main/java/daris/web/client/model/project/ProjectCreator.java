@@ -28,11 +28,23 @@ public class ProjectCreator extends DObjectCreator {
         _namespace = namespace;
     }
 
+    public void addMethod(String methodId) {
+        if (_methods == null || !_methods.containsKey(methodId)) {
+            addMethod(methodId, null);
+        }
+    }
+
     public void addMethod(String methodId, String methodNotes) {
         if (_methods == null) {
             _methods = new HashMap<String, String>();
         }
         _methods.put(methodId, methodNotes);
+    }
+
+    public void clearMethods() {
+        if (_methods != null) {
+            _methods.clear();
+        }
     }
 
     public void setDataUse(DataUse dataUse) {

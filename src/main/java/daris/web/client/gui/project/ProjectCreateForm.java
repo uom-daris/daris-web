@@ -1,9 +1,14 @@
 package daris.web.client.gui.project;
 
+import java.util.List;
 import java.util.Set;
 
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
+import arc.gui.form.FieldGroup;
+import arc.gui.form.FieldRenderOptions;
+import arc.gui.form.FieldSet;
+import arc.gui.form.FieldSetListener;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
 import arc.gui.form.FormItem;
@@ -17,6 +22,8 @@ import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.EnumerationType;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.object.DObjectCreateForm;
+import daris.web.client.model.method.MethodEnum;
+import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.ProjectCreator;
 import daris.web.client.model.project.messages.ProjectCreate;
@@ -28,6 +35,13 @@ public class ProjectCreateForm extends DObjectCreateForm<ProjectCreator> {
 
     public ProjectCreateForm(ProjectCreator creator) {
         super(creator);
+        creator.setMetadataSetter(w -> {
+            if (_metadataForm != null) {
+                w.push("meta");
+                _metadataForm.save(w);
+                w.pop();
+            }
+        });
         updateMetadataTab();
     }
 
@@ -48,13 +62,14 @@ public class ProjectCreateForm extends DObjectCreateForm<ProjectCreator> {
         _metadataForm.setPaddingTop(15);
         _metadataForm.setPaddingLeft(20);
         _metadataForm.setPaddingRight(20);
-//        _metadataForm.fitToParent();
+        // _metadataForm.fitToParent();
         _metadataForm.render();
         addMustBeValid(_metadataForm);
         _metadataTabId = tabs.addTab("metadata", null, new ScrollPanel(_metadataForm, ScrollPolicy.AUTO));
 
     }
 
+    @SuppressWarnings({ "rawtypes" })
     protected void addToInterfaceForm(Form interfaceForm) {
 
         Set<String> cidRootNames = creator.availableCidRootNames();
@@ -112,6 +127,51 @@ public class ProjectCreateForm extends DObjectCreateForm<ProjectCreator> {
         }
 
         super.addToInterfaceForm(interfaceForm);
+
+        FieldGroup methodFieldGroup = new FieldGroup();
+        Field<MethodRef> methodField = new Field<MethodRef>(new FieldDefinition("Method", "Method",
+                new EnumerationType<MethodRef>(new MethodEnum()), "Method", null, 1, 255));
+        methodField.setRenderOptions(new FieldRenderOptions().setWidth100());
+        methodFieldGroup.add(methodField);
+        methodFieldGroup.addListener(new FieldSetListener() {
+
+            private void updateMethods(FieldSet s) {
+                creator.clearMethods();
+                List<FormItem> items = s.fields("Method");
+                for (FormItem item : items) {
+                    MethodRef m = (MethodRef) item.value();
+                    if (m != null) {
+                        creator.addMethod(m.citeableId());
+                    }
+                }
+            }
+
+            @Override
+            public void addedField(FieldSet s, FormItem f, int idx, boolean lastUpdate) {
+                ((Field) f).setRenderOptions(new FieldRenderOptions().setWidth100());
+            }
+
+            @Override
+            public void removedField(FieldSet s, FormItem f, int idx, boolean lastUpdate) {
+                updateMethods(s);
+            }
+
+            @Override
+            public void updatedFields(FieldSet s) {
+                updateMethods(s);
+            }
+
+            @Override
+            public void updatedFieldValue(FieldSet s, FormItem f) {
+                updateMethods(s);
+            }
+
+            @Override
+            public void updatedFieldState(FieldSet s, FormItem f, Property property) {
+
+            }
+        });
+        interfaceForm.add(methodFieldGroup);
 
         Field<DataUse> dataUseField = new Field<DataUse>(
                 new FieldDefinition("Data Use", "Data_Use", new EnumerationType<DataUse>(DataUse.values()),

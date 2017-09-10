@@ -5,6 +5,7 @@ import java.util.Map;
 
 import arc.gui.InterfaceCreateHandler;
 import arc.gui.window.Window;
+import daris.web.client.gui.dataset.DerivedDatasetCreateForm;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.dataset.Dataset;
 import daris.web.client.model.dataset.DerivedDatasetCreator;
@@ -29,6 +30,10 @@ public class DerivedDatasetCreateAction extends DatasetCreateAction {
     @Override
     public void createInterface(InterfaceCreateHandler ch) {
         ch.created(new DerivedDatasetCreateForm(new DerivedDatasetCreator(parentObject(), _inputs)));
+    }
+
+    public String title() {
+        return "Create derived dataset";
     }
 
 }
