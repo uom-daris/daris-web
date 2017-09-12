@@ -1,6 +1,8 @@
 package daris.web.client.model.subject;
 
+import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
+import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.object.DObjectCreator;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.MetadataSetter;
@@ -10,11 +12,22 @@ public class SubjectCreator extends DObjectCreator {
 
     private DataUse _dataUse;
     private String _methodId;
+    private XmlElement _privateMetadataForCreate;
     private MetadataSetter _privateMetadataSetter;
+
+    private XmlElement _publicMetadataForCreate;
     private MetadataSetter _publicMetadataSetter;
 
-    protected SubjectCreator(DObjectRef project) {
+    public SubjectCreator(DObjectRef project) {
         super(project);
+    }
+
+    public void setDataUse(DataUse dataUse) {
+        _dataUse = dataUse;
+    }
+
+    public void setMethod(String methodId) {
+        _methodId = methodId;
     }
 
     @Override
@@ -57,6 +70,30 @@ public class SubjectCreator extends DObjectCreator {
 
     public void setPublicMetadataSetter(MetadataSetter metadataSetter) {
         _publicMetadataSetter = metadataSetter;
+    }
+
+    public XmlElement privateMetadataForCreate() {
+        return _privateMetadataForCreate;
+    }
+
+    public XmlElement publicMetadataForCreate() {
+        return _publicMetadataForCreate;
+    }
+
+    public void setPrivateMetadataForCreate(XmlElement privateMetadataForCreate) {
+        _privateMetadataForCreate = privateMetadataForCreate;
+    }
+
+    public void setPublicMetadataForCreate(XmlElement publicMetadataForCreate) {
+        _publicMetadataForCreate = publicMetadataForCreate;
+    }
+
+    public void setMethod(MethodRef method) {
+        _methodId = method == null ? null : method.citeableId();
+    }
+
+    public String method() {
+        return _methodId;
     }
 
 }

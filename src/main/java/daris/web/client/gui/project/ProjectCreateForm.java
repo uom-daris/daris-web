@@ -54,7 +54,7 @@ public class ProjectCreateForm extends DObjectCreateForm<ProjectCreator> {
             tabs.removeTabById(_metadataTabId);
             _metadataTabId = null;
         }
-        XmlElement me = creator.metadataForEdit();
+        XmlElement me = creator.metadataForCreate();
         if (me == null) {
             return;
         }
@@ -65,7 +65,7 @@ public class ProjectCreateForm extends DObjectCreateForm<ProjectCreator> {
         // _metadataForm.fitToParent();
         _metadataForm.render();
         addMustBeValid(_metadataForm);
-        _metadataTabId = tabs.addTab("metadata", null, new ScrollPanel(_metadataForm, ScrollPolicy.AUTO));
+        _metadataTabId = tabs.addTab("Metadata", null, new ScrollPanel(_metadataForm, ScrollPolicy.AUTO));
 
     }
 

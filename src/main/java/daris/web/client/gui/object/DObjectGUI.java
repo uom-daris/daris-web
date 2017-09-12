@@ -17,8 +17,10 @@ import daris.web.client.gui.dataset.action.DerivedDatasetCreateAction;
 import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
 import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.gui.project.action.ProjectCreateAction;
+import daris.web.client.gui.project.action.ProjectUpdateAction;
 import daris.web.client.gui.study.action.StudyCreateAction;
 import daris.web.client.gui.subject.action.SubjectCreateAction;
+import daris.web.client.gui.subject.action.SubjectUpdateAction;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.DObjectSummary;
 import daris.web.client.util.DownloadUtil;
@@ -28,6 +30,8 @@ public class DObjectGUI implements ObjectGUI {
     public static final DObjectGUI INSTANCE = new DObjectGUI();
 
     public static arc.gui.image.Image ICON_CREATE = new arc.gui.image.Image(
+            Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_MODIFY = new arc.gui.image.Image(
             Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
             Resource.INSTANCE.download16().getSafeUri().asString(), 16, 16);
@@ -75,9 +79,30 @@ public class DObjectGUI implements ObjectGUI {
                     m.add(new ActionEntry(ICON_CREATE,
                             "Create derived dataset in " + po.referentTypeName() + " " + po.citeableId() + "...",
                             new DerivedDatasetCreateAction(po, null, window, 0.7, 0.7)));
+                    if (o != null) {
+                        m.add(new ActionEntry(ICON_CREATE,
+                                "Create dataset derived from " + o.referentTypeName() + " " + o.citeableId() + "...",
+                                new DerivedDatasetCreateAction(po, window, 0.7, 0.7, o)));
+                    }
                 }
+
                 if (o == null) {
                     return;
+                }
+
+                m.addSeparator();
+                if (o.isProject()) {
+                    m.add(new ActionEntry(ICON_MODIFY, "Modify " + o.referentTypeName() + " " + o.citeableId() + "...",
+                            new ProjectUpdateAction(o, window, 0.7, 0.7)));
+                } else if (o.isSubject()) {
+                    m.add(new ActionEntry(ICON_MODIFY, "Modify " + o.referentTypeName() + " " + o.citeableId() + "...",
+                            new SubjectUpdateAction(o, window, 0.7, 0.7)));
+                } else if (o.isExMethod()) {
+                    // TODO
+                } else if (o.isStudy()) {
+                    // TODO
+                } else if (o.isDataset()) {
+                    // TODO
                 }
                 String typeAndId = o.referentTypeName() + " " + o.citeableId();
                 if (os.contentExists()) {

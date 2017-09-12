@@ -11,14 +11,29 @@ import arc.mf.dtype.DynamicEnumerationDataHandler;
 import arc.mf.dtype.DynamicEnumerationDataSource;
 import arc.mf.dtype.DynamicEnumerationExistsHandler;
 import arc.mf.dtype.EnumerationType.Value;
+import arc.mf.object.ObjectResolveHandler;
 import arc.mf.session.ServiceResponseHandler;
 import arc.mf.session.Session;
 import daris.web.client.model.CiteableIdUtils;
+import daris.web.client.model.object.DObjectRef;
 
 public class ExMethodStudyStepEnum implements DynamicEnumerationDataSource<ExMethodStudyStepRef> {
 
     private String _exmCid;
     private String _studyType;
+
+    public ExMethodStudyStepEnum(String exmCid, String studyType) {
+        _exmCid = exmCid;
+        _studyType = studyType;
+    }
+
+    public ExMethodStudyStepEnum(DObjectRef parentObject, String studyType) {
+        this(parentObject.citeableId(), studyType);
+    }
+
+    public void setStudyType(String studyType) {
+        _studyType = studyType;
+    }
 
     @Override
     public boolean supportPrefix() {
@@ -51,6 +66,22 @@ public class ExMethodStudyStepEnum implements DynamicEnumerationDataSource<ExMet
     @Override
     public void retrieve(String prefix, long start, long end,
             DynamicEnumerationDataHandler<ExMethodStudyStepRef> handler) {
+        resolve(steps -> {
+            if (steps == null) {
+                handler.process(0, 0, 0, null);
+                return;
+            }
+            List<Value<ExMethodStudyStepRef>> values = new ArrayList<Value<ExMethodStudyStepRef>>(steps.size());
+            for (ExMethodStudyStepRef step : steps) {
+                Value<ExMethodStudyStepRef> value = new Value<ExMethodStudyStepRef>(step.toString(), step.toString(),
+                        step);
+                values.add(value);
+            }
+            handler.process(0, values.size(), values.size(), values);
+        });
+    }
+
+    public void resolve(ObjectResolveHandler<List<ExMethodStudyStepRef>> rh) {
         XmlStringWriter w = new XmlStringWriter();
         w.push("service", new String[] { "name", "om.pssd.ex-method.step.list" });
         w.add("id", _exmCid);
@@ -69,10 +100,10 @@ public class ExMethodStudyStepEnum implements DynamicEnumerationDataSource<ExMet
                 XmlElement re2 = xe.element("reply[@service='om.pssd.ex-method.study.step.find']/response");
                 List<XmlElement> ses = re2.elements("ex-method/step");
                 if (ses == null || ses.isEmpty()) {
-                    handler.process(0, 0, 0, null);
+                    rh.resolved(null);
                     return;
                 }
-                List<Value<ExMethodStudyStepRef>> values = new ArrayList<Value<ExMethodStudyStepRef>>(ses.size());
+                List<ExMethodStudyStepRef> steps = new ArrayList<ExMethodStudyStepRef>(ses.size());
                 for (XmlElement se : ses) {
                     String stepPath = se.value();
                     String studyType = se.value("@type");
@@ -85,15 +116,15 @@ public class ExMethodStudyStepEnum implements DynamicEnumerationDataSource<ExMet
                         }
                         sb.append("step");
                     }
-                    sb.append("[@path='").append(stepPath).append("']");
+                    sb.append("[@path='").append(stepPath).append("']/@name");
                     String stepName = re1.value(sb.toString());
                     ExMethodStudyStepRef step = new ExMethodStudyStepRef(_exmCid, stepPath, stepName, studyType,
                             dicomModality);
-                    Value<ExMethodStudyStepRef> value = new Value<ExMethodStudyStepRef>(step.toString(),
-                            step.toString(), step);
-                    values.add(value);
+                    steps.add(step);
                 }
-                handler.process(0, values.size(), values.size(), values);
+                if (!steps.isEmpty()) {
+                    rh.resolved(steps);
+                }
             }
         });
 

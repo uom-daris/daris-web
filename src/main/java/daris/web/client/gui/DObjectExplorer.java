@@ -2,6 +2,7 @@ package daris.web.client.gui;
 
 import java.util.List;
 
+import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 
@@ -146,7 +147,20 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
             });
         }
 
+        /*
+         * subscribe to system events.
+         */
         SystemEventChannel.add(this);
+
+        // Fit to browser window
+        com.google.gwt.user.client.Window.addResizeHandler(new com.google.gwt.event.logical.shared.ResizeHandler() {
+            @Override
+            public void onResize(ResizeEvent event) {
+                int dw = event.getWidth() - DObjectExplorer.this.width();
+                int dh = event.getHeight() - DObjectExplorer.this.height();
+                DObjectExplorer.this.resizeBy(dw, dh);
+            }
+        });
     }
 
     private void initMenus() {

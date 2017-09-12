@@ -1,13 +1,13 @@
-package daris.web.client.gui.study;
+package daris.web.client.gui.exmethod;
 
 import arc.mf.client.util.ActionListener;
 import daris.web.client.gui.object.DObjectUpdateForm;
-import daris.web.client.model.study.Study;
-import daris.web.client.model.study.StudyUpdater;
+import daris.web.client.model.exmethod.ExMethod;
+import daris.web.client.model.exmethod.ExMethodUpdater;
 
-public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater>{
+public class ExMethodUpdateForm extends DObjectUpdateForm<ExMethod, ExMethodUpdater>{
 
-    public StudyUpdateForm(Study o) {
+    public ExMethodUpdateForm(ExMethod o) {
         super(o);
         // TODO Auto-generated constructor stub
     }

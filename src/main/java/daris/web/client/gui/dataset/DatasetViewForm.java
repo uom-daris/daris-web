@@ -47,7 +47,7 @@ public class DatasetViewForm extends DObjectViewForm<Dataset> {
          */
         Field<String> vidField = new Field<String>(
                 new FieldDefinition("VID", "vid", StringType.DEFAULT, null, null, 1, 1));
-        vidField.setValue(ds.vid());
+        vidField.setValue(ds.contentVid());
         interfaceForm.add(vidField);
 
         if (ds instanceof PrimaryDataset) {

@@ -9,8 +9,8 @@ import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
 import arc.gui.form.FormItem;
-import arc.gui.form.FormItemListener;
 import arc.gui.form.FormItem.Property;
+import arc.gui.form.FormItemListener;
 import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.list.ListGridHeader;
@@ -18,11 +18,12 @@ import arc.gui.gwt.widget.panel.TabPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
+import arc.mf.client.util.AsynchronousAction;
 import arc.mf.client.util.Validity;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
 import daris.web.client.gui.dataset.DatasetUpdateForm;
-import daris.web.client.gui.exmethod.ExMethodEditor;
+import daris.web.client.gui.exmethod.ExMethodUpdateForm;
 import daris.web.client.gui.project.ProjectUpdateForm;
 import daris.web.client.gui.study.StudyUpdateForm;
 import daris.web.client.gui.subject.SubjectUpdateForm;
@@ -40,10 +41,11 @@ import daris.web.client.model.subject.Subject;
 import daris.web.client.model.subject.SubjectUpdater;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DObjectUpdateForm<T extends DObject> extends ValidatedInterfaceComponent {
+public abstract class DObjectUpdateForm<T extends DObject, U extends DObjectUpdater<T>>
+        extends ValidatedInterfaceComponent implements AsynchronousAction {
 
     protected T object;
-    protected DObjectUpdater<T> updater;
+    protected U updater;
 
     private VerticalPanel _container;
     protected TabPanel tabs;
@@ -96,7 +98,7 @@ public class DObjectUpdateForm<T extends DObject> extends ValidatedInterfaceComp
     protected void addToInterfaceForm(Form interfaceForm) {
 
         Field<String> name = new Field<String>(
-                new FieldDefinition("Name", "name", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Name", "name", StringType.DEFAULT, null, null, 1, 1));
         name.addListener(new FormItemListener<String>() {
 
             @Override
@@ -135,18 +137,18 @@ public class DObjectUpdateForm<T extends DObject> extends ValidatedInterfaceComp
         return _container;
     }
 
-    private static <T extends DObject> DObjectUpdater<T> createUpdater(T obj) {
+    private static <T extends DObject, U extends DObjectUpdater<T>> U createUpdater(T obj) {
         switch (obj.objectType()) {
         case PROJECT:
-            return (DObjectUpdater<T>) new ProjectUpdater((Project) obj);
+            return (U) new ProjectUpdater((Project) obj);
         case SUBJECT:
-            return (DObjectUpdater<T>) new SubjectUpdater((Subject) obj);
+            return (U) new SubjectUpdater((Subject) obj);
         case EX_METHOD:
-            return (DObjectUpdater<T>) new ExMethodUpdater((ExMethod) obj);
+            return (U) new ExMethodUpdater((ExMethod) obj);
         case STUDY:
-            return (DObjectUpdater<T>) new StudyUpdater((Study) obj);
+            return (U) new StudyUpdater((Study) obj);
         case DATASET:
-            return (DObjectUpdater<T>) DatasetUpdater.create((Dataset) obj);
+            return (U) DatasetUpdater.create((Dataset) obj);
         default:
             throw new AssertionError("Unknown object type: " + obj.objectType());
         }
@@ -160,7 +162,7 @@ public class DObjectUpdateForm<T extends DObject> extends ValidatedInterfaceComp
         case SUBJECT:
             return new SubjectUpdateForm((Subject) object);
         case EX_METHOD:
-            return new ExMethodEditor((ExMethod) object);
+            return new ExMethodUpdateForm((ExMethod) object);
         case STUDY:
             return new StudyUpdateForm((Study) object);
         case DATASET:

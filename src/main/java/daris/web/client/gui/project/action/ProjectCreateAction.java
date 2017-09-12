@@ -72,7 +72,7 @@ public class ProjectCreateAction extends DObjectCreateAction {
             @Override
             public void execute(ActionPreconditionListener l) {
                 _m.resolve(meta -> {
-                    _creator.setMetadataForEdit(meta);
+                    _creator.setMetadataForCreate(meta);
                     l.executed(ActionPreconditionOutcome.PASS, null);
                 });
             }
@@ -126,7 +126,7 @@ public class ProjectCreateAction extends DObjectCreateAction {
             ProjectAssetNamespaceSetRef.get().resolve(namespaces -> {
                 _creator.setAvailableAssetNamespaces(namespaces);
                 _m.resolve(meta -> {
-                    _creator.setMetadataForEdit(meta);
+                    _creator.setMetadataForCreate(meta);
                     ch.created(new ProjectCreateForm(_creator));
                 });
             });

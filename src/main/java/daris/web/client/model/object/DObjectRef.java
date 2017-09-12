@@ -308,4 +308,8 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         _parent = parent;
     }
 
+    public boolean forEdit() {
+        return _foredit;
+    }
+
 }

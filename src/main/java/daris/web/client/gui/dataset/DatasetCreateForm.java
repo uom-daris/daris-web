@@ -2,6 +2,7 @@ package daris.web.client.gui.dataset;
 
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
+import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.Form;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItem.Property;
@@ -41,9 +42,10 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
         super.addToInterfaceForm(interfaceForm);
 
-        Field<String> type = new Field<String>(new FieldDefinition("Type", "Type",
+        Field<String> typeField = new Field<String>(new FieldDefinition("Type", "Type",
                 new EnumerationType<String>(new TypeEnum()), "MIME type of the object.", null, 0, 1));
-        type.addListener(new FormItemListener<String>() {
+        typeField.setRenderOptions(new FieldRenderOptions().setWidth(350));
+        typeField.addListener(new FormItemListener<String>() {
 
             @Override
             public void itemValueChanged(FormItem<String> f) {
@@ -55,12 +57,13 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
             }
         });
-        type.setInitialValue(this.creator.type(), false);
-        interfaceForm.add(type);
+        typeField.setInitialValue(this.creator.type(), false);
+        interfaceForm.add(typeField);
 
-        Field<String> ctype = new Field<String>(new FieldDefinition("Content Type", "Content_Type",
+        Field<String> ctypeField = new Field<String>(new FieldDefinition("Content Type", "Content_Type",
                 new EnumerationType<String>(new TypeEnum()), "MIME type of the content.", null, 0, 1));
-        ctype.addListener(new FormItemListener<String>() {
+        ctypeField.setRenderOptions(new FieldRenderOptions().setWidth(350));
+        ctypeField.addListener(new FormItemListener<String>() {
 
             @Override
             public void itemValueChanged(FormItem<String> f) {
@@ -72,8 +75,8 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
             }
         });
-        ctype.setInitialValue(this.creator.contentType(), false);
-        interfaceForm.add(ctype);
+        ctypeField.setInitialValue(this.creator.contentType(), false);
+        interfaceForm.add(ctypeField);
     }
 
 }

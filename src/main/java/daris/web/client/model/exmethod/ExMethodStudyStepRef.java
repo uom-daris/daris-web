@@ -74,6 +74,10 @@ public class ExMethodStudyStepRef extends ObjectRef<ExMethodStudyStep> {
         return _path;
     }
 
+    public String exMethodCID() {
+        return _exmCid;
+    }
+
     public String studyType() {
         return _studyType;
     }
@@ -85,6 +89,15 @@ public class ExMethodStudyStepRef extends ObjectRef<ExMethodStudyStep> {
     @Override
     public String toString() {
         return _path + ": " + _name + " (type: " + _studyType + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o != null && (o instanceof ExMethodStudyStepRef)) {
+            ExMethodStudyStepRef so = (ExMethodStudyStepRef) o;
+            return _exmCid.equals(so.exMethodCID()) && _path.equals(so.path());
+        }
+        return false;
     }
 
 }

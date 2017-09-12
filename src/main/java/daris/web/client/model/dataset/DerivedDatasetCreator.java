@@ -32,7 +32,7 @@ public class DerivedDatasetCreator extends DatasetCreator {
 
     public DerivedDatasetCreator(Dataset input) {
         this(new DObjectRef(CiteableIdUtils.parent(input.citeableId()), -1),
-                new SimpleEntry<String, String>(input.citeableId(), input.vid()));
+                new SimpleEntry<String, String>(input.citeableId(), input.contentVid()));
     }
 
     public Map<String, String> inputs() {

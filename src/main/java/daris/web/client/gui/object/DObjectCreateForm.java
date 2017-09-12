@@ -93,6 +93,27 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
             }
         });
         interfaceForm.add(fillInField);
+
+        /*
+         * allow incomplete metadata
+         */
+        Field<Boolean> allowIncompleteMetadataField = new Field<Boolean>(
+                new FieldDefinition("Allow Incomplete Metadata", "Allow_Incomplete_Meatdata",
+                        BooleanType.DEFAULT_TRUE_FALSE, "Allow incomplete metadata. Not recommended.", null, 0, 1));
+        allowIncompleteMetadataField.setInitialValue(creator.allowIncompleteMeta(), false);
+        allowIncompleteMetadataField.addListener(new FormItemListener<Boolean>() {
+
+            @Override
+            public void itemValueChanged(FormItem<Boolean> f) {
+                creator.setAllowIncompleteMeta(f.value());
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<Boolean> f, Property property) {
+
+            }
+        });
+        interfaceForm.add(allowIncompleteMetadataField);
         interfaceForm.render();
         this.tabs.addTab("Interface", null, new ScrollPanel(interfaceForm, ScrollPolicy.AUTO));
         this.tabs.setActiveTab(0);
