@@ -4,18 +4,20 @@ import arc.mf.client.util.ActionListener;
 import daris.web.client.gui.object.DObjectUpdateForm;
 import daris.web.client.model.exmethod.ExMethod;
 import daris.web.client.model.exmethod.ExMethodUpdater;
+import daris.web.client.model.exmethod.messages.ExMethodUpdate;
 
-public class ExMethodUpdateForm extends DObjectUpdateForm<ExMethod, ExMethodUpdater>{
+public class ExMethodUpdateForm extends DObjectUpdateForm<ExMethod, ExMethodUpdater> {
 
     public ExMethodUpdateForm(ExMethod o) {
         super(o);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public void execute(ActionListener l) {
-        // TODO Auto-generated method stub
-        
+        new ExMethodUpdate(updater).send(r -> {
+            // TODO: fade out message;
+        });
+        l.executed(true);
     }
 
 }

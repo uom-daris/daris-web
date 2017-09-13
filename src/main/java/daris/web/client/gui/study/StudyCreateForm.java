@@ -37,8 +37,7 @@ public class StudyCreateForm extends DObjectCreateForm<StudyCreator> {
         super(creator);
         creator.setMetadataSetter(w -> {
             if (_methodMetadataForm != null) {
-                w.push("meta", new String[] { "ns", StudyCreateForm.this.creator.parentObject().citeableId() + "_"
-                        + StudyCreateForm.this.creator.step().path() });
+                w.push("meta");
                 _methodMetadataForm.save(w);
                 w.pop();
             }

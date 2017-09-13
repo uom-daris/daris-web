@@ -23,6 +23,7 @@ public abstract class DObjectUpdateAction<T extends DObject> extends UpdateActio
     protected DObjectUpdateAction(DObjectRef o, Window owner, double w, double h) {
         super(o, new ArrayList<ActionPrecondition>(), owner, WindowUtil.calcWindowWidth(owner, w),
                 WindowUtil.calcWindowHeight(owner, h));
+        o.setForEdit(true);
         addPrecondition(new ActionPrecondition() {
 
             @Override
