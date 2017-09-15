@@ -90,16 +90,22 @@ public class Explorer extends ContainerWidget implements ObjectSelectionEventHan
                 if (token != null && token.startsWith("list_")) {
                     String cid = token.substring(5);
                     DObjectRef po = cid == null ? null : new DObjectRef(cid, -1);
+                    _navBar.update(po);
+                    _actionMenu.setObject(null).setParent(po);
                     ObjectSelectionEventManager.fireEvent(Explorer.this, po, true);
                 } else if (token != null && token.startsWith("view_")) {
                     String cid = token.substring(5);
                     DObjectRef o = cid == null ? null : new DObjectRef(cid, -1);
-                    _navBar.update(o.parent());
+                    DObjectRef po = o.parent();
+                    _navBar.update(po);
+                    _actionMenu.setObject(o).setParent(po);
                     ObjectSelectionEventManager.fireEvent(Explorer.this, o, false);
                 } else {
                     if (!"list".equals(token)) {
                         History.replaceItem("list", false);
                     }
+                    _navBar.update(null);
+                    _actionMenu.setObject(null).setParent(null);
                     ObjectSelectionEventManager.fireEvent(Explorer.this, null, true);
                 }
             });

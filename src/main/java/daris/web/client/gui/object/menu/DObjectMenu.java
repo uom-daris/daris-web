@@ -34,16 +34,20 @@ import daris.web.client.util.DownloadUtil;
 
 public class DObjectMenu extends ObjectMenu<DObject> {
 
-    public static arc.gui.image.Image ICON_CREATE = new arc.gui.image.Image(
-            Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_CREATE1 = new arc.gui.image.Image(
+            Resource.INSTANCE.addBlue16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_CREATE2 = new arc.gui.image.Image(
+            Resource.INSTANCE.addGreen16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_MODIFY = new arc.gui.image.Image(
-            Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.editGreen16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
-            Resource.INSTANCE.download16().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.downloadBlue16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DOWNLOAD2 = new arc.gui.image.Image(
-            Resource.INSTANCE.downloadDark16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_SHARE = new arc.gui.image.Image(
-            Resource.INSTANCE.share16().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.downloadGold16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_SHARE1 = new arc.gui.image.Image(
+            Resource.INSTANCE.linkGreen16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_SHARE2 = new arc.gui.image.Image(
+            Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
 
     private DObjectRef _po;
     private DObjectRef _o;
@@ -100,20 +104,20 @@ public class DObjectMenu extends ObjectMenu<DObject> {
          * create actions
          */
         if (_po == null) {
-            add(new ActionEntry(ICON_CREATE, "Create project...", new ProjectCreateAction(_owner, 0.7, 0.7)));
+            add(new ActionEntry(ICON_CREATE1, "Create project...", new ProjectCreateAction(_owner, 0.7, 0.7)));
         } else if (_po.isProject()) {
-            add(new ActionEntry(ICON_CREATE, "Create subject in " + _po.typeAndId() + "...",
+            add(new ActionEntry(ICON_CREATE1, "Create subject in " + _po.typeAndId() + "...",
                     new SubjectCreateAction(_po, _owner, 0.7, 0.7)));
         } else if (_po.isExMethod()) {
-            add(new ActionEntry(ICON_CREATE, "Create study in " + _po.typeAndId() + "...",
+            add(new ActionEntry(ICON_CREATE1, "Create study in " + _po.typeAndId() + "...",
                     new StudyCreateAction(_po, _owner, 0.7, 0.7)));
         } else if (_po.isStudy()) {
-            add(new ActionEntry(ICON_CREATE, "Create primary dataset in " + _po.typeAndId() + "...",
+            add(new ActionEntry(ICON_CREATE1, "Create primary dataset in " + _po.typeAndId() + "...",
                     new PrimaryDatasetCreateAction(_po, _owner, 0.7, 0.7)));
-            add(new ActionEntry(ICON_CREATE, "Create derived dataset in " + _po.typeAndId() + "...",
+            add(new ActionEntry(ICON_CREATE2, "Create derived dataset in " + _po.typeAndId() + "...",
                     new DerivedDatasetCreateAction(_po, null, _owner, 0.7, 0.7)));
             if (_o != null) {
-                add(new ActionEntry(ICON_CREATE, "Create dataset derived from " + _o.typeAndId() + "...",
+                add(new ActionEntry(ICON_CREATE2, "Create dataset derived from " + _o.typeAndId() + "...",
                         new DerivedDatasetCreateAction(_po, _owner, 0.7, 0.7, _o)));
             }
         }
@@ -168,7 +172,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
                 /*
                  * share url
                  */
-                add(new ActionEntry(ICON_SHARE, "Share " + _o.typeAndId() + "...", () -> {
+                add(new ActionEntry(ICON_SHARE1, "Share " + _o.typeAndId() + "...", () -> {
                     new CollectionArchiveShareAction(_o, _owner).execute();
                 }));
             }

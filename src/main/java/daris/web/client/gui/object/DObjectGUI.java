@@ -17,17 +17,6 @@ public class DObjectGUI implements ObjectGUI {
 
     public static final DObjectGUI INSTANCE = new DObjectGUI();
 
-    public static arc.gui.image.Image ICON_CREATE = new arc.gui.image.Image(
-            Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_MODIFY = new arc.gui.image.Image(
-            Resource.INSTANCE.add16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
-            Resource.INSTANCE.download16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_DOWNLOAD2 = new arc.gui.image.Image(
-            Resource.INSTANCE.downloadDark16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_SHARE = new arc.gui.image.Image(
-            Resource.INSTANCE.share16().getSafeUri().asString(), 16, 16);
-
     @Override
     public String idToString(Object o) {
         if (o != null && (o instanceof DObjectRef)) {

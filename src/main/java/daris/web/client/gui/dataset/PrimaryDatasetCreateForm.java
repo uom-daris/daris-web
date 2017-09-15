@@ -17,7 +17,6 @@ public class PrimaryDatasetCreateForm extends DatasetCreateForm<PrimaryDatasetCr
         l.executed(true);
         new PrimaryDatasetCreateTask(creator).execute(r -> {
             if (r != null) {
-                System.out.println("created " + r.referentType() + " " + r.citeableId());
                 // TODO display a message box.
             }
         }, FileUploadTaskManager.get());

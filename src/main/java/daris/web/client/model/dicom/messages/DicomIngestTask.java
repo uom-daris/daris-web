@@ -16,6 +16,7 @@ public class DicomIngestTask extends FileUploadTask<Void> {
         super(files);
         setArchiveType(ArchiveType.AAR);
         _settings = settings;
+        setName("dicom ingest");
     }
 
     @Override

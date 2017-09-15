@@ -59,7 +59,6 @@ public class DerivedDatasetCreateForm extends DatasetCreateForm<DerivedDatasetCr
         l.executed(true);
         new DerivedDatasetCreateTask(creator).execute(r -> {
             if (r != null) {
-                System.out.println("created " + r.referentType() + " " + r.citeableId());
                 // TODO display a message box.
             }
         }, FileUploadTaskManager.get());

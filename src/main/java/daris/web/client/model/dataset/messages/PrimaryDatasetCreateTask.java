@@ -14,6 +14,7 @@ public class PrimaryDatasetCreateTask extends FileUploadTask<DObjectRef> {
         super(c.files());
         _c = c;
         setArchiveType(_c.archiveType());
+        setName("upload primary dataset");
     }
 
     @Override

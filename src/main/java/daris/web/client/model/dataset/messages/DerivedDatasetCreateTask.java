@@ -13,6 +13,7 @@ public class DerivedDatasetCreateTask extends FileUploadTask<DObjectRef> {
     public DerivedDatasetCreateTask(DerivedDatasetCreator dc) {
         super(dc.files());
         _dc = dc;
+        setName("create derived dataset");
     }
 
     @Override

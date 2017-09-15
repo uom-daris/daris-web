@@ -10,8 +10,11 @@ public interface Resource extends ClientBundle {
     @Source("resource/about_16.png")
     ImageResource about16();
 
-    @Source("resource/add_16.png")
-    ImageResource add16();
+    @Source("resource/add_blue_16.png")
+    ImageResource addBlue16();
+
+    @Source("resource/add_green_16.png")
+    ImageResource addGreen16();
 
     @Source("resource/alert_16.png")
     ImageResource alert16();
@@ -28,6 +31,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/delete_12x16.png")
     ImageResource delete12x16();
 
+    @Source("resource/delete_16.png")
+    ImageResource delete16();
+
     @Source("resource/document_32.png")
     ImageResource document32();
 
@@ -37,11 +43,17 @@ public interface Resource extends ClientBundle {
     @Source("resource/down_20.png")
     ImageResource down20();
 
-    @Source("resource/download_16.png")
-    ImageResource download16();
+    @Source("resource/download_blue_16.png")
+    ImageResource downloadBlue16();
 
-    @Source("resource/download_dark_16.png")
-    ImageResource downloadDark16();
+    @Source("resource/download_gold_16.png")
+    ImageResource downloadGold16();
+
+    @Source("resource/edit_blue_16.png")
+    ImageResource editBlue16();
+
+    @Source("resource/edit_green_16.png")
+    ImageResource editGreen16();
 
     @Source("resource/error_16.png")
     ImageResource error16();
@@ -72,6 +84,12 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/launch_16.png")
     ImageResource launch16();
+
+    @Source("resource/link_blue_16.png")
+    ImageResource linkBlue16();
+
+    @Source("resource/link_green_16.png")
+    ImageResource linkGreen16();
 
     @Source("resource/loading_16.gif")
     ImageResource loading16();
@@ -108,9 +126,6 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/settings_16.png")
     ImageResource settings16();
-
-    @Source("resource/share_16.png")
-    ImageResource share16();
 
     @Source("resource/sub_16.png")
     ImageResource sub16();

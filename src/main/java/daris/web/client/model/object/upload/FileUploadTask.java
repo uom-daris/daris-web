@@ -186,7 +186,6 @@ public abstract class FileUploadTask<T> {
                     @Override
                     public void processResponse(XmlElement xe, List<Output> outputs) {
                         _uploaded++;
-                        _total--;
                         FileEntry entry = _entries.poll();
                         if (entry == null) {
                             consumeTmpDirectory();

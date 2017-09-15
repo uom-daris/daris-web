@@ -3,17 +3,19 @@ package daris.web.client.gui.object.upload;
 import java.util.ArrayList;
 import java.util.List;
 
+import arc.gui.gwt.widget.HTML;
+import arc.gui.gwt.widget.button.Button;
 import arc.gui.gwt.widget.button.ButtonBar;
 import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
+import arc.gui.gwt.widget.progress.ProgressBar;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.gui.gwt.widget.table.Table.Row;
 import arc.gui.gwt.widget.window.Window;
 import arc.gui.window.WindowProperties;
-import daris.web.client.gui.widget.ProgressBar;
 import daris.web.client.model.object.upload.FileUploadTask;
 import daris.web.client.model.object.upload.FileUploadTaskMonitor;
 
@@ -43,18 +45,27 @@ public class FileUploadTaskManager implements FileUploadTaskMonitor, FileUploadT
         _vp.add(_bbSP);
 
         updateButtons();
-
     }
 
     private void initTaskList() {
         _taskList.fitToParent();
         _taskList.setEmptyMessage("No upload tasks.");
         _taskList.addColumnDefn("id", "ID");
-        _taskList.addColumnDefn("name", "Name");
+        _taskList.addColumnDefn("name", "Name").setWidth(200);
         _taskList.addColumnDefn("progress", "Progress", null, (task, progress) -> {
             FileUploadTask<?> t = (FileUploadTask<?>) task;
-            return new ProgressBar().setProgress(t.progress(), t.statusMessage());
-        }).setFixedWidth(500);;
+            ProgressBar pb = new ProgressBar();
+            pb.setWidth(200);
+            pb.setProgress(t.progress());
+            return pb;
+        }).setWidth(220);
+        _taskList.addColumnDefn("status", "Status", null, (task, statusMessage) -> {
+            FileUploadTask<?> t = (FileUploadTask<?>) task;
+            HTML html = new HTML();
+            html.setFontSize(10);
+            html.setHTML(t.statusMessage());
+            return html;
+        }).setWidth(380);
         _taskList.setMultiSelect(true);
         _taskList.setSelectionHandler(new SelectionHandler<FileUploadTask<?>>() {
 
@@ -95,6 +106,7 @@ public class FileUploadTaskManager implements FileUploadTaskMonitor, FileUploadT
                 entry.set("id", task.id());
                 entry.set("name", task.name());
                 entry.set("progress", task.progress());
+                entry.set("status", task.statusMessage());
                 entries.add(entry);
             }
         }
@@ -135,30 +147,32 @@ public class FileUploadTaskManager implements FileUploadTaskMonitor, FileUploadT
                 default:
                     break;
                 }
-                if (initial.size() > 0 || uploading.size() > 0 || consuming.size() > 0) {
-                    bb.addButton("Abort").addClickHandler(e -> {
-                        for (FileUploadTask<?> t : initial) {
-                            t.abort();
-                        }
-                        for (FileUploadTask<?> t : uploading) {
-                            t.abort();
-                        }
-                        for (FileUploadTask<?> t : initial) {
-                            t.abort();
-                        }
-                    });
-                }
-                if (aborted.size() > 0 || failed.size() > 0 || succeeded.size() > 0) {
-                    bb.addButton("Remove").addClickHandler(e -> {
-                        _tasks.removeAll(aborted);
-                        _tasks.removeAll(failed);
-                        _tasks.removeAll(succeeded);
-                        updateTaskList();
-                    });
-                }
+            }
+            if (initial.size() > 0 || uploading.size() > 0 || consuming.size() > 0) {
+                bb.addButton("Abort").addClickHandler(e -> {
+                    for (FileUploadTask<?> t : initial) {
+                        t.abort();
+                    }
+                    for (FileUploadTask<?> t : uploading) {
+                        t.abort();
+                    }
+                    for (FileUploadTask<?> t : initial) {
+                        t.abort();
+                    }
+                });
+            }
+            if (aborted.size() > 0 || failed.size() > 0 || succeeded.size() > 0) {
+                bb.addButton("Remove").addClickHandler(e -> {
+                    _tasks.removeAll(aborted);
+                    _tasks.removeAll(failed);
+                    _tasks.removeAll(succeeded);
+                    updateTaskList();
+                });
             }
         }
-        bb.addButton("Dismiss").addClickHandler(e -> {
+        Button dismissButton = bb.addButton("Dismiss");
+        dismissButton.setMarginRight(25);
+        dismissButton.addClickHandler(e -> {
             hide();
         });
         _bbSP.setContent(bb);
@@ -208,7 +222,8 @@ public class FileUploadTaskManager implements FileUploadTaskMonitor, FileUploadT
         Row row = _taskList.rowFor(task);
         if (row != null) {
             ProgressBar pb = (ProgressBar) row.cell(2).widget();
-            pb.setProgress(task.progress(), task.statusMessage());
+            pb.setProgress(task.progress());
+            ((HTML) row.cell(3).widget()).setHTML(task.statusMessage());
         }
     }
 
