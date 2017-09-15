@@ -1,7 +1,6 @@
-package daris.web.client.gui;
+package daris.web.client.gui.explorer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -15,6 +14,7 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -29,8 +29,10 @@ import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.image.LinearGradient;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
+import arc.gui.gwt.widget.list.ListGridRowContextMenuHandler;
 import arc.gui.gwt.widget.list.ListGridRowDoubleClickHandler;
 import arc.gui.gwt.widget.list.ListGridRowEnterHandler;
+import arc.gui.gwt.widget.menu.ActionMenu;
 import arc.gui.gwt.widget.paging.PagingControl;
 import arc.gui.gwt.widget.paging.PagingListener;
 import arc.gui.gwt.widget.panel.AbsolutePanel;
@@ -38,19 +40,34 @@ import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.gui.gwt.widget.table.Table.Row;
+import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
+import arc.mf.event.Filter;
+import arc.mf.event.Subscriber;
+import arc.mf.event.SystemEvent;
+import arc.mf.event.SystemEventChannel;
 import arc.mf.object.CollectionResolveHandler;
 import arc.mf.object.ObjectMessageResponse;
+import arc.mf.object.ObjectResolveHandler;
+import arc.mf.session.Session;
+import daris.web.client.gui.DObjectGUIRegistry;
+import daris.web.client.gui.DObjectListGridViewOptionsForm;
+import daris.web.client.gui.Resource;
+import daris.web.client.gui.explorer.event.ObjectSelectionEvent;
+import daris.web.client.gui.explorer.event.ObjectSelectionEventHandler;
+import daris.web.client.gui.explorer.event.ObjectSelectionEventManager;
+import daris.web.client.gui.object.DObjectGUI;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectChildrenRef;
 import daris.web.client.model.object.DObjectChildrenRef.SortKey;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.SortOrder;
+import daris.web.client.model.object.event.DObjectEvent;
 import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.messages.DObjectChildCursorFromGet;
 import daris.web.client.util.StringUtils;
 
-public class DObjectListGrid extends ContainerWidget implements PagingListener {
+public class ListView extends ContainerWidget implements PagingListener, Subscriber, ObjectSelectionEventHandler {
 
     public static final int DEFAULT_PAGE_SIZE = 100;
     public static final SortKey DEFAULT_SORT_KEY = SortKey.CID;
@@ -62,9 +79,12 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
     public static final arc.gui.image.Image ICON_OPTIONS = new arc.gui.image.Image(
             Resource.INSTANCE.options16().getSafeUri().asString(), 12, 12);
 
-    public static interface ParentUpdateListener {
-        void parentUpdated(DObjectRef parent);
-    }
+    public static final arc.gui.image.Image ICON_FOLDER = new arc.gui.image.Image(
+            Resource.INSTANCE.folder32().getSafeUri().asString(), 16, 16);
+    public static final arc.gui.image.Image ICON_FOLDER_ENTER = new arc.gui.image.Image(
+            Resource.INSTANCE.folderEnter32().getSafeUri().asString(), 16, 16);
+    public static final arc.gui.image.Image ICON_DOCUMENT = new arc.gui.image.Image(
+            Resource.INSTANCE.document32().getSafeUri().asString(), 16, 16);
 
     private DObjectRef _parent;
     private LinkedHashMap<DObjectRef, DObjectChildrenRef> _childrenMap;
@@ -73,25 +93,17 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
     private SortKey _sortKey;
     private SortOrder _sortOrder;
     private List<DObjectRef> _childrenInCurrentPage;
-
     private DObjectRef _toSelect;
 
     private VerticalPanel _vp;
-
     private VerticalPanel _listVP;
     private ListGrid<DObjectRef> _list;
     private DObjectListGridViewOptionsForm _viewOptionsForm;
-
     private PagingControl _pc;
-
     private ImageButton _optionsButton;
-
-    private List<SelectionHandler<DObjectRef>> _shs;
-    private List<ParentUpdateListener> _puls;
-
     private int _pageSize = DEFAULT_PAGE_SIZE;
 
-    public DObjectListGrid(DObjectRef parent) {
+    public ListView(DObjectRef parent) {
 
         _parent = parent;
         _childrenMap = new LinkedHashMap<DObjectRef, DObjectChildrenRef>() {
@@ -152,8 +164,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
                         }
                     }
                 } else {
-                    // TODO fix
-                    // notifyOfDeselectionInPage(_parent);
+                    ObjectSelectionEventManager.fireEvent(ListView.this, null, false);
                 }
                 _toSelect = null;
             }
@@ -166,23 +177,30 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         _list.setClearSelectionOnRefresh(false);
 
         _list.setMultiSelect(false);
+        _list.setRowContextMenuHandler(new ListGridRowContextMenuHandler<DObjectRef>() {
 
+            @Override
+            public void show(DObjectRef o, ContextMenuEvent event) {
+                ActionMenu.showAt(event.getNativeEvent().getScreenX(), _list.rowFor(o).absoluteBottom(),
+                        DObjectGUI.INSTANCE.actionMenu(window(), o, null, false));
+            }
+        });
         _list.setSelectionHandler(new SelectionHandler<DObjectRef>() {
 
             @Override
-            public void selected(DObjectRef selected) {
-
-                if ((_parent == null && selected.isProject())
-                        || (_parent != null && _parent.isDirectParentOf(selected))) {
-                    _selectedMap.put(_parent, selected);
+            public void selected(DObjectRef o) {
+                // save selection to cache
+                if ((_parent == null && o.isProject()) || (_parent != null && _parent.isDirectParentOf(o))) {
+                    _selectedMap.put(_parent, o);
+                } else {
+                    _selectedMap.put(o.parent(), o);
                 }
-                notifyOfSelectionInPage(selected);
+                ObjectSelectionEventManager.fireEvent(ListView.this, o, false);
             }
 
             @Override
             public void deselected(DObjectRef deselected) {
-
-                notifyOfDeselectionInPage(deselected);
+                ObjectSelectionEventManager.fireEvent(ListView.this, null, false);
             }
         });
         _list.setEmptyMessage("");
@@ -254,6 +272,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             @Override
             public void doubleClicked(DObjectRef o, DoubleClickEvent event) {
                 open(o);
+                ObjectSelectionEventManager.fireEvent(ListView.this, o, true);
             }
         });
 
@@ -262,6 +281,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             @Override
             public void onEnter(DObjectRef o) {
                 open(o);
+                ObjectSelectionEventManager.fireEvent(ListView.this, o, true);
             }
         });
 
@@ -295,38 +315,43 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
         initWidget(_vp);
 
-        gotoOffset(0);
+        /*
+         * subscribe to system events.
+         */
+        SystemEventChannel.add(this);
+
+        ObjectSelectionEventManager.subscribe(this);
+
+        // gotoOffset(0);
     }
 
-    private void open(DObjectRef o) {
-        if (!o.isDataset()) {
-            setBusyLoading();
+    public void open(DObjectRef o) {
+        if (o != null) {
+            if (o.isDataset()) {
+                // cannot open dataset.
+                return;
+            }
+            // save current selections to cache...
             if ((_parent == null && o.isProject()) || (_parent != null && _parent.isDirectParentOf(o))) {
                 _selectedMap.put(_parent, o);
-            }
-            setParentObject(o, true);
-        }
-    }
-
-    DObjectRef parentObject() {
-        return _parent;
-    }
-
-    public void setParentObject(DObjectRef parent, boolean refresh) {
-        if (refresh || !ObjectUtil.equals(parent, _parent)) {
-            _list.clearSelections(true);
-            _parent = parent;
-            DObjectRef selected = _selectedMap.get(parent);
-            if (selected != null) {
-                seekTo(selected);
             } else {
-                gotoOffset(0);
+                _selectedMap.put(o.parent(), o);
             }
-            notifyOfParentUpdate(_parent);
+        }
+        if (_list != null) {
+            _list.clearSelections();
+            _list.setBusyLoading();
+        }
+        _parent = o;
+        DObjectRef selected = _selectedMap.get(_parent);
+        if (selected != null) {
+            seekTo(selected, true);
+        } else {
+            gotoOffset(0);
         }
     }
 
-    DObjectChildrenRef childrenRef() {
+    private DObjectChildrenRef childrenRef() {
         DObjectChildrenRef c = _childrenMap.get(_parent);
         SimpleObjectFilter filter = _filters.get(_parent);
         if (c == null) {
@@ -349,28 +374,10 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         return c;
     }
 
-    DObjectRef selected() {
-        return _selectedMap.get(_parent);
-    }
-
-    public int pageSize() {
-        return _pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        _pageSize = pageSize;
-        Collection<DObjectChildrenRef> cs = _childrenMap.values();
-        if (cs != null) {
-            for (DObjectChildrenRef c : cs) {
-                c.setPageSize(pageSize);
-            }
-        }
-    }
-
     @Override
     public void gotoOffset(final long offset) {
         final DObjectChildrenRef childrenRef = childrenRef();
-        childrenRef.resolve(offset, offset + pageSize(), new CollectionResolveHandler<DObjectRef>() {
+        childrenRef.resolve(offset, offset + _pageSize, new CollectionResolveHandler<DObjectRef>() {
             @Override
             public void resolved(List<DObjectRef> cos) throws Throwable {
                 long total = childrenRef.totalNumberOfMembers();
@@ -393,9 +400,18 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     }
 
-    protected void seekTo(final DObjectRef object) {
-        final DObjectChildrenRef childrenRef = childrenRef();
-        new DObjectChildCursorFromGet(object, childrenRef).send(new ObjectMessageResponse<Long>() {
+    public void seekTo(DObjectRef object, boolean refresh) {
+        DObjectRef parent = object.parent();
+        if (!ObjectUtil.equals(_parent, parent)) {
+            _parent = parent;
+            refresh = true;
+        }
+        DObjectRef selected = _selectedMap.get(_parent);
+        if (ObjectUtil.equals(selected, object) && !refresh) {
+            return;
+        }
+        _toSelect = object;
+        new DObjectChildCursorFromGet(object, childrenRef()).send(new ObjectMessageResponse<Long>() {
 
             @Override
             public void responded(Long idx) {
@@ -408,74 +424,6 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             }
         });
     }
-
-    public void seekTo(DObjectRef parent, DObjectRef object, boolean refresh) {
-        DObjectRef selected = _selectedMap.get(_parent);
-        if (!refresh && ObjectUtil.equals(selected, object)) {
-            return;
-        }
-        if (!ObjectUtil.equals(parent, _parent)) {
-            _parent = parent;
-        }
-        seekTo(object);
-    }
-
-    public void addSelectionHandler(SelectionHandler<DObjectRef> sh) {
-        if (_shs == null) {
-            _shs = new ArrayList<SelectionHandler<DObjectRef>>();
-        }
-        _shs.add(sh);
-    }
-
-    public void removeSelectionHandler(SelectionHandler<DObjectRef> sh) {
-        if (_shs != null) {
-            _shs.remove(sh);
-        }
-    }
-
-    public void addParentUpdateListener(ParentUpdateListener pul) {
-        if (_puls == null) {
-            _puls = new ArrayList<ParentUpdateListener>();
-        }
-        _puls.add(pul);
-    }
-
-    public void removeParentUpdateListener(ParentUpdateListener pul) {
-        if (_puls != null) {
-            _puls.remove(pul);
-        }
-    }
-
-    private void notifyOfParentUpdate(DObjectRef parent) {
-        if (_puls != null) {
-            for (ParentUpdateListener pul : _puls) {
-                pul.parentUpdated(parent);
-            }
-        }
-    }
-
-    private void notifyOfSelectionInPage(DObjectRef o) {
-        if (_shs != null) {
-            for (SelectionHandler<DObjectRef> sh : _shs) {
-                sh.selected(o);
-            }
-        }
-    }
-
-    private void notifyOfDeselectionInPage(DObjectRef o) {
-        if (_shs != null) {
-            for (SelectionHandler<DObjectRef> sh : _shs) {
-                sh.deselected(o);
-            }
-        }
-    }
-
-    public static final arc.gui.image.Image IMG_FOLDER = new arc.gui.image.Image(
-            Resource.INSTANCE.folder32().getSafeUri().asString(), 16, 16);
-    public static final arc.gui.image.Image IMG_FOLDER_ENTER = new arc.gui.image.Image(
-            Resource.INSTANCE.folderEnter32().getSafeUri().asString(), 16, 16);
-    public static final arc.gui.image.Image IMG_DOCUMENT = new arc.gui.image.Image(
-            Resource.INSTANCE.document32().getSafeUri().asString(), 16, 16);
 
     private static class ObjectIcon extends ContainerWidget {
 
@@ -490,9 +438,9 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
             _ap.setCursor(Cursor.POINTER);
 
             if (o.isDataset()) {
-                _img = new arc.gui.gwt.widget.image.Image(IMG_DOCUMENT);
+                _img = new arc.gui.gwt.widget.image.Image(ICON_DOCUMENT);
             } else {
-                _img = new arc.gui.gwt.widget.image.Image(IMG_FOLDER_ENTER);
+                _img = new arc.gui.gwt.widget.image.Image(ICON_FOLDER_ENTER);
                 _img.setTitle(toolTipFor(o));
             }
             _img.setPosition(Position.ABSOLUTE);
@@ -529,7 +477,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
 
     }
 
-    public void refreshRow(DObjectRef object) {
+    private void refreshRow(DObjectRef object) {
         object.reset();
         object.resolve(o -> {
             Row row = _list.rowFor(object);
@@ -552,22 +500,16 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         });
     }
 
-    public boolean isCurrentPageFull() {
+    private boolean isCurrentPageFull() {
         return _childrenInCurrentPage != null && _childrenInCurrentPage.size() == _pageSize;
     }
 
-    public boolean isInCurrentPage(DObjectRef o) {
+    private boolean isInCurrentPage(DObjectRef o) {
         return _childrenInCurrentPage != null && _childrenInCurrentPage.contains(o);
     }
 
-    public boolean isInCurrentPage(String cid) {
+    private boolean isInCurrentPage(String cid) {
         return isInCurrentPage(new DObjectRef(cid, -1));
-    }
-
-    public void setBusyLoading() {
-        if (_list != null) {
-            _list.setBusyLoading();
-        }
     }
 
     private void showViewOptionsForm() {
@@ -596,7 +538,7 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         }
     }
 
-    public void collectionRemoved(String pid) {
+    private void collectionRemoved(String pid) {
         Set<DObjectRef> keys = _selectedMap.keySet();
         Set<DObjectRef> toDelete = new HashSet<DObjectRef>();
         for (DObjectRef key : keys) {
@@ -611,6 +553,157 @@ public class DObjectListGrid extends ContainerWidget implements PagingListener {
         if (!toDelete.isEmpty()) {
             for (DObjectRef key : toDelete) {
                 _selectedMap.remove(key);
+            }
+        }
+    }
+
+    @Override
+    public List<Filter> systemEventFilters() {
+        return ListUtil.list(new Filter(DObjectEvent.SYSTEM_EVENT_NAME, null));
+    }
+
+    @Override
+    public void process(SystemEvent se) {
+        DObjectEvent de = (DObjectEvent) se;
+        DObjectEvent.isRelavent(de, relavent -> {
+            if (relavent) {
+                handleEvent(de);
+            }
+        });
+    }
+
+    private void handleEvent(DObjectEvent de) {
+        DObjectEvent.Action action = de.action();
+        String ecid = de.citeableId();
+
+        DObjectRef selected = _selectedMap.get(_parent);
+
+        switch (action) {
+        case MODIFY:
+            if (de.matchesObject(selected)) {
+                if (isInCurrentPage(selected)) {
+                    refreshRow(selected);
+                }
+                ObjectSelectionEventManager.fireEvent(this, selected, false);
+            } else if (de.isParentOf(selected)) {
+                ObjectSelectionEventManager.fireEvent(this, _parent, true);
+            }
+            break;
+        case CREATE:
+            if (_parent == null) {
+                if (CiteableIdUtils.isProject(ecid)) {
+                    if (!isCurrentPageFull()) {
+                        if (selected != null) {
+                            seekTo(selected, true);
+                        } else {
+                            gotoOffset(0);
+                        }
+                    }
+                } else if (CiteableIdUtils.isSubject(ecid)) {
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (isInCurrentPage(o)) {
+                        refreshRow(o);
+                    }
+                }
+            } else {
+                if (de.isDirectChildOf(_parent)) {
+                    if (!isCurrentPageFull()) {
+                        if (selected != null) {
+                            seekTo(selected, true);
+                        } else {
+                            gotoOffset(0);
+                        }
+                    }
+                } else if (de.isGrandChildOf(_parent)) {
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (isInCurrentPage(o)) {
+                        refreshRow(o);
+                    }
+                }
+            }
+            break;
+        case DESTROY:
+            if (_parent == null) {
+                if (CiteableIdUtils.isProject(ecid)) {
+                    collectionRemoved(ecid);
+                    if (isInCurrentPage(ecid)) {
+                        if (selected != null) {
+                            seekTo(selected, true);
+                        } else {
+                            gotoOffset(0);
+                        }
+                    }
+                } else if (CiteableIdUtils.isSubject(ecid)) {
+                    collectionRemoved(ecid);
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (isInCurrentPage(o)) {
+                        refreshRow(o);
+                    }
+                }
+            } else {
+                if (de.isDirectChildOf(selected)) {
+                    collectionRemoved(ecid);
+                    if (isInCurrentPage(selected)) {
+                        refreshRow(selected);
+                    }
+                } else if (de.isGrandChildOf(_parent)) {
+                    collectionRemoved(ecid);
+                    DObjectRef o = new DObjectRef(CiteableIdUtils.parent(ecid), -1);
+                    if (isInCurrentPage(o)) {
+                        refreshRow(o);
+                    }
+                } else {
+                    if (de.isDirectChildOf(_parent)) {
+                        if (de.matchesObject(selected)) {
+                            collectionRemoved(ecid);
+                        }
+                        if (selected != null) {
+                            seekTo(selected, true);
+                        } else {
+                            gotoOffset(0);
+                        }
+                    } else if (de.matchesObject(_parent) || de.isParentOf(_parent)) {
+                        collectionRemoved(ecid);
+                        resolveNearestExistingParent(ecid, pid -> {
+                            open(pid == null ? null : new DObjectRef(pid, -1));
+                        });
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    private void resolveNearestExistingParent(String cid, ObjectResolveHandler<String> rh) {
+        String pid = cid == null ? null : CiteableIdUtils.parent(cid);
+        if (pid == null) {
+            if (rh != null) {
+                rh.resolved(null);
+            }
+            return;
+        }
+        Session.execute("asset.exists", "<cid>" + pid + "</cid>", (xe, outputs) -> {
+            boolean exists = xe.booleanValue("exists");
+            if (!exists) {
+                collectionRemoved(pid);
+                resolveNearestExistingParent(pid, rh);
+            } else {
+                if (rh != null) {
+                    rh.resolved(pid);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void handleEvent(ObjectSelectionEvent event) {
+        if (!ObjectUtil.equals(event.source(), this)) {
+            if (event.isParent()) {
+                open(event.object());
+            } else {
+                seekTo(event.object(), true);
             }
         }
     }

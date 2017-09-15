@@ -14,6 +14,7 @@ import arc.mf.session.LoginDialog;
 import arc.mf.session.Session;
 import arc.mf.session.SessionHandler;
 import daris.web.client.gui.DObjectExplorer;
+import daris.web.client.gui.explorer.Explorer;
 import daris.web.client.gui.theme.DaRISTheme;
 import daris.web.client.model.object.event.DObjectEvents;
 
@@ -70,7 +71,7 @@ public class DaRIS implements EntryPoint, SessionHandler {
             /*
              * show gui
              */
-            RootPanel.add(DObjectExplorer.get());
+            RootPanel.add(Explorer.get());
 
             /*
              * Fire current history state
@@ -90,7 +91,7 @@ public class DaRIS implements EntryPoint, SessionHandler {
              */
             SystemEventChannel.unsubscribe(Session.created());
 
-            RootPanel.remove(DObjectExplorer.get());
+            RootPanel.remove(Explorer.get());
         }
     }
 
@@ -106,7 +107,7 @@ public class DaRIS implements EntryPoint, SessionHandler {
              */
             SystemEventChannel.unsubscribe(Session.created());
 
-            RootPanel.remove(DObjectExplorer.get());
+            RootPanel.remove(Explorer.get());
         }
     }
 

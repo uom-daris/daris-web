@@ -1,34 +1,52 @@
 package daris.web.client.model.object;
 
+import arc.mf.client.util.ObjectUtil;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.object.ObjectRef;
 
 public class DObjectPathRef extends ObjectRef<DObjectPath> {
 
-    private String _cid;
-
-    public DObjectPathRef(String cid) {
-        _cid = cid;
-    }
+    private DObjectRef _o;
 
     public DObjectPathRef(DObjectRef o) {
-        this(o.citeableId());
+        _o = o;
+    }
+
+    public void setObject(DObjectRef o) {
+        if (!ObjectUtil.equals(_o, o)) {
+            _o = o;
+            reset();
+        }
+    }
+    
+    public DObjectRef object(){
+        return _o;
     }
 
     @Override
     protected void resolveServiceArgs(XmlStringWriter w) {
-        w.add("cid", _cid);
+        if (_o != null) {
+            w.add("cid", _o.citeableId());
+        }
     }
 
     @Override
     protected String resolveServiceName() {
-        return "daris.object.path.find";
+        if (_o != null) {
+            return "daris.object.path.find";
+        } else {
+            return "server.ping";
+        }
     }
 
     @Override
     protected DObjectPath instantiate(XmlElement xe) throws Throwable {
-        return new DObjectPath(xe);
+        if (xe != null && xe.element("object") != null) {
+            return new DObjectPath(xe);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -38,7 +56,7 @@ public class DObjectPathRef extends ObjectRef<DObjectPath> {
 
     @Override
     public String idToString() {
-        return _cid;
+        return _o == null ? null : _o.citeableId();
     }
 
 }

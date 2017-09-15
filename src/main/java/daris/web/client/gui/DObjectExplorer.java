@@ -13,7 +13,6 @@ import arc.gui.gwt.widget.panel.HorizontalSplitPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
-import arc.gui.object.SelectedObjectSet;
 import arc.mf.client.plugin.Plugin;
 import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
@@ -24,7 +23,7 @@ import arc.mf.event.SystemEventChannel;
 import arc.mf.object.ObjectResolveHandler;
 import arc.mf.session.Session;
 import daris.web.client.gui.DObjectListGrid.ParentUpdateListener;
-import daris.web.client.gui.object.DObjectGUI;
+import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.gui.widget.DMenuButton;
 import daris.web.client.gui.widget.DMenuButtonBar;
 import daris.web.client.gui.widget.DNavButtonBar;
@@ -62,6 +61,7 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
     private DObjectListGrid _list;
     private ObjectDetailedView _dv;
 
+    private DObjectMenu _actionMenu;
     private DMenuButton _actionMenuButton;
 
     private DObjectExplorer() {
@@ -188,18 +188,13 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
     }
 
     private void updateMenus() {
-        final DObjectRef o = _list.selected();
-        if (o == null) {
-            _actionMenuButton.setMenu(null);
+        DObjectRef po = _list.parentObject();
+        DObjectRef o = _list.selected();
+        if (_actionMenu == null) {
+            _actionMenu = new DObjectMenu(po, o, window());
+            _actionMenuButton.setMenu(_actionMenu);
         } else {
-            Menu menu = DObjectGUI.INSTANCE.actionMenu(window(), o, new SelectedObjectSet() {
-
-                @Override
-                public List<?> selections() {
-                    return ListUtil.list(_list.selected());
-                }
-            }, false);
-            _actionMenuButton.setMenu(menu);
+            _actionMenu.setParent(po).setObject(o).setOwner(window());
         }
     }
 
@@ -241,21 +236,21 @@ public class DObjectExplorer extends ContainerWidget implements Subscriber {
     }
 
     private void resolveObjectPath(DObjectRef o, ObjectResolveHandler<DObjectPath> rh) {
-        resolveObjectPath(o == null ? null : o.citeableId(), rh);
-    }
-
-    private void resolveObjectPath(String cid, ObjectResolveHandler<DObjectPath> rh) {
-        if (cid == null) {
+        if (o == null) {
             if (rh != null) {
                 rh.resolved(null);
             }
             return;
         }
-        new DObjectPathRef(cid).resolve(path -> {
+        new DObjectPathRef(o).resolve(path -> {
             if (rh != null) {
                 rh.resolved(path);
             }
         });
+    }
+
+    private void resolveObjectPath(String cid, ObjectResolveHandler<DObjectPath> rh) {
+        resolveObjectPath(cid == null ? null : new DObjectRef(cid, -1), rh);
     }
 
     public void refreshDetailedView() {

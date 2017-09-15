@@ -89,6 +89,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
     public void setForEdit(boolean forEdit) {
         if (_foredit != forEdit) {
             _foredit = forEdit;
+            cancel();
             reset();
         }
     }
@@ -320,6 +321,10 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
             return CiteableIdUtils.isDirectParent(_citeableId, o.citeableId());
         }
         return false;
+    }
+
+    public String typeAndId() {
+        return referentTypeName() + " " + citeableId();
     }
 
 }

@@ -112,6 +112,7 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
 
             }
         });
+        dataUseField.setInitialValue(updater.dataUse(), false);
         interfaceForm.add(dataUseField);
 
     }
