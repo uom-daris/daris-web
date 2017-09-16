@@ -37,7 +37,7 @@ import arc.mf.client.file.LocalFile;
 import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.util.ButtonUtil;
-import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.object.Attachment;
 import daris.web.client.model.object.AttachmentRef;
 import daris.web.client.model.object.DObject;
@@ -97,7 +97,7 @@ public class AttachmentListGrid extends ContainerWidget {
 
         if (_o.editable()) {
             HTML message = new HTML("To add attachments, drag local files and drop into above area...");
-            message.setFontFamily(DStyles.FONT_FAMILY);
+            message.setFontFamily(DefaultStyles.FONT_FAMILY);
             message.setFontSize(10);
             message.setTextAlign(TextAlign.CENTER);
             message.setVerticalAlign(VerticalAlign.MIDDLE);
@@ -170,7 +170,7 @@ public class AttachmentListGrid extends ContainerWidget {
 
         WidgetFormatter<Attachment, String> formatter = (attachment, str) -> {
             HTML html = new HTML(str);
-            html.setFontFamily(DStyles.FONT_FAMILY);
+            html.setFontFamily(DefaultStyles.FONT_FAMILY);
             html.setFontSize(FONT_SIZE);
             html.setVerticalAlign(VerticalAlign.MIDDLE);
             return html;

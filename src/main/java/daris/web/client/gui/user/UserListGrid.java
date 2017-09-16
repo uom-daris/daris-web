@@ -37,7 +37,7 @@ import arc.mf.model.authentication.UserRef;
 import arc.mf.object.ObjectMessageResponse;
 import arc.mf.session.Session;
 import daris.web.client.gui.DObjectGUIRegistry;
-import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.user.messages.UserDescribe;
 
 public class UserListGrid extends ContainerWidget {
@@ -98,7 +98,7 @@ public class UserListGrid extends ContainerWidget {
         _list.setEmptyMessage("");
         _list.setLoadingMessage("");
         _list.setCursorSize(Integer.MAX_VALUE);
-        _list.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.fitToParent();
         _list.addColumnDefn("domain", "Domain", null, new WidgetFormatter<UserRef, DomainRef>() {
 
@@ -150,7 +150,7 @@ public class UserListGrid extends ContainerWidget {
         vp.fitToParent();
 
         HTML title = new HTML("Filters");
-        title.setFontFamily(DStyles.FONT_FAMILY);
+        title.setFontFamily(DefaultStyles.FONT_FAMILY);
         title.setFontSize(11);
         title.setFontWeight(FontWeight.BOLD);
         title.setTextAlign(TextAlign.CENTER);
@@ -260,10 +260,10 @@ public class UserListGrid extends ContainerWidget {
 
     private static HTML createCellHtml(String value) {
         HTML html = value == null ? new HTML() : new HTML(value);
-        html.setHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        html.setFontFamily(DStyles.FONT_FAMILY);
-        html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
-        html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+        html.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        html.setFontFamily(DefaultStyles.FONT_FAMILY);
+        html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
+        html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
         return html;
     }
 

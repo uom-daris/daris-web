@@ -13,7 +13,6 @@ import arc.mf.session.DefaultLoginDialog;
 import arc.mf.session.LoginDialog;
 import arc.mf.session.Session;
 import arc.mf.session.SessionHandler;
-import daris.web.client.gui.DObjectExplorer;
 import daris.web.client.gui.explorer.Explorer;
 import daris.web.client.gui.theme.DaRISTheme;
 import daris.web.client.model.object.event.DObjectEvents;

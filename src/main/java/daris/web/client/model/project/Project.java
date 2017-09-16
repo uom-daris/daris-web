@@ -76,4 +76,8 @@ public class Project extends DObject {
         return _roleUsers;
     }
 
+    public int numberOfMethods() {
+        return _methods == null ? 0 : _methods.size();
+    }
+
 }

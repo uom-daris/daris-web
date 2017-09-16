@@ -51,11 +51,7 @@ import arc.mf.object.ObjectMessageResponse;
 import arc.mf.object.ObjectResolveHandler;
 import arc.mf.session.Session;
 import daris.web.client.gui.DObjectGUIRegistry;
-import daris.web.client.gui.DObjectListGridViewOptionsForm;
 import daris.web.client.gui.Resource;
-import daris.web.client.gui.explorer.event.ObjectSelectionEvent;
-import daris.web.client.gui.explorer.event.ObjectSelectionEventHandler;
-import daris.web.client.gui.explorer.event.ObjectSelectionEventManager;
 import daris.web.client.gui.object.DObjectGUI;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectChildrenRef;
@@ -67,7 +63,7 @@ import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.messages.DObjectChildCursorFromGet;
 import daris.web.client.util.StringUtils;
 
-public class ListView extends ContainerWidget implements PagingListener, Subscriber, ObjectSelectionEventHandler {
+public class ListView extends ContainerWidget implements PagingListener, Subscriber {
 
     public static final int DEFAULT_PAGE_SIZE = 100;
     public static final SortKey DEFAULT_SORT_KEY = SortKey.CID;
@@ -98,7 +94,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
     private VerticalPanel _vp;
     private VerticalPanel _listVP;
     private ListGrid<DObjectRef> _list;
-    private DObjectListGridViewOptionsForm _viewOptionsForm;
+    private ListViewOptionsForm _viewOptionsForm;
     private PagingControl _pc;
     private ImageButton _optionsButton;
     private int _pageSize = DEFAULT_PAGE_SIZE;
@@ -164,7 +160,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                         }
                     }
                 } else {
-                    ObjectSelectionEventManager.fireEvent(ListView.this, null, false);
+                    ListView.this.opened(_parent);
                 }
                 _toSelect = null;
             }
@@ -195,12 +191,12 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                 } else {
                     _selectedMap.put(o.parent(), o);
                 }
-                ObjectSelectionEventManager.fireEvent(ListView.this, o, false);
+                ListView.this.selected(o);
             }
 
             @Override
-            public void deselected(DObjectRef deselected) {
-                ObjectSelectionEventManager.fireEvent(ListView.this, null, false);
+            public void deselected(DObjectRef o) {
+                ListView.this.deselected(o);
             }
         });
         _list.setEmptyMessage("");
@@ -272,7 +268,6 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
             @Override
             public void doubleClicked(DObjectRef o, DoubleClickEvent event) {
                 open(o);
-                ObjectSelectionEventManager.fireEvent(ListView.this, o, true);
             }
         });
 
@@ -281,7 +276,6 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
             @Override
             public void onEnter(DObjectRef o) {
                 open(o);
-                ObjectSelectionEventManager.fireEvent(ListView.this, o, true);
             }
         });
 
@@ -320,8 +314,6 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
          */
         SystemEventChannel.add(this);
 
-        ObjectSelectionEventManager.subscribe(this);
-
         // gotoOffset(0);
     }
 
@@ -349,6 +341,22 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         } else {
             gotoOffset(0);
         }
+    }
+
+    protected void opened(DObjectRef o) {
+
+    }
+
+    protected void selected(DObjectRef o) {
+
+    }
+
+    protected void deselected(DObjectRef o) {
+
+    }
+
+    protected void updated(DObjectRef o) {
+
     }
 
     private DObjectChildrenRef childrenRef() {
@@ -514,7 +522,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
     private void showViewOptionsForm() {
         hideViewOptionsForm();
-        _viewOptionsForm = new DObjectListGridViewOptionsForm(_filters.get(_parent), _sortKey, _sortOrder, _pageSize);
+        _viewOptionsForm = new ListViewOptionsForm(_filters.get(_parent), _sortKey, _sortOrder, _pageSize);
         _viewOptionsForm.addUpdateListener((filter, sortKey, sortOrder, pageSize) -> {
             _filters.put(_parent, filter);
             _sortKey = sortKey;
@@ -580,13 +588,14 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
         switch (action) {
         case MODIFY:
+            DObjectRef eo = new DObjectRef(ecid, -1);
             if (de.matchesObject(selected)) {
                 if (isInCurrentPage(selected)) {
                     refreshRow(selected);
                 }
-                ObjectSelectionEventManager.fireEvent(this, selected, false);
+                updated(eo);
             } else if (de.isParentOf(selected)) {
-                ObjectSelectionEventManager.fireEvent(this, _parent, true);
+                updated(eo);
             }
             break;
         case CREATE:
@@ -695,17 +704,6 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                 }
             }
         });
-    }
-
-    @Override
-    public void handleEvent(ObjectSelectionEvent event) {
-        if (!ObjectUtil.equals(event.source(), this)) {
-            if (event.isParent()) {
-                open(event.object());
-            } else {
-                seekTo(event.object(), true);
-            }
-        }
     }
 
 }

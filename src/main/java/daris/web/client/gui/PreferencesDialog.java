@@ -17,6 +17,7 @@ import arc.mf.client.util.Validity;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.session.Session;
+import daris.web.client.gui.explorer.ListView;
 import daris.web.client.gui.widget.LoadingMessage;
 
 public class PreferencesDialog extends ValidatedInterfaceComponent {
@@ -33,8 +34,8 @@ public class PreferencesDialog extends ValidatedInterfaceComponent {
 
     public PreferencesDialog() {
 
-        _pageSizeCommitted = DObjectListGrid.DEFAULT_PAGE_SIZE;
-        _pageSizeUncommitted = DObjectListGrid.DEFAULT_PAGE_SIZE;
+        _pageSizeCommitted = ListView.DEFAULT_PAGE_SIZE;
+        _pageSizeUncommitted = ListView.DEFAULT_PAGE_SIZE;
         _sp = new SimplePanel();
         _sp.fitToParent();
 
@@ -60,7 +61,7 @@ public class PreferencesDialog extends ValidatedInterfaceComponent {
     }
 
     private void update(XmlElement se) throws Throwable {
-        _pageSizeCommitted = se.intValue("page.size", DObjectListGrid.DEFAULT_PAGE_SIZE);
+        _pageSizeCommitted = se.intValue("page.size", ListView.DEFAULT_PAGE_SIZE);
         TabPanel tp = new TabPanel();
         tp.fitToParent();
         Form explorerPreferencesForm = new Form(FormEditMode.UPDATE);

@@ -1,4 +1,4 @@
-package daris.web.client.gui;
+package daris.web.client.gui.explorer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ import daris.web.client.model.object.SortOrder;
 import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.filter.SimpleObjectFilter.Operator;
 
-public class DObjectListGridViewOptionsForm extends ValidatedInterfaceComponent {
+public class ListViewOptionsForm extends ValidatedInterfaceComponent {
 
     public static interface UpdateListener {
 
@@ -77,7 +77,7 @@ public class DObjectListGridViewOptionsForm extends ValidatedInterfaceComponent 
     private SortOrder _sortOrder;
     private int _pageSize;
 
-    public DObjectListGridViewOptionsForm(SimpleObjectFilter filter, SortKey sortKey, SortOrder sortOrder,
+    public ListViewOptionsForm(SimpleObjectFilter filter, SortKey sortKey, SortOrder sortOrder,
             int pageSize) {
         _filter = filter == null
                 ? new SimpleObjectFilter(SimpleObjectFilter.Type.name, SimpleObjectFilter.Operator.CONTAINS, null)
@@ -118,9 +118,9 @@ public class DObjectListGridViewOptionsForm extends ValidatedInterfaceComponent 
         Button resetButton = bb.addButton("Reset");
         resetButton.addClickHandler(e -> {
             _filter.setValue(null);
-            _sortKey = DObjectListGrid.DEFAULT_SORT_KEY;
-            _sortOrder = DObjectListGrid.DEFAULT_SORT_ORDER;
-            _pageSize = DObjectListGrid.DEFAULT_PAGE_SIZE;
+            _sortKey = ListView.DEFAULT_SORT_KEY;
+            _sortOrder = ListView.DEFAULT_SORT_ORDER;
+            _pageSize = ListView.DEFAULT_PAGE_SIZE;
             notifyOfUpdate();
         });
         Button applyButton = bb.addButton("Apply");
@@ -166,7 +166,7 @@ public class DObjectListGridViewOptionsForm extends ValidatedInterfaceComponent 
             public void itemValueChanged(FormItem<Integer> f) {
                 Integer v = f.value();
                 if (v == null || v <= 0) {
-                    v = DObjectListGrid.DEFAULT_PAGE_SIZE;
+                    v = ListView.DEFAULT_PAGE_SIZE;
                 }
                 _pageSize = v;
             }

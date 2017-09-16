@@ -27,7 +27,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.gui.project.user.ProjectUserDialog;
 import daris.web.client.gui.util.ButtonUtil;
-import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
@@ -128,7 +128,7 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         ListGrid<ProjectUser> list = new ListGrid<ProjectUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         WidgetFormatter<ProjectUser, String> formatter = new WidgetFormatter<ProjectUser, String>() {
 
             @Override
@@ -164,7 +164,7 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         ListGrid<ProjectRoleUser> list = new ListGrid<ProjectRoleUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         WidgetFormatter<ProjectRoleUser, String> formatter = new WidgetFormatter<ProjectRoleUser, String>() {
 
             @Override
@@ -198,9 +198,9 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         if (value != null) {
             HTML html = new HTML(value);
             html.setFontSize(11);
-            html.setFontFamily(DStyles.FONT_FAMILY);
-            html.setHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
-            html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+            html.setFontFamily(DefaultStyles.FONT_FAMILY);
+            html.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+            html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
             return html;
         }
         return null;

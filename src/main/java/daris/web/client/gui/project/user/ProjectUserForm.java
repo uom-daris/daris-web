@@ -34,7 +34,7 @@ import arc.mf.model.authentication.UserRef;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.user.RoleUserListGrid;
 import daris.web.client.gui.user.UserListGrid;
-import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.ProjectRoleType;
 import daris.web.client.model.project.ProjectRoleUser;
@@ -52,10 +52,10 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
 
     private static HTML createCellHtml(String value) {
         HTML html = value == null ? new HTML() : new HTML(value);
-        html.setHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        html.setFontFamily(DStyles.FONT_FAMILY);
-        html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
-        html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+        html.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        html.setFontFamily(DefaultStyles.FONT_FAMILY);
+        html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
+        html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
         return html;
     }
 
@@ -216,7 +216,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         hsp.add(_tpRight);
 
         _hint = new HTML();
-        _hint.setFontFamily(DStyles.FONT_FAMILY);
+        _hint.setFontFamily(DefaultStyles.FONT_FAMILY);
         _hint.setFontSize(10);
         _hint.setTextAlign(TextAlign.CENTER);
         _hint.setVerticalAlign(VerticalAlign.MIDDLE);
@@ -228,7 +228,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _vp.add(_hint);
 
         _status = new HTML();
-        _status.setFontFamily(DStyles.FONT_FAMILY);
+        _status.setFontFamily(DefaultStyles.FONT_FAMILY);
         _status.setColour(RGB.RED);
         _status.setFontSize(11);
         _status.setHeight(28);
@@ -254,7 +254,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _roleUserList.setHeight100();
         _roleUserList.setMultiSelect(false);
         _roleUserList.setEmptyMessage("");
-        _roleUserList.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _roleUserList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _roleUserList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectRoleUser, ProjectRoleUser>() {
 
             @Override
@@ -381,7 +381,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _userList.fitToParent();
         _userList.setMultiSelect(false);
         _userList.setEmptyMessage("");
-        _userList.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _userList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _userList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectUser, ProjectUser>() {
 
             @Override

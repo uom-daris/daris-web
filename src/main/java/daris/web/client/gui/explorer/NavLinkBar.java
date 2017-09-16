@@ -16,16 +16,13 @@ import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.mf.client.util.ObjectUtil;
 import daris.web.client.gui.Resource;
-import daris.web.client.gui.explorer.event.ObjectSelectionEvent;
-import daris.web.client.gui.explorer.event.ObjectSelectionEventHandler;
-import daris.web.client.gui.explorer.event.ObjectSelectionEventManager;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectPathRef;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.util.StringUtils;
 
-public class NavLinkBar extends ContainerWidget implements ObjectSelectionEventHandler {
+public class NavLinkBar extends ContainerWidget {
 
     public static final int FONT_SIZE = 13;
     public static final int HEIGHT = 32;
@@ -61,8 +58,6 @@ public class NavLinkBar extends ContainerWidget implements ObjectSelectionEventH
 
         _path = new DObjectPathRef(null);
 
-        ObjectSelectionEventManager.subscribe(this);
-
         render(false);
 
     }
@@ -90,7 +85,7 @@ public class NavLinkBar extends ContainerWidget implements ObjectSelectionEventH
          */
         addButton(null, (nbParents > 0) ? (event -> {
             update(null);
-            ObjectSelectionEventManager.fireEvent(NavLinkBar.this, null, true);
+            selected(null);
         }) : null);
         /*
          * parents
@@ -101,10 +96,14 @@ public class NavLinkBar extends ContainerWidget implements ObjectSelectionEventH
                 addSeparator();
                 addButton(p, (i != nbParents - 1) ? (event -> {
                     update(p);
-                    ObjectSelectionEventManager.fireEvent(NavLinkBar.this, p, true);
+                    selected(p);
                 }) : null);
             }
         }
+    }
+
+    protected void selected(DObjectRef o) {
+
     }
 
     private void render(boolean refresh) {
@@ -196,16 +195,20 @@ public class NavLinkBar extends ContainerWidget implements ObjectSelectionEventH
             }
             return sb.toString();
         }
-
     }
 
-    @Override
-    public void handleEvent(ObjectSelectionEvent event) {
-        if (!ObjectUtil.equals(event.source(), this)) {
-            if (event.isParent()) {
-                update(event.object());
+    public boolean contains(DObjectRef obj) {
+        if (_path != null && _path.referent() != null) {
+            List<DObjectRef> os = _path.referent().list(true, false);
+            if (os != null) {
+                for (DObjectRef o : os) {
+                    if (o.equals(obj)) {
+                        return true;
+                    }
+                }
             }
         }
+        return false;
     }
 
 }

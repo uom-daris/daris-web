@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.user.client.ui.Widget;
 
 import arc.gui.ValidatedInterfaceComponent;
+import arc.gui.file.FileFilter;
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
@@ -16,6 +17,7 @@ import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.list.ListGridHeader;
 import arc.gui.gwt.widget.panel.VerticalPanel;
+import arc.mf.client.file.LocalFile;
 import arc.mf.client.util.ActionListener;
 import arc.mf.client.util.AsynchronousAction;
 import arc.mf.client.util.Validity;
@@ -33,17 +35,24 @@ public class DicomIngestForm extends ValidatedInterfaceComponent implements Asyn
     private VerticalPanel _vp;
 
     private FileForm _fileForm;
+    private FileFilter _fileFilter;
     private HTML _status;
 
     public DicomIngestForm(DObjectRef po) {
         _settings = new DicomIngestSettings(po);
 
-        VerticalPanel _vp = new VerticalPanel();
+        _fileFilter = new FileFilter() {
+
+            @Override
+            public boolean accept(LocalFile f) {
+                return f != null && !f.isDirectory() && (f.name().endsWith(".dcm") || f.name().endsWith(".DCM"));
+            }
+        };
+
+        _vp = new VerticalPanel();
         _vp.fitToParent();
 
         Form settingsForm = new Form();
-        settingsForm.setShowHelp(false);
-        settingsForm.setShowDescriptions(false);
         settingsForm.setBooleanAs(BooleanAs.CHECKBOX);
         settingsForm.setHeight(160);
         settingsForm.setPadding(20);
@@ -54,8 +63,8 @@ public class DicomIngestForm extends ValidatedInterfaceComponent implements Asyn
         cid.setValue(po.citeableId(), false);
         settingsForm.add(cid);
 
-        Field<Boolean> anonymize = new Field<Boolean>(
-                new FieldDefinition("Anonymize", "anonymize", BooleanType.DEFAULT_TRUE_FALSE, null, null, 0, 1));
+        Field<Boolean> anonymize = new Field<Boolean>(new FieldDefinition("Anonymize", "anonymize",
+                BooleanType.DEFAULT_TRUE_FALSE, "Anonymize Patient's Name (0010,0010) element", null, 0, 1));
         anonymize.setValue(_settings.anonymize(), false);
         anonymize.addListener(new FormItemListener<Boolean>() {
 
@@ -71,11 +80,36 @@ public class DicomIngestForm extends ValidatedInterfaceComponent implements Asyn
         });
         settingsForm.add(anonymize);
 
+        Field<Boolean> includeOnlyDcmFiles = new Field<Boolean>(new FieldDefinition("Include only *.dcm files",
+                "inc_only_dcm", BooleanType.DEFAULT_TRUE_FALSE, "Include only *.dcm files.", null, 0, 1));
+        includeOnlyDcmFiles.setInitialValue(true, false);
+        includeOnlyDcmFiles.addListener(new FormItemListener<Boolean>() {
+
+            @Override
+            public void itemValueChanged(FormItem<Boolean> f) {
+                Boolean includeOnlyDcmFiles = f.value();
+                if (includeOnlyDcmFiles != null && includeOnlyDcmFiles) {
+                    _fileForm.setFileFilter(_fileFilter);
+                } else {
+                    _fileForm.setFileFilter(null);
+                }
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<Boolean> f, Property property) {
+
+            }
+        });
+        settingsForm.add(includeOnlyDcmFiles);
+
         settingsForm.render();
         _vp.add(settingsForm);
         addMustBeValid(settingsForm);
 
         _fileForm = new FileForm();
+        _fileForm.setFileFilter(f -> {
+            return f != null && !f.isDirectory() && (f.name().endsWith(".dcm") || f.name().endsWith(".DCM"));
+        });
         _fileForm.fitToParent();
         _vp.add(_fileForm.widget());
         addMustBeValid(_fileForm);

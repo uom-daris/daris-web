@@ -7,6 +7,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
+import arc.gui.gwt.colour.Colour;
 import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.colour.RGBA;
 import arc.gui.gwt.widget.HTML;
@@ -14,7 +15,12 @@ import arc.gui.gwt.widget.menu.MenuHideHandler;
 import arc.gui.menu.Menu;
 import daris.web.client.gui.Resource;
 
-public class DMenuButton extends HTML {
+public class MenuButton extends HTML {
+
+    public static final String FONT_FAMILY = DefaultStyles.FONT_FAMILY;
+    public static final int HEIGHT = MenuButtonBar.HEIGHT;
+    public static final int FONT_SIZE = 13;
+    public static final Colour HOVER_COLOUR = RGB.GREY_CCC;
 
     public static arc.gui.image.Image DOWN = new arc.gui.image.Image(Resource.INSTANCE.down20().getSafeUri().asString(),
             20, 20);
@@ -22,18 +28,18 @@ public class DMenuButton extends HTML {
     private Menu _menu;
     private boolean _showingMenu;
 
-    DMenuButton(String label, arc.gui.image.Image icon, Menu menu) {
+    MenuButton(String label, arc.gui.image.Image icon, Menu menu) {
         super(htmlFor(label, icon, menu));
         _menu = menu;
         _showingMenu = false;
-        setFontFamily(DStyles.FONT_FAMILY);
-        setFontSize(DStyles.MENU_BUTTON_FONT_SIZE);
+        setFontFamily(FONT_FAMILY);
+        setFontSize(FONT_SIZE);
         setFontWeight(FontWeight.BOLD);
         setBorderRadius(3);
         setPaddingLeft(5);
         setPaddingRight(5);
-        setHeight(DStyles.MENU_BUTTON_BAR_HEIGHT);
-        element().getStyle().setLineHeight(DStyles.MENU_BUTTON_BAR_HEIGHT, Unit.PX);
+        setHeight(HEIGHT);
+        element().getStyle().setLineHeight(HEIGHT, Unit.PX);
         setOverflow(Overflow.HIDDEN);
 
         // defaults to low light
@@ -54,7 +60,7 @@ public class DMenuButton extends HTML {
             @Override
             public void onClick(ClickEvent event) {
                 highLight();
-                arc.gui.gwt.widget.menu.MenuButton.showMenu(event, _menu, DMenuButton.this, new MenuHideHandler() {
+                arc.gui.gwt.widget.menu.MenuButton.showMenu(event, _menu, MenuButton.this, new MenuHideHandler() {
 
                     @Override
                     public void hidden() {
@@ -79,7 +85,7 @@ public class DMenuButton extends HTML {
     private void highLight() {
         setColour(RGB.WHITE);
         setForegroundColour(RGB.WHITE);
-        setBackgroundColour(DStyles.MENU_BUTTON_HOVER_COLOR);
+        setBackgroundColour(HOVER_COLOUR);
         setTextShadow(0, 1, 1, RGB.BLACK);
     }
 

@@ -40,7 +40,7 @@ import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.project.ProjectViewForm;
 import daris.web.client.gui.study.StudyViewForm;
 import daris.web.client.gui.subject.SubjectViewForm;
-import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.dataset.Dataset;
 import daris.web.client.model.exmethod.ExMethod;
@@ -86,7 +86,7 @@ public class DObjectViewForm<T extends DObject> extends ValidatedInterfaceCompon
         _vp.fitToParent();
 
         HTML title = new HTML(titleFor(o));
-        title.setFontFamily(DStyles.FONT_FAMILY);
+        title.setFontFamily(DefaultStyles.FONT_FAMILY);
         title.setFontSize(11);
         title.setFontWeight(FontWeight.BOLD);
         title.setWidth100();

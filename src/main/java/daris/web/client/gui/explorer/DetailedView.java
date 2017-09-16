@@ -647,4 +647,11 @@ public class DetailedView extends ContainerWidget implements ObjectDetailsDispla
     public void setDisplayContextMenu(boolean displayContextMenu) {
         _displayContextMenu = displayContextMenu;
     }
+
+    public boolean isCurrentObject(Object o) {
+        if (o != null) {
+            return o.equals(_currentObject);
+        }
+        return false;
+    }
 }

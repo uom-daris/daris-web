@@ -82,6 +82,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/image_32.png")
     ImageResource image32();
 
+    @Source("resource/import_16.gif")
+    ImageResource import16();
+
     @Source("resource/launch_16.png")
     ImageResource launch16();
 

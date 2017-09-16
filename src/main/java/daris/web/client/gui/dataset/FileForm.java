@@ -2,14 +2,17 @@ package daris.web.client.gui.dataset;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.user.client.ui.Widget;
 
 import arc.gui.ValidatedInterfaceComponent;
+import arc.gui.file.FileFilter;
 import arc.gui.gwt.dnd.DropCheck;
 import arc.gui.gwt.dnd.DropHandler;
 import arc.gui.gwt.dnd.DropListener;
@@ -43,10 +46,11 @@ public class FileForm extends ValidatedInterfaceComponent {
     private ListGrid<FileEntry> _fileList;
     private HTML _fileListStatus;
     private int _addingFiles = 0;
+    private FileFilter _fileFilter;
 
     public FileForm() {
         _files = new TreeMap<String, FileEntry>();
-        
+
         _vp = new VerticalPanel();
         _vp.setWidth100();
         _vp.setHeight(170);
@@ -61,9 +65,8 @@ public class FileForm extends ValidatedInterfaceComponent {
             public DropCheck checkCanDrop(Object data) {
                 if (data != null && (data instanceof LocalFile)) {
                     return DropCheck.CAN;
-                } else {
-                    return DropCheck.CANNOT;
                 }
+                return DropCheck.CANNOT;
             }
 
             @Override
@@ -75,9 +78,11 @@ public class FileForm extends ValidatedInterfaceComponent {
                             if (f.isDirectory()) {
                                 addDirectory(f, PathUtils.trimLeadingSlash(f.path()));
                             } else {
-                                addFile(f, f.name());
-                                updateFileList();
-                                notifyOfChangeInState();
+                                if (_fileFilter == null || _fileFilter.accept(f)) {
+                                    addFile(f, f.name());
+                                    updateFileList();
+                                    notifyOfChangeInState();
+                                }
                             }
                         }
                     }
@@ -110,6 +115,29 @@ public class FileForm extends ValidatedInterfaceComponent {
 
     }
 
+    public FileForm setFileFilter(FileFilter filter) {
+        if (filter != null && !filter.equals(_fileFilter)) {
+            _fileFilter = filter;
+            if (!_files.isEmpty()) {
+                boolean removed = false;
+                Set<Map.Entry<String, FileEntry>> entries = _files.entrySet();
+                for (Iterator<Map.Entry<String, FileEntry>> it = entries.iterator(); it.hasNext();) {
+                    Map.Entry<String, FileEntry> entry = it.next();
+                    if (!_fileFilter.accept(entry.getValue().file)) {
+                        it.remove();
+                        removed = true;
+                    }
+                }
+                if(removed){
+                    updateFileList();
+                }
+            }
+        } else {
+            _fileFilter = filter;
+        }
+        return this;
+    }
+
     private void updateFileList() {
         Collection<FileEntry> files = _files.values();
         List<ListGridEntry<FileEntry>> entries = new ArrayList<ListGridEntry<FileEntry>>();
@@ -125,7 +153,9 @@ public class FileForm extends ValidatedInterfaceComponent {
     }
 
     private void addFile(LocalFile file, String dstPath) {
-        _files.put(dstPath, new FileEntry(file, dstPath));
+        if (_fileFilter == null || _fileFilter.accept(file)) {
+            _files.put(dstPath, new FileEntry(file, dstPath));
+        }
     }
 
     private void addDirectory(LocalFile dir, String base) {

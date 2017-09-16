@@ -15,17 +15,14 @@ import arc.mf.session.Session;
 import daris.web.client.gui.AboutDialog;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.Resource;
-import daris.web.client.gui.explorer.event.ObjectSelectionEvent;
-import daris.web.client.gui.explorer.event.ObjectSelectionEventHandler;
-import daris.web.client.gui.explorer.event.ObjectSelectionEventManager;
 import daris.web.client.gui.object.menu.DObjectMenu;
-import daris.web.client.gui.widget.DMenuButtonBar;
+import daris.web.client.gui.widget.MenuButtonBar;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.util.ObjectUtils;
 import daris.web.client.util.StringUtils;
 
-public class Explorer extends ContainerWidget implements ObjectSelectionEventHandler {
+public class Explorer extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_DARIS = new arc.gui.image.Image(
             Resource.INSTANCE.daris16().getSafeUri().asString(), 14, 14);
@@ -43,7 +40,7 @@ public class Explorer extends ContainerWidget implements ObjectSelectionEventHan
             Resource.INSTANCE.exit16().getSafeUri().asString(), 16, 16);
 
     private VerticalPanel _vp;
-    private DMenuButtonBar _menuBar;
+    private MenuButtonBar _menuBar;
     private NavLinkBar _navBar;
     private ListView _list;
     private DetailedView _dv;
@@ -57,21 +54,72 @@ public class Explorer extends ContainerWidget implements ObjectSelectionEventHan
         /*
          * menu bar
          */
-        _menuBar = new DMenuButtonBar();
+        _menuBar = new MenuButtonBar();
         _vp.add(_menuBar);
         initMenus();
 
         /*
          * Nav bar
          */
-        _navBar = new NavLinkBar();
+        _navBar = new NavLinkBar() {
+            protected void selected(DObjectRef o) {
+                if (_list != null) {
+                    _list.open(o);
+                }
+                if (_actionMenu != null) {
+                    _actionMenu.setObject(null).setParent(o);
+                }
+            }
+        };
         _vp.add(_navBar);
 
         HorizontalSplitPanel hsp = new HorizontalSplitPanel(5);
         hsp.fitToParent();
         _vp.add(hsp);
 
-        _list = new ListView(null);
+        _list = new ListView(null) {
+
+            protected void opened(DObjectRef o) {
+                if (_navBar != null) {
+                    _navBar.update(o);
+                }
+                if (_actionMenu != null) {
+                    _actionMenu.setParent(o).setObject(null);
+                }
+                updateHistoryToken(o, null);
+                updateWindowTitle(null);
+            }
+
+            protected void selected(DObjectRef o) {
+                if (_navBar != null) {
+                    _navBar.update(o == null ? null : o.parent());
+                }
+                if (_actionMenu != null) {
+                    _actionMenu.setParent(o.parent()).setObject(o);
+                }
+                if (_dv != null) {
+                    _dv.setForEdit(false);
+                    _dv.loadAndDisplayObject(o);
+                }
+                updateHistoryToken(o);
+                updateWindowTitle(o);
+            }
+
+            protected void deselected(DObjectRef o) {
+                if (_dv != null) {
+                    _dv.clear(o);
+                }
+            }
+
+            protected void updated(DObjectRef o) {
+                if (_navBar != null && _navBar.contains(o)) {
+                    _navBar.refresh();
+                }
+                if (_dv != null && _dv.isCurrentObject(o)) {
+                    _dv.reloadAndDisplayObject(o);
+                }
+            }
+        };
         _list.setPreferredWidth(0.5);
         _list.setHeight100();
         hsp.add(_list);
@@ -92,21 +140,21 @@ public class Explorer extends ContainerWidget implements ObjectSelectionEventHan
                     DObjectRef po = cid == null ? null : new DObjectRef(cid, -1);
                     _navBar.update(po);
                     _actionMenu.setObject(null).setParent(po);
-                    ObjectSelectionEventManager.fireEvent(Explorer.this, po, true);
+                    _list.open(po);
                 } else if (token != null && token.startsWith("view_")) {
                     String cid = token.substring(5);
                     DObjectRef o = cid == null ? null : new DObjectRef(cid, -1);
                     DObjectRef po = o.parent();
                     _navBar.update(po);
                     _actionMenu.setObject(o).setParent(po);
-                    ObjectSelectionEventManager.fireEvent(Explorer.this, o, false);
+                    _list.seekTo(o, true);
                 } else {
                     if (!"list".equals(token)) {
                         History.replaceItem("list", false);
                     }
                     _navBar.update(null);
                     _actionMenu.setObject(null).setParent(null);
-                    ObjectSelectionEventManager.fireEvent(Explorer.this, null, true);
+                    _list.open(null);
                 }
             });
         }
@@ -121,7 +169,6 @@ public class Explorer extends ContainerWidget implements ObjectSelectionEventHan
             }
         });
 
-        ObjectSelectionEventManager.subscribe(this);
     }
 
     private void initMenus() {
@@ -216,27 +263,6 @@ public class Explorer extends ContainerWidget implements ObjectSelectionEventHan
             _instance = new Explorer();
         }
         return _instance;
-    }
-
-    @Override
-    public void handleEvent(ObjectSelectionEvent event) {
-        if (!ObjectUtil.equals(event.source(), Explorer.this)) {
-            if (event.isParent()) {
-                _actionMenu.setParent(event.object());
-                updateHistoryToken(event.object(), null);
-                updateWindowTitle(null);
-            } else {
-                if (event.object() == null) {
-                    _dv.clear();
-                } else {
-                    _dv.setForEdit(false);
-                    _dv.reloadAndDisplayObject(event.object());
-                }
-                _actionMenu.setObject(event.object());
-                updateHistoryToken(event.object());
-                updateWindowTitle(event.object());
-            }
-        }
     }
 
 }

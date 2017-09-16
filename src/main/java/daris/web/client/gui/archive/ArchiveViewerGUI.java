@@ -26,7 +26,7 @@ import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.object.CollectionResolveHandler;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.util.ButtonUtil;
-import daris.web.client.gui.widget.DStyles;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.archive.messages.ArchiveContentGet;
@@ -72,7 +72,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
                 }
             }
         };
-        _list.setMinRowHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setClearSelectionOnRefresh(false);
         _list.setMultiSelect(false);
         _list.setSelectionHandler(new SelectionHandler<ArchiveEntry>() {
@@ -99,9 +99,9 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
             @Override
             public BaseWidget format(ArchiveEntry ae, Integer idx) {
                 HTML html = new HTML(String.valueOf(idx));
-                html.setFontFamily(DStyles.FONT_FAMILY);
-                html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
-                html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+                html.setFontFamily(DefaultStyles.FONT_FAMILY);
+                html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
+                html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
                 return html;
             }
         }).setWidth(50);
@@ -110,8 +110,8 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
             @Override
             public BaseWidget format(ArchiveEntry ae, String name) {
                 HTML html = new HTML(name);
-                html.setFontFamily(DStyles.FONT_FAMILY);
-                html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
+                html.setFontFamily(DefaultStyles.FONT_FAMILY);
+                html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
                 return html;
             }
         }).setWidth(350);
@@ -120,9 +120,9 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
             @Override
             public BaseWidget format(ArchiveEntry ae, Long size) {
                 HTML html = new HTML(size >= 0 ? SizeUtil.getHumanReadableSize(size, true) : "");
-                html.setFontFamily(DStyles.FONT_FAMILY);
-                html.setFontSize(DStyles.LIST_GRID_CELL_FONT_SIZE);
-                html.element().getStyle().setLineHeight(DStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+                html.setFontFamily(DefaultStyles.FONT_FAMILY);
+                html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
+                html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
                 if (size != null && size >= 0) {
                     html.setToolTip(Long.toString(size) + " bytes");
                 }
@@ -223,7 +223,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
     }
 
     private static AbsolutePanel createInfoPanel(ArchiveEntry ae) {
-        String tdStyle = "font-family:" + DStyles.FONT_FAMILY + "; font-size:" + DStyles.LIST_GRID_CELL_FONT_SIZE
+        String tdStyle = "font-family:" + DefaultStyles.FONT_FAMILY + "; font-size:" + DefaultStyles.LIST_GRID_CELL_FONT_SIZE
                 + "px; border: 1px inset #ddd;";
         StringBuilder sb = new StringBuilder();
         sb.append("<div style=\"position:absolute; top:50%; left:50%; transform:translateX(-50%) translateY(-50%);\">");

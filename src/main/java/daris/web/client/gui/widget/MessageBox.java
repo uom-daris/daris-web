@@ -49,7 +49,7 @@ public class MessageBox {
 
         HTML messageHTML = new HTML(message);
         messageHTML.setFontSize(11);
-        messageHTML.setFontFamily(DStyles.FONT_FAMILY);
+        messageHTML.setFontFamily(DefaultStyles.FONT_FAMILY);
         messageHTML.setPaddingTop(2);
         messageHTML.setColour(RGB.WHITE);
         messageHTML.setTextAlignment(TextAlignment.CENTER);
