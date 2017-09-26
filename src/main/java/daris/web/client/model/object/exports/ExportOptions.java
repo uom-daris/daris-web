@@ -1,22 +1,19 @@
-package daris.web.client.model.collection;
+package daris.web.client.model.object.exports;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ArchiveOptions {
+public abstract class ExportOptions {
 
     private Parts _parts;
     private boolean _includeAttachments;
     private boolean _decompress;
-    private ArchiveFormat _archiveFormat;
     private Map<String, String> _transcodes;
-    private Integer _clevel;
 
-    public ArchiveOptions() {
+    protected ExportOptions() {
         _parts = Parts.CONTENT;
         _includeAttachments = true;
         _decompress = true;
-        _archiveFormat = ArchiveFormat.ZIP;
     }
 
     public void setParts(Parts parts) {
@@ -31,10 +28,6 @@ public class ArchiveOptions {
         _decompress = decompress;
     }
 
-    public void setArchiveFormat(ArchiveFormat format) {
-        _archiveFormat = format;
-    }
-
     public Parts parts() {
         return _parts;
     }
@@ -45,10 +38,6 @@ public class ArchiveOptions {
 
     public boolean decompress() {
         return _decompress;
-    }
-
-    public ArchiveFormat archiveFormat() {
-        return _archiveFormat;
     }
 
     public Map<String, String> transcodes() {
@@ -79,35 +68,4 @@ public class ArchiveOptions {
         return null;
     }
 
-    public Integer compressionLevel() {
-        return _clevel;
-    }
-
-    public void setCompressionLevel(Integer compressionLevel) {
-        if (compressionLevel == null) {
-            _clevel = null;
-        } else {
-            if (compressionLevel <= 0) {
-                _clevel = 0;
-            } else if (compressionLevel >= 9) {
-                _clevel = 9;
-            } else {
-                _clevel = compressionLevel;
-            }
-        }
-    }
-
-    public boolean compress() {
-        return _clevel != null && _clevel > 0;
-    }
-
-    public void setCompress(Boolean compress) {
-        if (compress == null) {
-            _clevel = null;
-        } else if (compress) {
-            _clevel = 6;
-        } else {
-            _clevel = 0;
-        }
-    }
 }

@@ -4,7 +4,7 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import daris.web.client.model.dataset.DerivedDatasetCreator;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.model.object.upload.FileUploadTask;
+import daris.web.client.model.object.imports.FileUploadTask;
 
 public class DerivedDatasetCreateTask extends FileUploadTask<DObjectRef> {
 

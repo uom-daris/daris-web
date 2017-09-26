@@ -1,4 +1,4 @@
-package daris.web.client.gui.object.upload;
+package daris.web.client.gui.object.imports;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,8 @@ import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.gui.gwt.widget.table.Table.Row;
 import arc.gui.gwt.widget.window.Window;
 import arc.gui.window.WindowProperties;
-import daris.web.client.model.object.upload.FileUploadTask;
-import daris.web.client.model.object.upload.FileUploadTaskMonitor;
+import daris.web.client.model.object.imports.FileUploadTask;
+import daris.web.client.model.object.imports.FileUploadTaskMonitor;
 
 public class FileUploadTaskManager implements FileUploadTaskMonitor, FileUploadTask.Listener {
 

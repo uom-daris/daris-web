@@ -13,7 +13,7 @@ import arc.gui.gwt.widget.BaseWidget;
 import arc.mf.client.util.ActionListener;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
-import daris.web.client.gui.object.upload.FileUploadTaskManager;
+import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.model.dataset.DerivedDatasetCreator;
 import daris.web.client.model.dataset.messages.DerivedDatasetCreateTask;
 

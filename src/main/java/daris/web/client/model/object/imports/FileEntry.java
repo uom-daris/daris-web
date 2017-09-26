@@ -1,4 +1,4 @@
-package daris.web.client.model.object.upload;
+package daris.web.client.model.object.imports;
 
 import arc.mf.client.file.LocalFile;
 

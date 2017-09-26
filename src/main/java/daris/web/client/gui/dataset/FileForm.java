@@ -30,7 +30,7 @@ import arc.mf.client.file.LocalFile.Filter;
 import arc.mf.client.util.IsNotValid;
 import arc.mf.client.util.Validity;
 import daris.web.client.gui.Resource;
-import daris.web.client.model.object.upload.FileEntry;
+import daris.web.client.model.object.imports.FileEntry;
 import daris.web.client.util.PathUtils;
 
 public class FileForm extends ValidatedInterfaceComponent {

@@ -1,4 +1,4 @@
-package daris.web.client.model.object.upload;
+package daris.web.client.model.object.imports;
 
 import java.util.ArrayList;
 import java.util.Collection;

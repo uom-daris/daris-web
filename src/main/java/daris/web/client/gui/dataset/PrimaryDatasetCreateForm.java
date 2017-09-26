@@ -2,7 +2,7 @@ package daris.web.client.gui.dataset;
 
 import arc.gui.gwt.widget.BaseWidget;
 import arc.mf.client.util.ActionListener;
-import daris.web.client.gui.object.upload.FileUploadTaskManager;
+import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.model.dataset.PrimaryDatasetCreator;
 import daris.web.client.model.dataset.messages.PrimaryDatasetCreateTask;
 

@@ -8,7 +8,7 @@ import arc.mf.client.file.LocalFile;
 import daris.web.client.model.archive.ArchiveType;
 import daris.web.client.model.object.DObjectCreator;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.model.object.upload.FileEntry;
+import daris.web.client.model.object.imports.FileEntry;
 
 public abstract class DatasetCreator extends DObjectCreator {
 

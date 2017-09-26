@@ -10,10 +10,10 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import arc.mf.object.Null;
 import arc.mf.object.ObjectMessage;
-import daris.web.client.model.collection.ArchiveFormat;
-import daris.web.client.model.collection.ArchiveOptions;
-import daris.web.client.model.collection.Parts;
 import daris.web.client.model.object.DObjectRef;
+import daris.web.client.model.object.exports.ArchiveFormat;
+import daris.web.client.model.object.exports.DownloadOptions;
+import daris.web.client.model.object.exports.Parts;
 import daris.web.client.model.transcode.Transcode;
 
 public class CollectionArchiveCreate extends ObjectMessage<Null> {
@@ -29,7 +29,7 @@ public class CollectionArchiveCreate extends ObjectMessage<Null> {
     private Integer _clevel;
     private Map<String, Transcode> _transcodes;
 
-    public CollectionArchiveCreate(DObjectRef o, ArchiveOptions archiveOptions) {
+    public CollectionArchiveCreate(DObjectRef o, DownloadOptions archiveOptions) {
         _o = o;
         _parts = archiveOptions.parts();
         _includeAttachments = archiveOptions.includeAttachments();

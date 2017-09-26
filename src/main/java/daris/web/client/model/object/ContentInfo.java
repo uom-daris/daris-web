@@ -95,4 +95,8 @@ public class ContentInfo {
     public XmlElement xmlElement() {
         return _de;
     }
+
+    public boolean isAAR() {
+        return "application/arc-archive".equals(type());
+    }
 }

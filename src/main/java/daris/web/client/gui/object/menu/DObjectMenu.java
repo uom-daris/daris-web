@@ -15,25 +15,24 @@ import arc.gui.window.Window;
 import arc.mf.client.util.Action;
 import arc.mf.client.util.ObjectUtil;
 import daris.web.client.gui.Resource;
-import daris.web.client.gui.collection.action.CollectionArchiveDownloadAction;
-import daris.web.client.gui.collection.action.CollectionArchiveShareAction;
 import daris.web.client.gui.dataset.action.DerivedDatasetCreateAction;
 import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
 import daris.web.client.gui.dicom.action.DicomIngestAction;
 import daris.web.client.gui.exmethod.action.ExMethodUpdateAction;
+import daris.web.client.gui.object.exports.action.DownloadAction;
+import daris.web.client.gui.object.exports.action.ShareAction;
 import daris.web.client.gui.project.action.ProjectCreateAction;
 import daris.web.client.gui.project.action.ProjectUpdateAction;
 import daris.web.client.gui.study.action.StudyCreateAction;
 import daris.web.client.gui.study.action.StudyUpdateAction;
 import daris.web.client.gui.subject.action.SubjectCreateAction;
 import daris.web.client.gui.subject.action.SubjectUpdateAction;
+import daris.web.client.model.object.CollectionSummary;
+import daris.web.client.model.object.CollectionSummaryRef;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.model.object.DObjectSummary;
-import daris.web.client.model.object.DObjectSummaryRef;
 import daris.web.client.model.project.Project;
 import daris.web.client.model.subject.Subject;
-import daris.web.client.util.DownloadUtil;
 
 public class DObjectMenu extends ObjectMenu<DObject> {
 
@@ -56,7 +55,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
 
     private DObjectRef _po;
     private DObjectRef _o;
-    private DObjectSummaryRef _os;
+    private CollectionSummaryRef _os;
 
     private Window _owner;
 
@@ -80,7 +79,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
     public DObjectMenu setObject(DObjectRef o) {
         if (!ObjectUtil.equals(_o, o)) {
             _o = o;
-            _os = _o == null ? null : new DObjectSummaryRef(_o);
+            _os = _o == null ? null : new CollectionSummaryRef(_o);
         }
         return this;
     }
@@ -122,7 +121,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
         }
     }
 
-    private void updateMenuItems(DObjectSummary os) {
+    private void updateMenuItems(CollectionSummary os) {
         /*
          * create actions
          */
@@ -188,30 +187,16 @@ public class DObjectMenu extends ObjectMenu<DObject> {
         }
 
         if (os != null) {
-            if (os.contentExists()) {
-                /*
-                 * download content
-                 */
-                add(new ActionEntry(ICON_DOWNLOAD1, "Download " + _o.typeAndId() + " content", () -> {
-                    _o.resolve(oo -> {
-                        DownloadUtil.download(oo.contentDownloadUrl());
-                    });
-                }));
-            }
-            if (os.numberOfDatasets() > 0) {
-                /*
-                 * download as archive
-                 */
-                add(new ActionEntry(ICON_DOWNLOAD2, "Download " + _o.typeAndId() + " as archive...", () -> {
-                    new CollectionArchiveDownloadAction(_o, _owner).execute();
-                }));
-                /*
-                 * share url
-                 */
-                add(new ActionEntry(ICON_SHARE1, "Share " + _o.typeAndId() + "...", () -> {
-                    new CollectionArchiveShareAction(_o, _owner).execute();
-                }));
-            }
+            /*
+             * download
+             */
+            add(new ActionEntry(ICON_DOWNLOAD1, "Download " + _o.typeAndId() + "...",
+                    new DownloadAction(_o, os, _owner)));
+
+            /*
+             * share url
+             */
+            add(new ActionEntry(ICON_SHARE1, "Share " + _o.typeAndId() + "...", new ShareAction(_o, os, _owner)));
 
             if (os.numberOfDicomDatasets() > 0) {
                 /*
@@ -220,7 +205,6 @@ public class DObjectMenu extends ObjectMenu<DObject> {
                 // TODO
             }
         }
-
     }
 
     public void add(ActionEntry ae) {

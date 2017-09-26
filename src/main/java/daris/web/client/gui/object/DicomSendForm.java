@@ -1,4 +1,4 @@
-package daris.web.client.gui.collection;
+package daris.web.client.gui.object;
 
 import java.util.List;
 

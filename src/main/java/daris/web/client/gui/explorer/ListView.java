@@ -177,7 +177,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
             @Override
             public void show(DObjectRef o, ContextMenuEvent event) {
-                ActionMenu.showAt(event.getNativeEvent().getScreenX(), _list.rowFor(o).absoluteBottom(),
+                ActionMenu.showAt(event.getNativeEvent().getClientX(), _list.rowFor(o).absoluteBottom(),
                         DObjectGUI.INSTANCE.actionMenu(window(), o, null, false));
             }
         });

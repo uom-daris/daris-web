@@ -56,6 +56,8 @@ public abstract class DObject {
 
     private ContentInfo _content;
 
+    private Collection<String> _attachmentIds;
+
     /**
      * 
      * @param oe
@@ -105,6 +107,7 @@ public abstract class DObject {
             _content = new ContentInfo(ce);
         }
 
+        _attachmentIds = oe.values("attachment");
     }
 
     public abstract DObject.Type objectType();
@@ -153,7 +156,7 @@ public abstract class DObject {
         return _nbChildren;
     }
 
-    public boolean isleaf() {
+    public boolean isLeaf() {
         return _isleaf;
     }
 
@@ -209,6 +212,10 @@ public abstract class DObject {
 
     public boolean hasArchiveContent() {
         return hasContent() && _content.isSupportedArchive();
+    }
+
+    public boolean hasAttachments() {
+        return _attachmentIds != null && !_attachmentIds.isEmpty();
     }
 
     public String parentCiteableId() {

@@ -5,8 +5,8 @@ import java.util.Collection;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import daris.web.client.model.archive.ArchiveType;
-import daris.web.client.model.object.upload.FileEntry;
-import daris.web.client.model.object.upload.FileUploadTask;
+import daris.web.client.model.object.imports.FileEntry;
+import daris.web.client.model.object.imports.FileUploadTask;
 
 public class DicomIngestTask extends FileUploadTask<Void> {
 

@@ -1,4 +1,4 @@
-package daris.web.client.model.collection;
+package daris.web.client.model.object.exports;
 
 public enum Parts {
     META, CONTENT, ALL;

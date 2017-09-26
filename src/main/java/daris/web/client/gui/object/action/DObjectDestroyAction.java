@@ -9,10 +9,10 @@ import arc.gui.window.Window;
 import arc.mf.object.ObjectRef;
 import daris.web.client.model.object.DObject;
 
-public class ObjectDestroyAction extends DestroyActionInterface<DObject> {
+public class DObjectDestroyAction extends DestroyActionInterface<DObject> {
 
 
-    public ObjectDestroyAction(ObjectRef<DObject> o, List<ActionPrecondition> preconditions, Window owner) {
+    public DObjectDestroyAction(ObjectRef<DObject> o, List<ActionPrecondition> preconditions, Window owner) {
         super(o, preconditions, owner);
         // TODO Auto-generated constructor stub
     }

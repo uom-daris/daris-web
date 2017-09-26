@@ -24,7 +24,7 @@ import arc.mf.client.util.Validity;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
 import daris.web.client.gui.dataset.FileForm;
-import daris.web.client.gui.object.upload.FileUploadTaskManager;
+import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.model.dicom.messages.DicomIngestSettings;
 import daris.web.client.model.dicom.messages.DicomIngestTask;
 import daris.web.client.model.object.DObjectRef;
