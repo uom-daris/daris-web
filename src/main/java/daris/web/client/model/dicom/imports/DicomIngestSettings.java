@@ -1,4 +1,4 @@
-package daris.web.client.model.dicom.messages;
+package daris.web.client.model.dicom.imports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

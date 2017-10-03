@@ -1,4 +1,4 @@
-package daris.web.client.model.dicom.messages;
+package daris.web.client.model.dicom.exports;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +11,14 @@ import daris.web.client.model.object.DObjectRef;
 public class DicomSend extends BackgroundObjectMessage {
 
     public static enum ElementName {
-        PATIENT_NAME("patient.name", "00100010"), PATIENT_ID("patient.id", "00100020"), STUDY_ID("study.id",
-                "00200010"), PERFORMING_PHYSICIAN_NAME("performing.physician.name",
-                        "00081050"), REFERRING_PHYSICIAN_NAME("referring.physician.name",
-                                "00080090"), REFERRING_PHYSICIAN_PHONE("referring.physician.phone", "00080094");
+        // @formatter:off
+        PATIENT_NAME("patient.name", "00100010"),
+        PATIENT_ID("patient.id", "00100020"),
+        STUDY_ID("study.id", "00200010"),
+        PERFORMING_PHYSICIAN_NAME("performing.physician.name", "00081050"),
+        REFERRING_PHYSICIAN_NAME("referring.physician.name", "00080090"), 
+        REFERRING_PHYSICIAN_PHONE("referring.physician.phone", "00080094");
+        // @formatter:on
         private String _stringValue;
         private String _tag;
 
@@ -59,7 +63,12 @@ public class DicomSend extends BackgroundObjectMessage {
     }
 
     public static enum ValueReference {
-        SUBJECT_CID("subject.cid"), STUDY_CID("study.cid"), PATIENT_NAME("patient.name"), PATIENT_ID("patient.id");
+        // @formatter:off
+        SUBJECT_CID("subject.cid"),
+        STUDY_CID("study.cid"),
+        PATIENT_NAME("patient.name"),
+        PATIENT_ID("patient.id");
+        // @formatter:on
 
         private String _stringValue;
 
@@ -190,7 +199,7 @@ public class DicomSend extends BackgroundObjectMessage {
         this(null, where);
     }
 
-    protected DicomSend(String cid, String where) {
+    public DicomSend(String cid, String where) {
         _cid = cid;
         _where = where;
         _callingAET = null;

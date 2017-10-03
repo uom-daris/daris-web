@@ -1,9 +1,8 @@
-package daris.web.client.gui.object.exports.action;
+package daris.web.client.gui.object.exports;
 
 import arc.gui.dialog.DialogProperties;
 import arc.gui.gwt.widget.dialog.Dialog;
 import arc.mf.client.util.Action;
-import daris.web.client.gui.object.exports.ShareOptionsForm;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectRef;

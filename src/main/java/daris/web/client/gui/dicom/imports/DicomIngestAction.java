@@ -1,4 +1,4 @@
-package daris.web.client.gui.dicom.action;
+package daris.web.client.gui.dicom.imports;
 
 import arc.gui.InterfaceCreateHandler;
 import arc.gui.object.action.CreateActionInterface;

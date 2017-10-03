@@ -17,10 +17,11 @@ import arc.mf.client.util.ObjectUtil;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.dataset.action.DerivedDatasetCreateAction;
 import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
-import daris.web.client.gui.dicom.action.DicomIngestAction;
+import daris.web.client.gui.dicom.exports.DicomSendAction;
+import daris.web.client.gui.dicom.imports.DicomIngestAction;
 import daris.web.client.gui.exmethod.action.ExMethodUpdateAction;
-import daris.web.client.gui.object.exports.action.DownloadAction;
-import daris.web.client.gui.object.exports.action.ShareAction;
+import daris.web.client.gui.object.exports.DownloadAction;
+import daris.web.client.gui.object.exports.ShareAction;
 import daris.web.client.gui.project.action.ProjectCreateAction;
 import daris.web.client.gui.project.action.ProjectUpdateAction;
 import daris.web.client.gui.study.action.StudyCreateAction;
@@ -52,6 +53,9 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             Resource.INSTANCE.linkGreen16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_SHARE2 = new arc.gui.image.Image(
             Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_DICOM_SEND = new arc.gui.image.Image(
+            Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
+    
 
     private DObjectRef _po;
     private DObjectRef _o;
@@ -190,7 +194,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             /*
              * download
              */
-            add(new ActionEntry(ICON_DOWNLOAD1, "Download " + _o.typeAndId() + "...",
+            add(new ActionEntry(ICON_DOWNLOAD2, "Download " + _o.typeAndId() + "...",
                     new DownloadAction(_o, os, _owner)));
 
             /*
@@ -202,7 +206,8 @@ public class DObjectMenu extends ObjectMenu<DObject> {
                 /*
                  * dicom send
                  */
-                // TODO
+                add(new ActionEntry(ICON_DICOM_SEND, "Send DICOM data in " + _o.typeAndId() + "...",
+                        new DicomSendAction(_o, os, _owner)));
             }
         }
     }

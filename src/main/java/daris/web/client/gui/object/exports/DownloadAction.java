@@ -1,11 +1,10 @@
-package daris.web.client.gui.object.exports.action;
+package daris.web.client.gui.object.exports;
 
 import java.util.ArrayList;
 
 import arc.gui.InterfaceCreateHandler;
 import arc.gui.object.action.ActionInterface;
 import arc.gui.object.action.precondition.ActionPrecondition;
-import daris.web.client.gui.object.exports.DownloadOptionsForm;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectRef;

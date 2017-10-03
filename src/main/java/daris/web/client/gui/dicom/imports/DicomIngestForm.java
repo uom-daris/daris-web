@@ -1,4 +1,4 @@
-package daris.web.client.gui.dicom.action;
+package daris.web.client.gui.dicom.imports;
 
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,8 +25,8 @@ import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
 import daris.web.client.gui.dataset.FileForm;
 import daris.web.client.gui.object.imports.FileUploadTaskManager;
-import daris.web.client.model.dicom.messages.DicomIngestSettings;
-import daris.web.client.model.dicom.messages.DicomIngestTask;
+import daris.web.client.model.dicom.imports.DicomIngestSettings;
+import daris.web.client.model.dicom.imports.DicomIngestTask;
 import daris.web.client.model.object.DObjectRef;
 
 public class DicomIngestForm extends ValidatedInterfaceComponent implements AsynchronousAction {

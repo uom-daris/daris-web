@@ -2,6 +2,10 @@ package daris.web.client.util;
 
 public class SizeUtil {
 
+    public static String getHumanReadableSize(long nBytes) {
+        return getHumanReadableSize(nBytes, true);
+    }
+
     public static String getHumanReadableSize(long nBytes, boolean si) {
         int unit = si ? 1000 : 1024;
         if (nBytes < unit) {

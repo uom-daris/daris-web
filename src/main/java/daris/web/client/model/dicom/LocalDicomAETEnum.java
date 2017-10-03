@@ -1,5 +1,5 @@
 package daris.web.client.model.dicom;
 
-public class LocalAETitleList {
+public class LocalDicomAETEnum {
 
 }

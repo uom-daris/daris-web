@@ -240,4 +240,8 @@ public abstract class DObject {
         }
     }
 
+    public String typeAndId() {
+        return objectType().toString() + " " + citeableId();
+    }
+
 }

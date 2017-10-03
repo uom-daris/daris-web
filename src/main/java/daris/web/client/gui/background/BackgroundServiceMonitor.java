@@ -21,6 +21,7 @@ import arc.mf.model.service.BackgroundService;
 import arc.mf.model.service.messages.DestroyRequestResponse;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.widget.MessageBox;
+import daris.web.client.gui.widget.ProgressBar;
 import daris.web.client.util.DateTimeUtil;
 
 public class BackgroundServiceMonitor implements arc.mf.model.service.BackgroundServiceMonitorHandler {
@@ -128,27 +129,27 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
         vp.add(detail);
 
         // @formatter:off
-//        if (bso.numberSubOperationsCompleted() > 0 && bso.totalOperations() > 0) {
-//            ProgressBar pb = new ProgressBar();
-//            pb.setWidth100();
-//            pb.setHeight(18);
-//            vp.add(pb);
-//            pb.setMarginLeft(20);
-//            pb.setMarginRight(20);
-//            pb.setMarginBottom(20);
-//            long completed = bso.numberSubOperationsCompleted();
-//            long total = bso.totalOperations();
-//            if (completed > total) {
-//                completed = total;
-//            }
-//            pb.setProgress(completed, total, "" + completed + " / " + total);
-//        }
+        if (bso.numberSubOperationsCompleted() > 0 && bso.totalOperations() > 0) {
+            ProgressBar pb = new ProgressBar();
+            pb.setWidth100();
+            pb.setHeight(18);
+            vp.add(pb);
+            pb.setMarginLeft(20);
+            pb.setMarginRight(20);
+            pb.setMarginBottom(20);
+            long completed = bso.numberSubOperationsCompleted();
+            long total = bso.totalOperations();
+            if (completed > total) {
+                completed = total;
+            }
+            pb.setProgress(completed, total, "" + completed + " / " + total);
+        }
         // @formatter:on
-        AbsolutePanel progressAP = new AbsolutePanel();
-        progressAP.setHeight(40);
-        progressAP.setWidth100();
-        vp.add(progressAP);
-        progressAP.add(progressImageFor(bso));
+//        AbsolutePanel progressAP = new AbsolutePanel();
+//        progressAP.setHeight(40);
+//        progressAP.setWidth100();
+//        vp.add(progressAP);
+//        progressAP.add(progressImageFor(bso));
 
         ButtonBar bb = buttonBarFor(bso);
         vp.add(bb);
