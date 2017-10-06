@@ -127,6 +127,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/search_16.png")
     ImageResource search16();
 
+    @Source("resource/send_16.png")
+    ImageResource send16();
+
     @Source("resource/settings_16.png")
     ImageResource settings16();
 

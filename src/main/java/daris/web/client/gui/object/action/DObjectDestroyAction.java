@@ -78,4 +78,8 @@ public class DObjectDestroyAction extends DestroyActionInterface<DObject> {
         return false;
     }
 
+    public String title() {
+        return "Destroy " + ((DObjectRef)object()).typeAndId();
+    }
+
 }

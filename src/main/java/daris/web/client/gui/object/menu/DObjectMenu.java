@@ -46,16 +46,16 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             Resource.INSTANCE.editGreen16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_IMPORT1 = new arc.gui.image.Image(
             Resource.INSTANCE.import16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_DOWNLOAD1 = new arc.gui.image.Image(
-            Resource.INSTANCE.downloadBlue16().getSafeUri().asString(), 16, 16);
-    public static arc.gui.image.Image ICON_DOWNLOAD2 = new arc.gui.image.Image(
+    public static arc.gui.image.Image ICON_DOWNLOAD = new arc.gui.image.Image(
             Resource.INSTANCE.downloadGold16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_SHARE1 = new arc.gui.image.Image(
             Resource.INSTANCE.linkGreen16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_SHARE2 = new arc.gui.image.Image(
             Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DICOM_SEND = new arc.gui.image.Image(
-            Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
+            Resource.INSTANCE.send16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_DESTROY = new arc.gui.image.Image(
+            Resource.INSTANCE.delete16().getSafeUri().asString(), 16, 16);
 
     private DObjectRef _po;
     private DObjectRef _o;
@@ -194,7 +194,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             /*
              * download
              */
-            add(new ActionEntry(ICON_DOWNLOAD2, "Download " + _o.typeAndId() + "...",
+            add(new ActionEntry(ICON_DOWNLOAD, "Download " + _o.typeAndId() + "...",
                     new DownloadAction(_o, os, _owner)));
 
             /*
@@ -210,7 +210,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
                         new DicomSendAction(_o, os, _owner)));
             }
 
-            add(new ActionEntry(ICON_DOWNLOAD2, "Destroy " + _o.typeAndId() + "...",
+            add(new ActionEntry(ICON_DESTROY, "Destroy " + _o.typeAndId() + "...",
                     new DObjectDestroyAction(_o, os, _owner)));
         }
     }
