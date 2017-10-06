@@ -9,7 +9,6 @@ import arc.gui.object.register.ObjectGUI;
 import arc.gui.object.register.ObjectUpdateHandle;
 import arc.gui.object.register.ObjectUpdateListener;
 import arc.gui.window.Window;
-import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.model.object.DObjectRef;
 

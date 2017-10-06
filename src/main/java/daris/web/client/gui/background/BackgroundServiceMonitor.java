@@ -9,7 +9,6 @@ import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.button.ButtonBar;
 import arc.gui.gwt.widget.button.ButtonBar.Alignment;
 import arc.gui.gwt.widget.button.ButtonBar.Position;
-import arc.gui.gwt.widget.panel.AbsolutePanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.window.Window;
@@ -145,11 +144,12 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
             pb.setProgress(completed, total, "" + completed + " / " + total);
         }
         // @formatter:on
-//        AbsolutePanel progressAP = new AbsolutePanel();
-//        progressAP.setHeight(40);
-//        progressAP.setWidth100();
-//        vp.add(progressAP);
-//        progressAP.add(progressImageFor(bso));
+        // TODO Remove below...
+        // AbsolutePanel progressAP = new AbsolutePanel();
+        // progressAP.setHeight(40);
+        // progressAP.setWidth100();
+        // vp.add(progressAP);
+        // progressAP.add(progressImageFor(bso));
 
         ButtonBar bb = buttonBarFor(bso);
         vp.add(bb);
@@ -229,7 +229,8 @@ public class BackgroundServiceMonitor implements arc.mf.model.service.Background
         return sb.toString();
     }
 
-    private static arc.gui.gwt.widget.image.Image progressImageFor(BackgroundService bs) {
+    // TODO remove
+    static arc.gui.gwt.widget.image.Image progressImageFor(BackgroundService bs) {
         arc.gui.image.Image i = null;
         switch (bs.state()) {
         case PENDING:

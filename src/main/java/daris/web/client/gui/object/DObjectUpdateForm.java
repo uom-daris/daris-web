@@ -40,7 +40,7 @@ import daris.web.client.model.study.StudyUpdater;
 import daris.web.client.model.subject.Subject;
 import daris.web.client.model.subject.SubjectUpdater;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked" })
 public abstract class DObjectUpdateForm<T extends DObject, U extends DObjectUpdater<T>>
         extends ValidatedInterfaceComponent implements AsynchronousAction {
 
@@ -155,6 +155,7 @@ public abstract class DObjectUpdateForm<T extends DObject, U extends DObjectUpda
 
     }
 
+    @SuppressWarnings("rawtypes")
     public static DObjectUpdateForm create(DObject object) {
         switch (object.objectType()) {
         case PROJECT:

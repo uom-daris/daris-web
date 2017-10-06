@@ -636,7 +636,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                 if (CiteableIdUtils.isProject(ecid)) {
                     collectionRemoved(ecid);
                     if (isInCurrentPage(ecid)) {
-                        if (selected != null) {
+                        if (selected != null && !selected.citeableId().equals(ecid)) {
                             seekTo(selected, true);
                         } else {
                             gotoOffset(0);
@@ -666,7 +666,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                         if (de.matchesObject(selected)) {
                             collectionRemoved(ecid);
                         }
-                        if (selected != null) {
+                        if (selected != null && !selected.citeableId().equals(ecid)) {
                             seekTo(selected, true);
                         } else {
                             gotoOffset(0);

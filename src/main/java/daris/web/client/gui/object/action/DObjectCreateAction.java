@@ -13,7 +13,7 @@ public abstract class DObjectCreateAction extends CreateActionInterface<DObject>
 
     private DObjectRef _parentObj;
 
-    public DObjectCreateAction(DObjectRef parentObj, Window owner, double w, double h) {
+    protected DObjectCreateAction(DObjectRef parentObj, Window owner, double w, double h) {
         super(parentObj == null ? DObject.Type.PROJECT.toString() : parentObj.childTypeName(),
                 new ArrayList<ActionPrecondition>(), owner, WindowUtil.calcWindowWidth(owner, w),
                 WindowUtil.calcWindowHeight(owner, h));

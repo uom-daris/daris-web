@@ -33,8 +33,7 @@ public abstract class DObjectUpdateAction<T extends DObject> extends UpdateActio
 
             @Override
             public String description() {
-                return "Checking if you have sufficient privilege to modify " + obj().referentTypeName() + " "
-                        + obj().citeableId();
+                return "Checking if you have sufficient privilege to modify " + o.typeAndId();
             }
 
             @Override
@@ -49,8 +48,8 @@ public abstract class DObjectUpdateAction<T extends DObject> extends UpdateActio
                         if (can) {
                             l.executed(ActionPreconditionOutcome.PASS, null);
                         } else {
-                            l.executed(ActionPreconditionOutcome.FAIL, "Insufficient privilege to modify "
-                                    + obj().referentTypeName() + " " + obj().citeableId());
+                            l.executed(ActionPreconditionOutcome.FAIL,
+                                    "Insufficient privilege to modify " + o.typeAndId());
                         }
                     }
                 });

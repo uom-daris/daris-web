@@ -20,6 +20,7 @@ import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
 import daris.web.client.gui.dicom.exports.DicomSendAction;
 import daris.web.client.gui.dicom.imports.DicomIngestAction;
 import daris.web.client.gui.exmethod.action.ExMethodUpdateAction;
+import daris.web.client.gui.object.action.DObjectDestroyAction;
 import daris.web.client.gui.object.exports.DownloadAction;
 import daris.web.client.gui.object.exports.ShareAction;
 import daris.web.client.gui.project.action.ProjectCreateAction;
@@ -55,7 +56,6 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DICOM_SEND = new arc.gui.image.Image(
             Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
-    
 
     private DObjectRef _po;
     private DObjectRef _o;
@@ -209,6 +209,9 @@ public class DObjectMenu extends ObjectMenu<DObject> {
                 add(new ActionEntry(ICON_DICOM_SEND, "Send DICOM data in " + _o.typeAndId() + "...",
                         new DicomSendAction(_o, os, _owner)));
             }
+
+            add(new ActionEntry(ICON_DOWNLOAD2, "Destroy " + _o.typeAndId() + "...",
+                    new DObjectDestroyAction(_o, os, _owner)));
         }
     }
 
