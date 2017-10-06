@@ -32,7 +32,7 @@ public class DaRIS implements EntryPoint, SessionHandler {
             LoginDialog dlg = new DefaultLoginDialog();
             dlg.setTitle("DaRIS");
             dlg.setVersion(Version.VERSION);
-            Session.setAutoLogonCredentials("system", "manager", "change_me");
+//            Session.setAutoLogonCredentials("system", "manager", "change_me");
             Session.setLoginDialog(dlg);
             Session.initialize(this);
         } else {
