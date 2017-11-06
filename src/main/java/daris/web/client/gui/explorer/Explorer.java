@@ -10,11 +10,13 @@ import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.mf.client.plugin.Plugin;
+import arc.mf.client.util.Action;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.session.Session;
 import daris.web.client.gui.AboutDialog;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.Resource;
+import daris.web.client.gui.background.BackgroundServiceManager;
 import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.gui.widget.MenuButtonBar;
 import daris.web.client.model.CiteableIdUtils;
@@ -38,6 +40,12 @@ public class Explorer extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_EXIT = new arc.gui.image.Image(
             Resource.INSTANCE.exit16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_VIEW = new arc.gui.image.Image(
+            Resource.INSTANCE.faDesktopMonitor16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_BACKGROUND = new arc.gui.image.Image(
+            Resource.INSTANCE.tasks16().getSafeUri().asString(), 16, 16);
 
     private VerticalPanel _vp;
     private MenuButtonBar _menuBar;
@@ -193,6 +201,19 @@ public class Explorer extends ContainerWidget {
          */
         _actionMenu = new DObjectMenu(null, null, window());
         _menuBar.addMenuButton("Action", ICON_ACTION, _actionMenu);
+
+        /*
+         * view menu
+         */
+        Menu viewMenu = new Menu();
+        viewMenu.add(new ActionEntry(ICON_BACKGROUND, "View background tasks...", new Action() {
+
+            @Override
+            public void execute() {
+                new BackgroundServiceManager().show(window());
+            }
+        }));
+        _menuBar.addMenuButton("View", ICON_VIEW, viewMenu);
 
     }
 

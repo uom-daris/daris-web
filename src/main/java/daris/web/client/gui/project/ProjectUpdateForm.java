@@ -20,6 +20,7 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.dtype.EnumerationType;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.object.DObjectUpdateForm;
+import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.method.MethodEnum;
 import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
@@ -27,7 +28,7 @@ import daris.web.client.model.project.Project;
 import daris.web.client.model.project.ProjectUpdater;
 import daris.web.client.model.project.messages.ProjectUpdate;
 
-public class ProjectUpdateForm extends DObjectUpdateForm<Project, ProjectUpdater> {
+public class ProjectUpdateForm extends DObjectUpdateForm<Project> {
 
     private Integer _metadataTabId = null;
     private Form _metadataForm;
@@ -42,6 +43,10 @@ public class ProjectUpdateForm extends DObjectUpdateForm<Project, ProjectUpdater
             }
         });
         updateMetadataTab();
+    }
+
+    private ProjectUpdater updater() {
+        return (ProjectUpdater) updater;
     }
 
     private void updateMetadataTab() {
@@ -74,7 +79,7 @@ public class ProjectUpdateForm extends DObjectUpdateForm<Project, ProjectUpdater
         super.addToInterfaceForm(interfaceForm);
 
         FieldGroup methodFieldGroup = new FieldGroup();
-        List<MethodRef> methods = updater.methods();
+        List<MethodRef> methods = updater().methods();
         if (methods != null && !methods.isEmpty()) {
             for (MethodRef method : methods) {
                 Field<MethodRef> methodField = new Field<MethodRef>(new FieldDefinition("Method", "Method",
@@ -92,12 +97,12 @@ public class ProjectUpdateForm extends DObjectUpdateForm<Project, ProjectUpdater
         methodFieldGroup.addListener(new FieldSetListener() {
 
             private void updateMethods(FieldSet s) {
-                updater.clearMethods();
+                updater().clearMethods();
                 List<FormItem> items = s.fields("Method");
                 for (FormItem item : items) {
                     MethodRef m = (MethodRef) item.value();
                     if (m != null) {
-                        updater.addMethod(m);
+                        updater().addMethod(m);
                     }
                 }
             }
@@ -132,12 +137,12 @@ public class ProjectUpdateForm extends DObjectUpdateForm<Project, ProjectUpdater
         Field<DataUse> dataUseField = new Field<DataUse>(
                 new FieldDefinition("Data Use", "Data_Use", new EnumerationType<DataUse>(DataUse.values()),
                         "Specifies the type of consent for the use of data for this project.", null, 1, 1));
-        dataUseField.setInitialValue(updater.dataUse(), false);
+        dataUseField.setInitialValue(updater().dataUse(), false);
         dataUseField.addListener(new FormItemListener<DataUse>() {
 
             @Override
             public void itemValueChanged(FormItem<DataUse> f) {
-                updater.setDataUse(f.value());
+                updater().setDataUse(f.value());
             }
 
             @Override
@@ -150,8 +155,9 @@ public class ProjectUpdateForm extends DObjectUpdateForm<Project, ProjectUpdater
 
     @Override
     public void execute(ActionListener l) {
-        new ProjectUpdate(updater).send(r -> {
-            // TODO fade out messsage?
+        new ProjectUpdate(updater()).send(r -> {
+            MessageBox.show(280, 100, window(), MessageBox.Position.CENTER,
+                    "Project " + object.citeableId() + " has been updated.", 3);
         });
         l.executed(true);
     }

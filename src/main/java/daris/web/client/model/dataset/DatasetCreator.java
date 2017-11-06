@@ -71,6 +71,9 @@ public abstract class DatasetCreator extends DObjectCreator {
         } else {
             _files.clear();
         }
+        if (_atype == null && _files.size() > 1) {
+            setArchiveType(ArchiveType.AAR);
+        }
     }
 
     public Collection<FileEntry> files() {

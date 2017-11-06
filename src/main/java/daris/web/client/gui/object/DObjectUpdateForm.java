@@ -28,24 +28,18 @@ import daris.web.client.gui.project.ProjectUpdateForm;
 import daris.web.client.gui.study.StudyUpdateForm;
 import daris.web.client.gui.subject.SubjectUpdateForm;
 import daris.web.client.model.dataset.Dataset;
-import daris.web.client.model.dataset.DatasetUpdater;
 import daris.web.client.model.exmethod.ExMethod;
-import daris.web.client.model.exmethod.ExMethodUpdater;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectUpdater;
 import daris.web.client.model.project.Project;
-import daris.web.client.model.project.ProjectUpdater;
 import daris.web.client.model.study.Study;
-import daris.web.client.model.study.StudyUpdater;
 import daris.web.client.model.subject.Subject;
-import daris.web.client.model.subject.SubjectUpdater;
 
-@SuppressWarnings({ "unchecked" })
-public abstract class DObjectUpdateForm<T extends DObject, U extends DObjectUpdater<T>>
-        extends ValidatedInterfaceComponent implements AsynchronousAction {
+public abstract class DObjectUpdateForm<T extends DObject> extends ValidatedInterfaceComponent
+        implements AsynchronousAction {
 
     protected T object;
-    protected U updater;
+    protected DObjectUpdater<T> updater;
 
     private VerticalPanel _container;
     protected TabPanel tabs;
@@ -53,7 +47,7 @@ public abstract class DObjectUpdateForm<T extends DObject, U extends DObjectUpda
 
     protected DObjectUpdateForm(T o) {
         this.object = o;
-        this.updater = createUpdater(o);
+        this.updater = DObjectUpdater.create(o);
 
         _container = new VerticalPanel();
         _container.fitToParent();
@@ -137,22 +131,8 @@ public abstract class DObjectUpdateForm<T extends DObject, U extends DObjectUpda
         return _container;
     }
 
-    private static <T extends DObject, U extends DObjectUpdater<T>> U createUpdater(T obj) {
-        switch (obj.objectType()) {
-        case PROJECT:
-            return (U) new ProjectUpdater((Project) obj);
-        case SUBJECT:
-            return (U) new SubjectUpdater((Subject) obj);
-        case EX_METHOD:
-            return (U) new ExMethodUpdater((ExMethod) obj);
-        case STUDY:
-            return (U) new StudyUpdater((Study) obj);
-        case DATASET:
-            return (U) DatasetUpdater.create((Dataset) obj);
-        default:
-            throw new AssertionError("Unknown object type: " + obj.objectType());
-        }
-
+    public arc.gui.gwt.widget.window.Window window() {
+        return _container.window();
     }
 
     @SuppressWarnings("rawtypes")

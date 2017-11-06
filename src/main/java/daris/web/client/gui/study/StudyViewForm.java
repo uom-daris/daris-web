@@ -1,5 +1,8 @@
 package daris.web.client.gui.study;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
+
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.FieldGroup;
@@ -35,6 +38,29 @@ public class StudyViewForm extends DObjectViewForm<Study> {
         interfaceForm.add(studyType);
 
         /*
+         * other-id
+         */
+        if (study.otherIds() != null) {
+            List<SimpleEntry<String, String>> otherIds = study.otherIds();
+            for (SimpleEntry<String, String> otherId : otherIds) {
+                FieldGroup fg = new FieldGroup(new FieldDefinition("Other ID", "other-id", StringType.DEFAULT,
+                        "An arbitrary identifier for the Study supplied by some other authority.", null, 0,
+                        Integer.MAX_VALUE));
+                Field<String> type = new Field<String>(new FieldDefinition("Type", "type", ConstantType.DEFAULT,
+                        "The type (authority) of this identifier.", null, 1, 1));
+                type.setInitialValue(otherId.getKey());
+                fg.add(type);
+
+                Field<String> value = new Field<String>(new FieldDefinition("Value", "value", ConstantType.DEFAULT,
+                        "The value of identifier.", null, 1, 1));
+                value.setInitialValue(otherId.getValue());
+                fg.add(value);
+                
+                interfaceForm.add(fg);
+            }
+        }
+
+        /*
          * processed?
          */
         if (study.processed() != null) {
@@ -43,6 +69,7 @@ public class StudyViewForm extends DObjectViewForm<Study> {
                             "Processed: is the Study intended to hold processed DataSets (true), non-processed DataSets (false) or unknown/mix (don't set).",
                             null, 0, 1));
             processed.setInitialValue(study.processed());
+            interfaceForm.add(processed);
         }
 
         /*

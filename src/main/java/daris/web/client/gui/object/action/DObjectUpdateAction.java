@@ -92,4 +92,7 @@ public abstract class DObjectUpdateAction<T extends DObject> extends UpdateActio
         preconditions().add(precondition);
     }
 
+    public String title(){
+        return actionName() + " " + obj().typeAndId();
+    }
 }

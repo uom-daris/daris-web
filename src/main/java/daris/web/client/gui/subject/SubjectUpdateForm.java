@@ -14,12 +14,13 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.dtype.EnumerationType;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.object.DObjectUpdateForm;
+import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.subject.Subject;
 import daris.web.client.model.subject.SubjectUpdater;
 import daris.web.client.model.subject.messages.SubjectUpdate;
 
-public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater> {
+public class SubjectUpdateForm extends DObjectUpdateForm<Subject> {
     private Integer _publicMetadataTabId = null;
     private Form _publicMetadataForm;
 
@@ -29,14 +30,14 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
     public SubjectUpdateForm(Subject subject) {
         super(subject);
         updater.setMetadataSetter(null);
-        updater.setPublicMetadataSetter(w -> {
+        updater().setPublicMetadataSetter(w -> {
             if (_publicMetadataForm != null) {
                 w.push("public");
                 _publicMetadataForm.save(w);
                 w.pop();
             }
         });
-        updater.setPrivateMetadataSetter(w -> {
+        updater().setPrivateMetadataSetter(w -> {
             if (_privateMetadataForm != null) {
                 w.push("private");
                 _privateMetadataForm.save(w);
@@ -44,6 +45,10 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
             }
         });
         updateMetadataTabs();
+    }
+
+    private SubjectUpdater updater() {
+        return (SubjectUpdater) updater;
     }
 
     private void updatePrivateMetadataTab() {
@@ -56,7 +61,7 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
             tabs.removeTabById(_privateMetadataTabId);
             _privateMetadataTabId = null;
         }
-        XmlElement me = updater.privateMetadataForEdit();
+        XmlElement me = updater().privateMetadataForEdit();
         if (me == null) {
             return;
         }
@@ -79,7 +84,7 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
             tabs.removeTabById(_publicMetadataTabId);
             _publicMetadataTabId = null;
         }
-        XmlElement me = updater.publicMetadataForEdit();
+        XmlElement me = updater().publicMetadataForEdit();
         if (me == null) {
             return;
         }
@@ -104,7 +109,7 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
 
             @Override
             public void itemValueChanged(FormItem<DataUse> f) {
-                updater.setDataUse(f.value());
+                updater().setDataUse(f.value());
             }
 
             @Override
@@ -112,7 +117,7 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
 
             }
         });
-        dataUseField.setInitialValue(updater.dataUse(), false);
+        dataUseField.setInitialValue(updater().dataUse(), false);
         interfaceForm.add(dataUseField);
 
     }
@@ -124,8 +129,9 @@ public class SubjectUpdateForm extends DObjectUpdateForm<Subject, SubjectUpdater
 
     @Override
     public void execute(ActionListener l) {
-        new SubjectUpdate(updater).send(r -> {
-            // TODO fade out message
+        new SubjectUpdate(updater()).send(r -> {
+            MessageBox.show(280, 100, window(), MessageBox.Position.CENTER,
+                    "Subject " + object.citeableId() + " has been updated.", 3);
         });
         l.executed(true);
     }

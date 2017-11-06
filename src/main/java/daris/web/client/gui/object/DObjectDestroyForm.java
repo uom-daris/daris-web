@@ -1,7 +1,5 @@
 package daris.web.client.gui.object;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -18,21 +16,17 @@ import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.panel.AbsolutePanel;
 import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
-import arc.mf.client.Output;
 import arc.mf.client.util.ActionListener;
 import arc.mf.client.util.AsynchronousAction;
 import arc.mf.client.util.IsNotValid;
 import arc.mf.client.util.IsValid;
 import arc.mf.client.util.Validity;
-import arc.mf.client.xml.XmlElement;
-import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.dtype.CiteableIdType;
-import arc.mf.session.ServiceResponseHandler;
-import arc.mf.session.Session;
 import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.gui.widget.SummaryTable;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
+import daris.web.client.model.object.messages.DObjectDestroy;
 import daris.web.client.util.SizeUtil;
 
 public class DObjectDestroyForm extends ValidatedInterfaceComponent implements AsynchronousAction {
@@ -123,17 +117,8 @@ public class DObjectDestroyForm extends ValidatedInterfaceComponent implements A
 
     @Override
     public void execute(ActionListener l) {
-        XmlStringWriter w = new XmlStringWriter();
-        w.add("cid", _o.citeableId());
-        if (_o.objectType() == DObject.Type.PROJECT) {
-            w.add("destroy", true);
-        }
-        Session.execute("om.pssd.object.destroy", w.document(), new ServiceResponseHandler() {
-
-            @Override
-            public void processResponse(XmlElement xe, List<Output> outputs) throws Throwable {
-                MessageBox.show(200, 80, MessageBox.Position.CENTER, "Deleted " + _o.typeAndId(), 3);
-            }
+        new DObjectDestroy(_o).send(r -> {
+            MessageBox.show(200, 80, MessageBox.Position.CENTER, "Deleted " + _o.typeAndId(), 3);
         });
         l.executed(true);
     }

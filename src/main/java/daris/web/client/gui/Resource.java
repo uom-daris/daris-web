@@ -64,6 +64,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/exit_16.png")
     ImageResource exit16();
 
+    @Source("resource/fa-desktop-monitor_16.png")
+    ImageResource faDesktopMonitor16();
+
     @Source("resource/folder_16.png")
     ImageResource folder16();
 
@@ -138,6 +141,9 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/suspended_16.gif")
     ImageResource suspended16();
+
+    @Source("resource/tasks_16.png")
+    ImageResource tasks16();
 
     @Source("resource/waiting_16.gif")
     ImageResource waiting16();

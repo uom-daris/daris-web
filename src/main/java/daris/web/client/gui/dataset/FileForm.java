@@ -47,8 +47,10 @@ public class FileForm extends ValidatedInterfaceComponent {
     private HTML _fileListStatus;
     private int _addingFiles = 0;
     private FileFilter _fileFilter;
+    private boolean _mandatory;
 
-    public FileForm() {
+    public FileForm(boolean mandatory) {
+        _mandatory = mandatory;
         _files = new TreeMap<String, FileEntry>();
 
         _vp = new VerticalPanel();
@@ -128,7 +130,7 @@ public class FileForm extends ValidatedInterfaceComponent {
                         removed = true;
                     }
                 }
-                if(removed){
+                if (removed) {
                     updateFileList();
                 }
             }
@@ -196,11 +198,13 @@ public class FileForm extends ValidatedInterfaceComponent {
     public Validity valid() {
         Validity v = super.valid();
         if (v.valid()) {
-            if (_files.isEmpty()) {
-                return new IsNotValid("No files added.");
-            }
             if (_addingFiles > 0) {
                 return new IsNotValid("Adding files... Please wait...");
+            }
+            if (_mandatory) {
+                if (_files.isEmpty()) {
+                    return new IsNotValid("No files added.");
+                }
             }
         }
         return v;
@@ -242,5 +246,9 @@ public class FileForm extends ValidatedInterfaceComponent {
 
     public Map<String, FileEntry> files() {
         return _files;
+    }
+
+    public void setEmptyMessage(String message) {
+        _fileList.setEmptyMessage(message);
     }
 }

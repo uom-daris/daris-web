@@ -87,4 +87,8 @@ public class DerivedDataset extends Dataset {
     public List<Input> inputs() {
         return _inputs;
     }
+
+    public boolean hasInputs() {
+        return _inputs != null && !_inputs.isEmpty();
+    }
 }

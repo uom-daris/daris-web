@@ -15,6 +15,7 @@ import arc.gui.window.Window;
 import arc.mf.client.util.Action;
 import arc.mf.client.util.ObjectUtil;
 import daris.web.client.gui.Resource;
+import daris.web.client.gui.dataset.action.DatasetUpdateAction;
 import daris.web.client.gui.dataset.action.DerivedDatasetCreateAction;
 import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
 import daris.web.client.gui.dicom.exports.DicomSendAction;
@@ -185,8 +186,8 @@ public class DObjectMenu extends ObjectMenu<DObject> {
         } else if (_o.isDataset()) {
             // TODO
             // @formatter:off
-            // add(new ActionEntry(ICON_MODIFY, "Modify " + _o.typeAndId() + "...",
-            // DatasetUpdateAction.create(_o, _owner, 0.7, 0.7)));
+             add(new ActionEntry(ICON_MODIFY, "Modify " + _o.typeAndId() + "...",
+             new DatasetUpdateAction(_o, _owner, 0.7, 0.7)));
             // @formatter:on
         }
 

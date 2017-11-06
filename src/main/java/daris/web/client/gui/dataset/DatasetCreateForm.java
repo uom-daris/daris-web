@@ -17,18 +17,22 @@ import daris.web.client.model.object.TypeEnum;
 public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjectCreateForm<T> {
 
     private FileForm _fileForm;
+// TODO filename Field
+    private Field<String> _typeField;
+    private Field<String> _ctypeField;
 
     protected DatasetCreateForm(T dc) {
         super(dc);
     }
 
     protected void addToContainer(VerticalPanel container) {
-        _fileForm = new FileForm();
+        _fileForm = new FileForm(true);
         container.add(_fileForm.widget());
         addMustBeValid(_fileForm);
         _fileForm.addChangeListener(() -> {
             if (_fileForm.valid().valid()) {
                 creator.setFiles(_fileForm.files());
+                // TODO
             }
         });
     }
@@ -42,10 +46,10 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
         super.addToInterfaceForm(interfaceForm);
 
-        Field<String> typeField = new Field<String>(new FieldDefinition("Type", "Type",
-                new EnumerationType<String>(new TypeEnum()), "MIME type of the object.", null, 0, 1));
-        typeField.setRenderOptions(new FieldRenderOptions().setWidth(350));
-        typeField.addListener(new FormItemListener<String>() {
+        _typeField = new Field<String>(new FieldDefinition("Type", "Type", new EnumerationType<String>(new TypeEnum()),
+                "MIME type of the object.", null, 0, 1));
+        _typeField.setRenderOptions(new FieldRenderOptions().setWidth(350));
+        _typeField.addListener(new FormItemListener<String>() {
 
             @Override
             public void itemValueChanged(FormItem<String> f) {
@@ -57,13 +61,13 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
             }
         });
-        typeField.setInitialValue(this.creator.type(), false);
-        interfaceForm.add(typeField);
+        _typeField.setInitialValue(this.creator.type(), false);
+        interfaceForm.add(_typeField);
 
-        Field<String> ctypeField = new Field<String>(new FieldDefinition("Content Type", "Content_Type",
+        _ctypeField = new Field<String>(new FieldDefinition("Content Type", "Content_Type",
                 new EnumerationType<String>(new TypeEnum()), "MIME type of the content.", null, 0, 1));
-        ctypeField.setRenderOptions(new FieldRenderOptions().setWidth(350));
-        ctypeField.addListener(new FormItemListener<String>() {
+        _ctypeField.setRenderOptions(new FieldRenderOptions().setWidth(350));
+        _ctypeField.addListener(new FormItemListener<String>() {
 
             @Override
             public void itemValueChanged(FormItem<String> f) {
@@ -75,8 +79,8 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
             }
         });
-        ctypeField.setInitialValue(this.creator.contentType(), false);
-        interfaceForm.add(ctypeField);
+        _ctypeField.setInitialValue(this.creator.contentType(), false);
+        interfaceForm.add(_ctypeField);
     }
 
 }

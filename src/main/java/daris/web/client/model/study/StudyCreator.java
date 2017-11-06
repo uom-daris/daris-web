@@ -1,5 +1,8 @@
 package daris.web.client.model.study;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
+
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import daris.web.client.model.exmethod.ExMethodStudyStepRef;
@@ -11,6 +14,7 @@ public class StudyCreator extends DObjectCreator {
     private ExMethodStudyStepRef _step;
     private Boolean _processed;
     private XmlElement _methodMetadataForCreate;
+    private List<SimpleEntry<String, String>> _otherIds;
 
     public StudyCreator(DObjectRef po) {
         super(po);
@@ -41,6 +45,10 @@ public class StudyCreator extends DObjectCreator {
         _processed = processed;
     }
 
+    public void setOtherIds(List<SimpleEntry<String, String>> otherIds) {
+        _otherIds = otherIds;
+    }
+
     @Override
     public String serviceName() {
         return "om.pssd.study.create";
@@ -61,17 +69,23 @@ public class StudyCreator extends DObjectCreator {
         if (description() != null) {
             w.add("description", description());
         }
-        if (_processed != null) {
-            w.add("processed", _processed);
+        if (otherIds() != null) {
+            List<SimpleEntry<String, String>> otherIds = otherIds();
+            for (SimpleEntry<String, String> otherId : otherIds) {
+                w.add("other-id", new String[] { "type", otherId.getKey() }, otherId.getValue());
+            }
         }
-        if (_step != null) {
-            w.add("step", _step.path());
+        if (processed() != null) {
+            w.add("processed", processed());
         }
-        if (_studyType != null) {
-            w.add("type", _studyType);
+        if (step() != null) {
+            w.add("step", step().path());
         }
-        if (this.metadataSetter != null) {
-            this.metadataSetter.setMetadata(w);
+        if (studyType() != null) {
+            w.add("type", studyType());
+        }
+        if (metadataSetter() != null) {
+            metadataSetter().setMetadata(w);
         }
     }
 
@@ -85,5 +99,9 @@ public class StudyCreator extends DObjectCreator {
 
     public Boolean processed() {
         return _processed;
+    }
+
+    public List<SimpleEntry<String, String>> otherIds() {
+        return _otherIds;
     }
 }

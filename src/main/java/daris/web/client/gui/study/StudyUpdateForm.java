@@ -14,11 +14,12 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.dtype.BooleanType;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.object.DObjectUpdateForm;
+import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.study.Study;
 import daris.web.client.model.study.StudyUpdater;
 import daris.web.client.model.study.messages.StudyUpdate;
 
-public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater> {
+public class StudyUpdateForm extends DObjectUpdateForm<Study> {
 
     private Integer _metadataTabId = null;
     private Form _metadataForm;
@@ -36,7 +37,7 @@ public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater> {
             }
         });
         updateMetadataTab();
-        updater.setMethodMetadataSetter(w -> {
+        updater().setMethodMetadataSetter(w -> {
             if (_methodMetadataForm != null) {
                 w.push("meta");
                 _methodMetadataForm.save(w);
@@ -44,6 +45,10 @@ public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater> {
             }
         });
         updateMethodMetadataTab();
+    }
+
+    private StudyUpdater updater() {
+        return (StudyUpdater) updater;
     }
 
     private void updateMetadataTab() {
@@ -78,7 +83,7 @@ public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater> {
             tabs.removeTabById(_methodMetadataTabId);
             _methodMetadataTabId = null;
         }
-        XmlElement me = updater.methodMetadataForEdit();
+        XmlElement me = updater().methodMetadataForEdit();
         if (me == null) {
             return;
         }
@@ -95,23 +100,29 @@ public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater> {
 
     @Override
     public void execute(ActionListener l) {
-        new StudyUpdate(updater).send(r -> {
-            // TODO fade out message
+        new StudyUpdate(updater()).send(r -> {
+            MessageBox.show(280, 100, window(), MessageBox.Position.CENTER,
+                    "Study " + object.citeableId() + " has been updated.", 3);
         });
         l.executed(true);
     }
 
     protected void addToInterfaceForm(Form interfaceForm) {
         super.addToInterfaceForm(interfaceForm);
+        
+        /*
+         * other-id
+         */
+        StudyCreateForm.addOtherIdFields(interfaceForm, updater());
 
         Field<Boolean> processedField = new Field<Boolean>(new FieldDefinition("Processed",
                 BooleanType.DEFAULT_TRUE_FALSE, "Is the dataset processed?", null, 0, 1));
-        processedField.setInitialValue(updater.processed(), false);
+        processedField.setInitialValue(updater().processed(), false);
         processedField.addListener(new FormItemListener<Boolean>() {
 
             @Override
             public void itemValueChanged(FormItem<Boolean> f) {
-                updater.setProcessed(f.value());
+                updater().setProcessed(f.value());
             }
 
             @Override
@@ -120,6 +131,7 @@ public class StudyUpdateForm extends DObjectUpdateForm<Study, StudyUpdater> {
             }
         });
         interfaceForm.add(processedField);
+
     }
 
 }

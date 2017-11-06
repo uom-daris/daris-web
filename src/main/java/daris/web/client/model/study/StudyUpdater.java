@@ -1,5 +1,8 @@
 package daris.web.client.model.study;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
+
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlWriter;
 import daris.web.client.model.object.DObjectUpdater;
@@ -10,6 +13,7 @@ public class StudyUpdater extends DObjectUpdater<Study> {
     private Boolean _processed;
     private XmlElement _methodMetadataForEdit;
     private MetadataSetter _methodMetadataSetter;
+    private List<SimpleEntry<String, String>> _otherIds;
 
     public StudyUpdater(Study obj) {
         super(obj);
@@ -19,10 +23,6 @@ public class StudyUpdater extends DObjectUpdater<Study> {
 
     public XmlElement methodMetadataForEdit() {
         return _methodMetadataForEdit;
-    }
-
-    public void setMethodMetadataForEdit(XmlElement methodMetadataForEdit) {
-        _methodMetadataForEdit = methodMetadataForEdit;
     }
 
     public MetadataSetter methodMetadataSetter() {
@@ -53,14 +53,20 @@ public class StudyUpdater extends DObjectUpdater<Study> {
         if (description() != null) {
             w.add("description", description());
         }
-        if (this.metadataSetter != null) {
-            metadataSetter.setMetadata(w);
+        if (metadataSetter() != null) {
+            metadataSetter().setMetadata(w);
         }
         if (_methodMetadataSetter != null) {
             _methodMetadataSetter.setMetadata(w);
         }
         if (processed() != null) {
             w.add("processed", processed());
+        }
+        if (otherIds() != null) {
+            List<SimpleEntry<String, String>> otherIds = otherIds();
+            for (SimpleEntry<String, String> otherId : otherIds) {
+                w.add("other-id", new String[] { "type", otherId.getKey() }, otherId.getValue());
+            }
         }
     }
 
@@ -70,5 +76,13 @@ public class StudyUpdater extends DObjectUpdater<Study> {
 
     public void setProcessed(Boolean processed) {
         _processed = processed;
+    }
+
+    public List<SimpleEntry<String, String>> otherIds() {
+        return _otherIds;
+    }
+
+    public void setOtherIds(List<SimpleEntry<String, String>> otherIds) {
+        _otherIds = otherIds;
     }
 }

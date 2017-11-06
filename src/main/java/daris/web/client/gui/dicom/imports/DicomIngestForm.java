@@ -106,7 +106,7 @@ public class DicomIngestForm extends ValidatedInterfaceComponent implements Asyn
         _vp.add(settingsForm);
         addMustBeValid(settingsForm);
 
-        _fileForm = new FileForm();
+        _fileForm = new FileForm(true);
         _fileForm.setFileFilter(f -> {
             return f != null && !f.isDirectory() && (f.name().endsWith(".dcm") || f.name().endsWith(".DCM"));
         });

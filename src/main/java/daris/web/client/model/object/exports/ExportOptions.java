@@ -9,6 +9,7 @@ public abstract class ExportOptions {
     private boolean _includeAttachments;
     private boolean _decompress;
     private Map<String, String> _transcodes;
+    private String _outputPathPattern;
 
     protected ExportOptions() {
         _parts = Parts.CONTENT;
@@ -26,6 +27,10 @@ public abstract class ExportOptions {
 
     public void setDecompress(boolean decompress) {
         _decompress = decompress;
+    }
+
+    public void setOutputPathPattern(String outputPathPattern) {
+        _outputPathPattern = outputPathPattern;
     }
 
     public Parts parts() {
@@ -66,6 +71,10 @@ public abstract class ExportOptions {
             return _transcodes.get(from);
         }
         return null;
+    }
+
+    public String outputPathPattern() {
+        return _outputPathPattern;
     }
 
 }

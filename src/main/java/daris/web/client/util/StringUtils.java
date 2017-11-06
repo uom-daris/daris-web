@@ -1,6 +1,15 @@
 package daris.web.client.util;
 
+import arc.mf.dtype.StringType;
+
 public class StringUtils {
+    public static String FILE_NAME_REGEX = "^[\\w-_ \\.]+$";
+
+    public static StringType createStringTypeForFileName() {
+        StringType type = new StringType();
+        type.setPattern(FILE_NAME_REGEX);
+        return type;
+    }
 
     public static String upperCaseFirst(String s, boolean lowerCaseRest) {
         if (s == null || s.isEmpty()) {

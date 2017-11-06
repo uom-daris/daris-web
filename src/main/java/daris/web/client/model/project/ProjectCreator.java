@@ -101,8 +101,8 @@ public class ProjectCreator extends DObjectCreator {
         if (_dataUse != null) {
             w.add("data-use", _dataUse);
         }
-        if (this.metadataSetter != null) {
-            this.metadataSetter.setMetadata(w);
+        if (metadataSetter() != null) {
+            metadataSetter().setMetadata(w);
         }
     }
 

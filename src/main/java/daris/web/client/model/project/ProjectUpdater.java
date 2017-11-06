@@ -77,8 +77,8 @@ public class ProjectUpdater extends DObjectUpdater<Project> {
         if (description() != null) {
             w.add("description", description());
         }
-        if (this.metadataSetter != null) {
-            this.metadataSetter.setMetadata(w);
+        if (metadataSetter() != null) {
+            metadataSetter().setMetadata(w);
         }
         if (!_methods.isEmpty()) {
             for (MethodRef method : _methods) {

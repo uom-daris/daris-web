@@ -61,7 +61,7 @@ public class PrimaryDatasetCreator extends DatasetCreator {
             w.pop();
         }
         if (numberOfFiles() == 1 && archiveType() == null) {
-            w.add("filename", files().iterator().next().file.name());
+            w.add("filename", files().iterator().next().filename());
         }
     }
 

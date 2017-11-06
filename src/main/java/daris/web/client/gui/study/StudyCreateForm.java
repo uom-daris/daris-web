@@ -1,7 +1,12 @@
 package daris.web.client.gui.study;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
+import arc.gui.form.FieldGroup;
 import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
@@ -14,13 +19,18 @@ import arc.mf.client.util.ActionListener;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.dtype.BooleanType;
+import arc.mf.dtype.DictionaryEnumerationSource;
+import arc.mf.dtype.DocType;
 import arc.mf.dtype.EnumerationType;
+import arc.mf.dtype.StringType;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.object.DObjectCreateForm;
 import daris.web.client.model.exmethod.ExMethodStudyStepEnum;
 import daris.web.client.model.exmethod.ExMethodStudyStepRef;
+import daris.web.client.model.object.DObjectBuilder;
 import daris.web.client.model.study.StudyCreator;
 import daris.web.client.model.study.StudyTypeEnum;
+import daris.web.client.model.study.StudyUpdater;
 import daris.web.client.model.study.messages.StudyCreate;
 import daris.web.client.model.study.messages.StudyMetadataDescribe;
 
@@ -145,6 +155,11 @@ public class StudyCreateForm extends DObjectCreateForm<StudyCreator> {
         });
         interfaceForm.add(_studyTypeField);
 
+        /*
+         * other-id
+         */
+        addOtherIdFields(interfaceForm, this.creator);
+
         Field<Boolean> processedField = new Field<Boolean>(new FieldDefinition("Processed",
                 BooleanType.DEFAULT_TRUE_FALSE, "Is the dataset processed?", null, 0, 1));
         processedField.setInitialValue(creator.processed(), false);
@@ -161,6 +176,94 @@ public class StudyCreateForm extends DObjectCreateForm<StudyCreator> {
             }
         });
         interfaceForm.add(processedField);
+    }
+
+    static void addOtherIdFields(Form interfaceForm, DObjectBuilder builder) {
+
+        List<SimpleEntry<String, String>> otherIds = null;
+        if (builder instanceof StudyUpdater) {
+            otherIds = ((StudyUpdater) builder).otherIds();
+        } else if (builder instanceof StudyCreator) {
+            otherIds = ((StudyCreator) builder).otherIds();
+        }
+        FormItemListener<String> fil = new FormItemListener<String>() {
+
+            @SuppressWarnings("rawtypes")
+            @Override
+            public void itemValueChanged(FormItem<String> f) {
+                Form form = f.form();
+                List<FormItem> items = form.fieldsByName("other-id");
+                List<SimpleEntry<String, String>> otherIds = new ArrayList<SimpleEntry<String, String>>();
+                for (FormItem item : items) {
+                    FieldGroup fg = (FieldGroup) item;
+                    String type = fg.fieldsByName("type").get(0).valueAsString();
+                    String value = fg.fieldsByName("value").get(0).valueAsString();
+                    if (type != null && value != null) {
+                        SimpleEntry<String, String> entry = new SimpleEntry<String, String>(type, value);
+                        if (!otherIds.contains(entry)) {
+                            otherIds.add(entry);
+                        }
+                    }
+                }
+                if (builder instanceof StudyUpdater) {
+                    if (otherIds.isEmpty()) {
+                        ((StudyUpdater) builder).setOtherIds(null);
+                    } else {
+                        ((StudyUpdater) builder).setOtherIds(otherIds);
+                    }
+                } else if (builder instanceof StudyCreator) {
+                    if (otherIds.isEmpty()) {
+                        ((StudyCreator) builder).setOtherIds(null);
+                    } else {
+                        ((StudyCreator) builder).setOtherIds(otherIds);
+                    }
+                }
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<String> f, Property property) {
+
+            }
+        };
+        if (otherIds != null) {
+            for (SimpleEntry<String, String> entry : otherIds) {
+                FieldGroup otherIdFG = new FieldGroup(
+                        new FieldDefinition("other-id", DocType.DEFAULT, null, null, 0, Integer.MAX_VALUE));
+                Field<String> otherIdTypeField = new Field<String>(new FieldDefinition("type",
+                        new EnumerationType<String>(
+                                new DictionaryEnumerationSource("daris:pssd.study.other-id.types", false)),
+                        "The type (authority) of this identifier.", null, 1, 1));
+                otherIdTypeField.setInitialValue(entry.getKey());
+                otherIdTypeField.setRenderOptions(new FieldRenderOptions().setWidth(338));
+                otherIdTypeField.addListener(fil);
+                otherIdFG.add(otherIdTypeField);
+
+                Field<String> otherIdValueField = new Field<String>(new FieldDefinition("value", StringType.DEFAULT,
+                        "An arbitrary identifier for the Study supplied by some other authority.", null, 1, 1));
+                otherIdValueField.setInitialValue(entry.getValue());
+                otherIdValueField.setRenderOptions(new FieldRenderOptions().setWidth(320));
+                otherIdValueField.addListener(fil);
+                otherIdFG.add(otherIdValueField);
+                interfaceForm.add(otherIdFG);
+            }
+        } else {
+            FieldGroup otherIdFG = new FieldGroup(
+                    new FieldDefinition("other-id", DocType.DEFAULT, null, null, 0, Integer.MAX_VALUE));
+            Field<String> otherIdTypeField = new Field<String>(new FieldDefinition("type",
+                    new EnumerationType<String>(
+                            new DictionaryEnumerationSource("daris:pssd.study.other-id.types", false)),
+                    "The type (authority) of this identifier.", null, 1, 1));
+            otherIdTypeField.setRenderOptions(new FieldRenderOptions().setWidth(338));
+            otherIdTypeField.addListener(fil);
+            otherIdFG.add(otherIdTypeField);
+
+            Field<String> otherIdValueField = new Field<String>(new FieldDefinition("value", StringType.DEFAULT,
+                    "An arbitrary identifier for the Study supplied by some other authority.", null, 1, 1));
+            otherIdValueField.setRenderOptions(new FieldRenderOptions().setWidth(320));
+            otherIdValueField.addListener(fil);
+            otherIdFG.add(otherIdValueField);
+            interfaceForm.add(otherIdFG);
+        }
     }
 
 }

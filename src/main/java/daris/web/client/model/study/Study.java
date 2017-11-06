@@ -1,5 +1,9 @@
 package daris.web.client.model.study;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.List;
+
 import arc.mf.client.xml.XmlElement;
 import daris.web.client.model.object.DObject;
 
@@ -11,6 +15,7 @@ public class Study extends DObject {
     private XmlElement _methodMeta;
     private XmlElement _methodMetaForEdit;
     private Boolean _processed;
+    private List<SimpleEntry<String, String>> _otherIds;
 
     public Study(XmlElement oe) {
         super(oe);
@@ -28,6 +33,17 @@ public class Study extends DObject {
                 _methodMetaForEdit = mme;
             } else {
                 _methodMeta = mme;
+            }
+        }
+
+        List<XmlElement> oies = oe.elements("other-id");
+        if (oies != null && !oies.isEmpty()) {
+            _otherIds = new ArrayList<SimpleEntry<String, String>>(oies.size());
+            for (XmlElement oie : oies) {
+                String type = oie.value("@type");
+                String oid = oie.value();
+                SimpleEntry<String, String> entry = new SimpleEntry<String, String>(type, oid);
+                _otherIds.add(entry);
             }
         }
     }
@@ -66,6 +82,10 @@ public class Study extends DObject {
     public boolean hasMethodMetadata() {
         return (_methodMeta != null && _methodMeta.hasElements())
                 || (_methodMetaForEdit != null && _methodMetaForEdit.hasElements());
+    }
+
+    public List<SimpleEntry<String, String>> otherIds() {
+        return _otherIds;
     }
 
 }

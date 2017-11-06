@@ -10,4 +10,13 @@ public class FileEntry {
         this.file = file;
         this.dstPath = dstPath;
     }
+
+    public String filename() {
+        int idx = this.dstPath.lastIndexOf('/');
+        if (idx == -1) {
+            return this.dstPath;
+        } else {
+            return this.dstPath.substring(idx + 1);
+        }
+    }
 }

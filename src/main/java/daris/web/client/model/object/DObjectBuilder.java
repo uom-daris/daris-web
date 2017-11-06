@@ -7,7 +7,7 @@ public abstract class DObjectBuilder {
     private boolean _allowIncompleteMeta;
     private boolean _allowInvalidMeta;
 
-    protected MetadataSetter metadataSetter;
+    private MetadataSetter _metadataSetter;
 
     public void setName(String name) {
         _name = name;
@@ -42,6 +42,10 @@ public abstract class DObjectBuilder {
     }
 
     public void setMetadataSetter(MetadataSetter metadataSetter) {
-        this.metadataSetter = metadataSetter;
+        _metadataSetter = metadataSetter;
+    }
+    
+    public MetadataSetter metadataSetter(){
+        return _metadataSetter;
     }
 }

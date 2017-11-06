@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
 import arc.gui.gwt.colour.RGB;
+import arc.gui.gwt.data.LocalDataSource;
 import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.ContainerWidget;
 import arc.gui.gwt.widget.HTML;
@@ -365,6 +366,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         if (c == null) {
             c = new DObjectChildrenRef(_parent, filter, _sortKey, _sortOrder);
             c.setPageSize(_pageSize);
+            _list.setCursorSize(_pageSize);
             _pc.setPageSize(_pageSize);
             _childrenMap.put(_parent, c);
         } else {
@@ -377,6 +379,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
             c.setSortOrder(_sortOrder);
             c.setPageSize(_pageSize);
             c.reset();
+            _list.setCursorSize(_pageSize);
             _pc.setPageSize(_pageSize);
         }
         return c;
@@ -385,6 +388,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
     @Override
     public void gotoOffset(final long offset) {
         final DObjectChildrenRef childrenRef = childrenRef();
+        _list.setBusyLoading();
         childrenRef.resolve(offset, offset + _pageSize, new CollectionResolveHandler<DObjectRef>() {
             @Override
             public void resolved(List<DObjectRef> cos) throws Throwable {
@@ -402,7 +406,14 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                         entries.add(entry);
                     }
                 }
-                _list.setData(entries);
+                _list.setDataSource(new LocalDataSource<ListGridEntry<DObjectRef>>(entries));
+                _list.refresh(0, _pageSize);
+                // _list.setData(entries);
+                // NOTE: the line commented out above does not work when _list
+                // cursor size changes. I think it is a bug in
+                // ListGrid.loadNow() function, line 1547 ~1550. The _end idx
+                // does not change after ListGrid.setCursorSize()
+
             }
         });
 
