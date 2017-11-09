@@ -27,10 +27,12 @@ public class DicomIngestSettings {
         _engine = ENGINE;
         _args = new LinkedHashMap<String, String>();
         setArg("nig.dicom.id.ignore-non-digits", "true");
-        setArg("nig.dicom.subject.create", "true");
         if (cid != null) {
             setArg("nig.dicom.id.citable", cid);
         }
+        setArg("nig.dicom.subject.create", "true");
+        setArg("nig.dicom.subject.find.method", "id");
+        setArg("nig.dicom.subject.name.from", "patient.id");
         setArg("nig.dicom.write.mf-dicom-patient", "true");
         _type = TYPE_AAR;
         _wait = false;

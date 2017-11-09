@@ -120,7 +120,7 @@ public abstract class DatasetUpdateForm<T extends Dataset> extends DObjectUpdate
 
             @Override
             public void itemValueChanged(FormItem<String> f) {
-                updater().setType(f.value());
+                updater().setMimeType(f.value());
             }
 
             @Override
@@ -128,7 +128,7 @@ public abstract class DatasetUpdateForm<T extends Dataset> extends DObjectUpdate
 
             }
         });
-        _typeField.setInitialValue(updater().type(), false);
+        _typeField.setInitialValue(updater().mimeType(), false);
         interfaceForm.add(_typeField);
 
         _ctypeField = new Field<String>(new FieldDefinition("Content Type", "Content_Type",

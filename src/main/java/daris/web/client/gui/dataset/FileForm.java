@@ -22,8 +22,11 @@ import arc.gui.gwt.widget.image.LinearGradient;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.list.ListGridHeader;
+import arc.gui.gwt.widget.menu.ActionMenu;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
+import arc.gui.menu.ActionEntry;
+import arc.gui.menu.Menu;
 import arc.mf.client.file.FileHandler;
 import arc.mf.client.file.LocalFile;
 import arc.mf.client.file.LocalFile.Filter;
@@ -39,6 +42,12 @@ public class FileForm extends ValidatedInterfaceComponent {
 
     public static final arc.gui.image.Image ICON_FILE = new arc.gui.image.Image(
             Resource.INSTANCE.document32().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_DELETE = new arc.gui.image.Image(
+            Resource.INSTANCE.delete12x16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_DELETE_ALL = new arc.gui.image.Image(
+            Resource.INSTANCE.delete16().getSafeUri().asString(), 16, 16);
 
     private Map<String, FileEntry> _files;
 
@@ -65,6 +74,10 @@ public class FileForm extends ValidatedInterfaceComponent {
 
             @Override
             public DropCheck checkCanDrop(Object data) {
+                if (_addingFiles > 0) {
+                    // Do not allow more dropping when adding files
+                    return DropCheck.CANNOT;
+                }
                 if (data != null && (data instanceof LocalFile)) {
                     return DropCheck.CAN;
                 }
@@ -92,12 +105,36 @@ public class FileForm extends ValidatedInterfaceComponent {
                 dl.dropped(DropCheck.CAN);
             }
         });
+
         _fileList.addColumnDefn("isDir", null, null, (f, isDir) -> {
             return ((Boolean) isDir) ? new arc.gui.gwt.widget.image.Image(ICON_DIRECTORY)
                     : new arc.gui.gwt.widget.image.Image(ICON_FILE);
         }).setWidth(20);
         _fileList.addColumnDefn("path", "File").setWidth(800);
         _fileList.setMultiSelect(true);
+        _fileList.setRowContextMenuHandler((f, event) -> {
+            if (_addingFiles <= 0 && !_files.isEmpty()) {
+                Menu menu = new Menu();
+                List<FileEntry> selections = _fileList.selections();
+                if (selections != null && !selections.isEmpty()) {
+
+                    menu.add(new ActionEntry(ICON_DELETE, "Remove selected file" + (selections.size() > 1 ? "s" : ""),
+                            () -> {
+                                for (FileEntry entry : selections) {
+                                    _files.remove(entry.dstPath);
+                                }
+                                updateFileList();
+                                notifyOfChangeInState();
+                            }));
+                }
+                menu.add(new ActionEntry(ICON_DELETE_ALL, "Remove all files", () -> {
+                    _files.clear();
+                    updateFileList();
+                    notifyOfChangeInState();
+                }));
+                ActionMenu.showAt(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY(), menu);
+            }
+        });
 
         _vp.add(_fileList);
 

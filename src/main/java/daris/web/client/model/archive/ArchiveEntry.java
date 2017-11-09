@@ -55,4 +55,9 @@ public class ArchiveEntry {
                 || "jpeg".equalsIgnoreCase(ext) || "gif".equalsIgnoreCase(ext) || "bmp".equalsIgnoreCase(ext)
                 || "tif".equalsIgnoreCase(ext) || "tiff".equalsIgnoreCase(ext) || "dcm".equalsIgnoreCase(ext));
     }
+
+    public boolean isNiftiImage() {
+        String fileName = fileName();
+        return fileName != null && (fileName.endsWith(".nii") || fileName.endsWith(".nii.gz"));
+    }
 }

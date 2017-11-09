@@ -65,8 +65,8 @@ public class DerivedDatasetUpdater extends DatasetUpdater<DerivedDataset> {
         if (processed() != null) {
             w.add("processed", processed());
         }
-        if (type() != null) {
-            w.add("type", type());
+        if (mimeType() != null) {
+            w.add("type", mimeType());
         }
     }
 

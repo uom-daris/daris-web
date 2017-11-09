@@ -50,6 +50,14 @@ public class DatasetViewForm extends DObjectViewForm<Dataset> {
         vidField.setValue(ds.contentVid());
         interfaceForm.add(vidField);
 
+        /*
+         * (asset mime) type
+         */
+        Field<String> typeField = new Field<String>(
+                new FieldDefinition("Type", "type", StringType.DEFAULT, "MIME type of the object.", null, 0, 1));
+        typeField.setValue(ds.mimeType());
+        interfaceForm.add(typeField);
+
         if (ds instanceof PrimaryDataset) {
             PrimaryDataset pds = (PrimaryDataset) ds;
             FieldGroup fgAcquisition = new FieldGroup(

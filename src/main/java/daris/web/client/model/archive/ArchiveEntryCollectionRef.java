@@ -10,33 +10,29 @@ public class ArchiveEntryCollectionRef extends OrderedCollectionRef<ArchiveEntry
     public static int PAGE_SIZE_INFINITY = -1;
     public static int PAGE_SIZE_DEFAULT = 50;
 
-    private String _assetId;
-    private String _cid;
-    private String _assetMimeType;
+    private DObject _obj;
 
     private int _pageSize = PAGE_SIZE_DEFAULT;
 
     public ArchiveEntryCollectionRef(DObject obj) {
-        this(obj.citeableId(), obj.assetId(), (obj instanceof Dataset) ? ((Dataset) obj).mimeType() : null);
-    }
-
-    public ArchiveEntryCollectionRef(String cid, String assetId, String assetMimeType) {
-        _cid = cid;
-        _assetId = assetId;
-        _assetMimeType = assetMimeType;
+        _obj = obj;
         setCountMembers(true);
     }
 
     public String assetId() {
-        return _assetId;
+        return _obj.assetId();
     }
 
     public String assetMimeType() {
-        return _assetMimeType;
+        return (_obj instanceof Dataset) ? ((Dataset) _obj).mimeType() : null;
     }
 
     public String citeableId() {
-        return _cid;
+        return _obj.citeableId();
+    }
+    
+    public DObject object(){
+        return _obj;
     }
 
     @Override
@@ -50,10 +46,10 @@ public class ArchiveEntryCollectionRef extends OrderedCollectionRef<ArchiveEntry
 
     @Override
     protected void resolveServiceArgs(XmlStringWriter w, long start, int size, boolean count) {
-        if (_cid != null) {
-            w.add("cid", _cid);
+        if (assetId() != null) {
+            w.add("id", assetId());
         } else {
-            w.add("id", _assetId);
+            w.add("cid", citeableId());
         }
         w.add("idx", start + 1);
         w.add("size", size);

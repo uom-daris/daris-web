@@ -1,5 +1,6 @@
 package daris.web.client.gui.dataset;
 
+import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.dataset.NiftiDataset;
 
 public class NiftiViewer extends IFrameViewer {
@@ -8,4 +9,7 @@ public class NiftiViewer extends IFrameViewer {
         super(ds.niftiViewerUrl());
     }
 
+    public NiftiViewer(NiftiDataset ds, ArchiveEntry entry) {
+        super(ds.niftiViewerUrl(entry));
+    }
 }

@@ -10,7 +10,7 @@ import daris.web.client.model.object.imports.FileEntry;
 
 public abstract class DatasetUpdater<T extends Dataset> extends DObjectUpdater<T> {
 
-    private String _type;
+    private String _mimeType;
     private String _ctype;
     private String _lctype;
     private String _filename;
@@ -19,7 +19,7 @@ public abstract class DatasetUpdater<T extends Dataset> extends DObjectUpdater<T
 
     protected DatasetUpdater(T obj) {
         super(obj);
-        _type = obj.mimeType();
+        _mimeType = obj.mimeType();
         _ctype = obj.content() == null ? null : obj.content().type();
         _lctype = obj.content() == null ? null : obj.content().ltype();
         _filename = obj.filename();
@@ -64,12 +64,12 @@ public abstract class DatasetUpdater<T extends Dataset> extends DObjectUpdater<T
         return _files == null ? 0 : _files.size();
     }
 
-    public String type() {
-        return _type;
+    public String mimeType() {
+        return _mimeType;
     }
 
-    public void setType(String type) {
-        _type = type;
+    public void setMimeType(String type) {
+        _mimeType = type;
     }
 
     public String contentType() {

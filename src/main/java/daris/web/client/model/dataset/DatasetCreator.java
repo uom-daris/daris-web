@@ -12,7 +12,7 @@ import daris.web.client.model.object.imports.FileEntry;
 
 public abstract class DatasetCreator extends DObjectCreator {
 
-    private String _type;
+    private String _mimeType;
     private String _ctype;
     private String _lctype;
     private String _methodId;
@@ -26,12 +26,12 @@ public abstract class DatasetCreator extends DObjectCreator {
         _files = new TreeMap<String, FileEntry>();
     }
 
-    public String type() {
-        return _type;
+    public String mimeType() {
+        return _mimeType;
     }
 
-    public void setType(String type) {
-        _type = type;
+    public void setMimeType(String type) {
+        _mimeType = type;
     }
 
     public String contentType() {

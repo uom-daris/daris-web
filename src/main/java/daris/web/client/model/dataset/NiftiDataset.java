@@ -9,6 +9,7 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.object.ObjectMessageResponse;
 import arc.mf.session.ServiceResponseHandler;
 import arc.mf.session.Session;
+import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.object.ContentInfo;
 
 public class NiftiDataset extends DerivedDataset {
@@ -64,6 +65,32 @@ public class NiftiDataset extends DerivedDataset {
         sb.append(RemoteServer.sessionId());
         sb.append("&module=view&id=");
         sb.append(assetId());
+        return sb.toString();
+    }
+
+    public String niftiViewerUrl(ArchiveEntry entry) {
+        if (content() == null && !RemoteServer.haveSession()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(com.google.gwt.user.client.Window.Location.getProtocol());
+        sb.append("//");
+        sb.append(com.google.gwt.user.client.Window.Location.getHost());
+        sb.append("/daris/nifti.mfjp?_skey=");
+        sb.append(RemoteServer.sessionId());
+        sb.append("&module=view&id=");
+        sb.append(assetId());
+        sb.append("&idx=").append(entry.ordinal());
+        sb.append("&ename=");
+        sb.append(assetId()).append("_").append(entry.ordinal());
+        String fileName = entry.fileName();
+        if (fileName.endsWith(".nii.gz")) {
+            sb.append(".nii.gz");
+        } else if (fileName.endsWith(".nii")) {
+            sb.append(".nii");
+        } else {
+            throw new AssertionError("Archive entry: " + fileName + " is not a NIFTI image.");
+        }
         return sb.toString();
     }
 

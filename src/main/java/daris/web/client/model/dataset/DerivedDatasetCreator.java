@@ -70,8 +70,8 @@ public class DerivedDatasetCreator extends DatasetCreator {
         if (description() != null) {
             w.add("description", description());
         }
-        if (type() != null) {
-            w.add("type", type());
+        if (mimeType() != null) {
+            w.add("type", mimeType());
         }
         if (contentType() != null) {
             w.add("ctype", contentType());

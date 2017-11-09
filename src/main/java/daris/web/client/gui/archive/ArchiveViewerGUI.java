@@ -25,11 +25,13 @@ import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.object.CollectionResolveHandler;
 import daris.web.client.gui.Resource;
+import daris.web.client.gui.dataset.NiftiViewer;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.archive.messages.ArchiveContentGet;
+import daris.web.client.model.dataset.NiftiDataset;
 import daris.web.client.util.SizeUtil;
 
 public class ArchiveViewerGUI extends ContainerWidget implements PagingListener {
@@ -200,7 +202,12 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
         VerticalPanel vp = new VerticalPanel();
         vp.fitToParent();
 
-        if (_selected.isViewableImage()) {
+        // TODO
+        if (_arc.object() instanceof NiftiDataset && _selected.isNiftiImage()) {
+            NiftiViewer nv = new NiftiViewer((NiftiDataset) _arc.object(), _selected);
+            nv.fitToParent();
+            vp.add(nv);
+        } else if (_selected.isViewableImage()) {
             ArchiveEntryImagePanel imagePanel = new ArchiveEntryImagePanel(_arc, _selected);
             imagePanel.fitToParent();
             vp.add(imagePanel);
@@ -223,8 +230,8 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
     }
 
     private static AbsolutePanel createInfoPanel(ArchiveEntry ae) {
-        String tdStyle = "font-family:" + DefaultStyles.FONT_FAMILY + "; font-size:" + DefaultStyles.LIST_GRID_CELL_FONT_SIZE
-                + "px; border: 1px inset #ddd;";
+        String tdStyle = "font-family:" + DefaultStyles.FONT_FAMILY + "; font-size:"
+                + DefaultStyles.LIST_GRID_CELL_FONT_SIZE + "px; border: 1px inset #ddd;";
         StringBuilder sb = new StringBuilder();
         sb.append("<div style=\"position:absolute; top:50%; left:50%; transform:translateX(-50%) translateY(-50%);\">");
         sb.append(
@@ -241,7 +248,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
         sb.append("<div>");
         HTML html = new HTML(sb.toString());
         AbsolutePanel ap = new AbsolutePanel();
-        if (ae.isViewableImage()) {
+        if (ae.isViewableImage() || ae.isNiftiImage()) {
             ap.setHeight(100);
             ap.setWidth100();
         } else {

@@ -22,6 +22,15 @@ public interface Resource extends ClientBundle {
     @Source("resource/check_16.png")
     ImageResource check16();
 
+    @Source("resource/checkbox_checked16.png")
+    ImageResource checkboxCheckedIcon();
+
+    @Source("resource/checkbox_intermediate16.png")
+    ImageResource checkboxIntermediateIcon();
+
+    @Source("resource/checkbox_unchecked16.png")
+    ImageResource checkboxUncheckedIcon();
+
     @Source("resource/cross_16.png")
     ImageResource cross16();
 

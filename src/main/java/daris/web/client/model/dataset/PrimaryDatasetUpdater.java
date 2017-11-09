@@ -48,8 +48,8 @@ public class PrimaryDatasetUpdater extends DatasetUpdater<PrimaryDataset> {
         if (object().subjectCid() != null) {
             w.add("subject", new String[] { "state", object().subjectState() }, object().subjectCid());
         }
-        if (type() != null) {
-            w.add("type", type());
+        if (mimeType() != null) {
+            w.add("type", mimeType());
         }
     }
 

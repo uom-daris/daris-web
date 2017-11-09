@@ -53,7 +53,7 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
             @Override
             public void itemValueChanged(FormItem<String> f) {
-                creator.setType(f.value());
+                creator.setMimeType(f.value());
             }
 
             @Override
@@ -61,7 +61,7 @@ public abstract class DatasetCreateForm<T extends DatasetCreator> extends DObjec
 
             }
         });
-        _typeField.setInitialValue(this.creator.type(), false);
+        _typeField.setInitialValue(this.creator.mimeType(), false);
         interfaceForm.add(_typeField);
 
         _ctypeField = new Field<String>(new FieldDefinition("Content Type", "Content_Type",
