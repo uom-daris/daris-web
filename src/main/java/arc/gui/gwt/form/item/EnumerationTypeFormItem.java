@@ -26,7 +26,6 @@ import arc.gui.gwt.widget.combo.ComboBox;
 import arc.gui.gwt.widget.combo.ComboBoxEntry;
 import arc.gui.gwt.widget.combo.ComboBoxSeparator;
 import arc.gui.gwt.widget.label.Label;
-import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.client.util.StringUtil;
 import arc.mf.client.util.Transform;
@@ -37,7 +36,8 @@ import arc.mf.dtype.DynamicEnumerationDataHandler;
 import arc.mf.dtype.DynamicEnumerationDataSource;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.dtype.EnumerationType.Value;
-
+//@formatter:off
+@SuppressWarnings({"unchecked", "rawtypes", "incomplete-switch"})
 public class EnumerationTypeFormItem implements FormItem {
     
     public Widget create(Form form,final Field f,FormItemFocusListener fl,FormSubmitOnEnter fse) {
@@ -141,7 +141,7 @@ public class EnumerationTypeFormItem implements FormItem {
             };
 
         } else {
-            DataSource<ComboBoxEntry<?>> ds = createRemoteDataSource(type);
+            DataSource<ComboBoxEntry<?>> ds = createRemoteDataSource(type); // TODO: Modified by Wilson Liu
             
             if ( ses != null ) {
                 ds = new CompoundDataSource(ds,new SpecialValuesDataSource(ses));
