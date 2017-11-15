@@ -24,8 +24,8 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
-
-
+// @formatter:off
+@SuppressWarnings({"rawtypes","unchecked","incomplete-switch"})
 public class TextTypeFormItem implements FormItem {
     
     public static enum Presentation {
@@ -298,18 +298,38 @@ public class TextTypeFormItem implements FormItem {
     }
 
     private static Widget createAutoResizeReadOnlyWidgetFor(Field f,int height) {
-        TextArea ta = new TextArea();
+        TextArea ta = new TextArea(){
+            protected com.google.gwt.user.client.ui.TextArea textBox() {
+                com.google.gwt.user.client.ui.TextArea ta = super.textBox();
+                ta.getElement().setAttribute("readonly", "readonly");
+                ta.getElement().getStyle().setProperty("fontSize", "11px");
+                ta.getElement().getStyle().setProperty("fontFamily", "Arial Unicode MS,Arial,sans-serif");
+                return ta;
+            }
+        }; // TODO Added by Wilson Liu
         if ( f.value() != null ) {
             ta.setValue(f.valueAsString());
         }
 
         ta.setReadOnly(true);
-
-        ta.setWidth(200);
-        ta.setHeight(height);
-        
+// TODO BEGIN -- Modified by Wilson Liu 
+//      ta.setWidth(200);
+//      ta.setHeight(height);
+        FieldRenderOptions fro = f.renderOptions();
+        if (fro.width() != null) {
+            ta.setPreferredWidth(fro.width());
+        } else {
+            ta.setWidth100();
+        }
+        if (fro.height() != null) {
+            ta.setPreferredHeight(fro.height());
+        } else {
+            ta.setHeight(height);
+        }
+// TODO END -- Modified by Wilson Liu
         FormItemStyle.applyReadOnlyTo(ta);
         
         return ta;
     }
 }
+
