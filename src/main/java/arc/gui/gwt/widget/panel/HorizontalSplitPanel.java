@@ -39,7 +39,9 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author jason
  *
+ * Modified by Wilson Liu, to fix the issue: separator is not displayed properly when dragging/moving the container window.
  */
+// @formatter:off
 public class HorizontalSplitPanel extends ContainerWidget {
 
     public static final Image HANDLE_BACKGROUND = new LinearGradient(LinearGradient.Orientation.LEFT_TO_RIGHT,new Colour[] { RGB.GREY_AAA, RGB.GREY_EEE, RGB.GREY_AAA });
@@ -158,7 +160,7 @@ public class HorizontalSplitPanel extends ContainerWidget {
             _separatorWidth = sp.separatorWidth();
             
             super.setPosition(Position.ABSOLUTE);
-            super.setZIndex(10000);
+//            super.setZIndex(10000); // TODO: commmented out by Wilson Liu
 
             int sw = sp.separatorWidth();
             if ( sw <= 0 ) {
@@ -175,7 +177,7 @@ public class HorizontalSplitPanel extends ContainerWidget {
                     _tw = _aw + _bw;
                     
                     Separator.this.setBackgroundColour(RGB.GREY_AAA);
-                    
+                    Separator.this.element().getStyle().setZIndex(Integer.MAX_VALUE); // TODO Added by Wilson Liu
                     return Cursor.COL_RESIZE;
                 }
 
@@ -220,6 +222,7 @@ public class HorizontalSplitPanel extends ContainerWidget {
                     b.setWidth(bw);
 
                     Separator.this.setBackgroundColour(RGB.GREY_DDD);
+                    Separator.this.element().getStyle().clearZIndex(); // TODO Added by Wilson Liu
                 }
 
                 public Widget widget() {
