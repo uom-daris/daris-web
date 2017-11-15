@@ -4,6 +4,7 @@ import arc.gui.dialog.DialogProperties;
 import arc.gui.gwt.widget.dialog.Dialog;
 import arc.mf.client.util.ActionListener;
 import arc.mf.client.util.AsynchronousAction;
+import daris.web.client.gui.util.WindowUtil;
 import daris.web.client.model.project.Project;
 import daris.web.client.model.project.messages.ProjectUserSet;
 
@@ -39,7 +40,7 @@ public class ProjectUserDialog {
         });
         dp.setCancelLabel("Cancel");
         dp.setButtonLabel("Apply");
-        dp.setSize(1024, 500);
+        dp.setSize(WindowUtil.calcWindowWidth(owner, 0.8), WindowUtil.calcWindowHeight(owner, 0.5));
         dp.setModal(false);
         Dialog dlg = Dialog.postDialog(dp, al);
         dlg.show();

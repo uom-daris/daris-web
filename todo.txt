@@ -5,10 +5,17 @@ tags...
 improve menu performance...
 permissions for editting ex-method...
 permissions for destroying ex-method...
+size of project user combobox
+
+message box -> option to view newly created object
+
+save filtering, sorting settings in user.self.settings
 
 Resolved issues:
-- add functions to remove files from file upload form.
-- fix dicom import at project level.
-- disallow dropping more files to file upload form while adding files 
-- missing mime type in dataset viewer
-- nifti viewer
+- dataset import: add functions to remove files from file upload form.
+- dataset import: fix dicom import at project level.
+- dataset import: disallow dropping more files to file upload form while adding files.
+- dataset viewer: missing mime type in dataset viewer.
+- dataset viewer: nifti viewer.
+- user management: allow system-administrator to manage project users.
+- user management: does not allow update with no project admin users, even if there is project admin role-users. 

@@ -3,11 +3,13 @@ package daris.web.client.gui.project;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
 
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
+import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.button.Button;
@@ -34,11 +36,11 @@ import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.Project;
 import daris.web.client.model.project.ProjectRoleUser;
 import daris.web.client.model.project.ProjectUser;
+import daris.web.client.model.user.UserSelf;
 
 public class ProjectViewForm extends DObjectViewForm<Project> {
 
     public static final String USER_TAB_NAME = "Users";
-
 
     public static final arc.gui.image.Image ICON_USER = new arc.gui.image.Image(
             Resource.INSTANCE.group20().getSafeUri().asString(), 16, 16);
@@ -106,21 +108,26 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
             vp.add(userList);
         }
 
-        if (project.editable()) {
-            ButtonBar bb = new ButtonBar(Position.BOTTOM, Alignment.CENTER);
-            bb.setHeight(32);
-            Button button = ButtonUtil.createButton(ICON_USER, "Manage users", "Add or remove project users.", true);
-            button.setWidth(120);
-            button.addClickHandler(e -> {
-                new ProjectUserDialog(project).show(window(), executed -> {
-                    if (executed) {
-                        MessageBox.show(320, 40, widget(), MessageBox.Position.CENTER, "Updating project users...", 5);
-                    }
+        UserSelf.isAdministrator(isAdmin -> {
+            if (project.editable() || isAdmin) {
+                ButtonBar bb = new ButtonBar(Position.BOTTOM, Alignment.CENTER);
+                bb.setHeight(32);
+                bb.setBorderTop(1, BorderStyle.SOLID, RGB.GREY_BBB);
+                Button button = ButtonUtil.createButton(ICON_USER, "Manage users", "Add or remove project users.",
+                        true);
+                button.setWidth(120);
+                button.addClickHandler(e -> {
+                    new ProjectUserDialog(project).show(window(), executed -> {
+                        if (executed) {
+                            MessageBox.show(320, 40, widget(), MessageBox.Position.CENTER, "Updating project users...",
+                                    5);
+                        }
+                    });
                 });
-            });
-            bb.add(button);
-            vp.add(bb);
-        }
+                bb.add(button);
+                vp.add(bb);
+            }
+        });
         putTab(USER_TAB_NAME, "Project users", vp);
     }
 

@@ -126,7 +126,6 @@ public class SimpleObjectFilter extends AbstractFilter {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public SimpleObjectFilter duplicate() {
         return new SimpleObjectFilter(_type, _op, _value);

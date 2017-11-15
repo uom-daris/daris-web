@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -14,6 +15,7 @@ import arc.gui.form.Form;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItem.Property;
 import arc.gui.form.FormItemListener;
+import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.data.DataLoadAction;
 import arc.gui.gwt.data.DataLoadHandler;
 import arc.gui.gwt.data.DataSource;
@@ -136,6 +138,7 @@ public class UserListGrid extends ContainerWidget {
         _filterSP.setHeight(50);
         _filterSP.setWidth100();
         _filterSP.setPaddingLeft(10);
+        _filterSP.setBorderTop(1, BorderStyle.SOLID, RGB.GREY_BBB);
         _vp.add(_filterSP);
 
         initFilters();

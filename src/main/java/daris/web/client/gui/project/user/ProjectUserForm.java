@@ -43,9 +43,9 @@ import daris.web.client.model.user.RoleUser;
 
 public class ProjectUserForm extends ValidatedInterfaceComponent {
 
-    public static interface ProjectUserChangeHandler {
-        void changed(List<ProjectUser> user, List<ProjectRoleUser> roleUsers);
-    }
+    // public static interface ProjectUserChangeHandler {
+    // void changed(List<ProjectUser> user, List<ProjectRoleUser> roleUsers);
+    // }
 
     public static final arc.gui.image.Image ICON_DELETE = new arc.gui.image.Image(
             Resource.INSTANCE.delete12x16().getSafeUri().asString(), 12, 16);
@@ -182,6 +182,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _vp.fitToParent();
 
         HorizontalSplitPanel hsp = new HorizontalSplitPanel(5);
+        hsp.setBorderBottom(1, BorderStyle.SOLID, RGB.GREY_BBB);
         hsp.fitToParent();
         _vp.add(hsp);
 
@@ -199,7 +200,9 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                 }
             }
         };
-        _tpLeft.fitToParent();
+        _tpLeft.setPreferredWidth(0.5);
+        _tpLeft.setHeight100();
+
         hsp.add(_tpLeft);
 
         initUserList();
@@ -276,7 +279,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                 HTML html = createCellHtml(name);
                 return html;
             }
-        }).setWidth(100);
+        }).setWidth(120);
         _roleUserList
                 .addColumnDefn("role", "Role", "Role type", new WidgetFormatter<ProjectRoleUser, ProjectRoleType>() {
 
@@ -298,10 +301,10 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                             }
                             notifyOfChangeInState();
                         });
-                        combo.setWidth(130);
+                        combo.setWidth(160);
                         return combo;
                     }
-                }).setWidth(140);
+                }).setWidth(170);
 
         _roleUserList
                 .addColumnDefn("data-use", "Data Use", "Data use", new WidgetFormatter<ProjectRoleUser, DataUse>() {
@@ -321,10 +324,10 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                             pru.setDataUse(cb.value());
                             notifyOfChangeInState();
                         });
-                        combo.setWidth(110);
+                        combo.setWidth(120);
                         return combo;
                     }
-                }).setWidth(120);
+                }).setWidth(130);
 
         _roleUserList.enableDropTarget(false);
         _roleUserList.setDropHandler(new DropHandler() {
@@ -422,7 +425,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                 });
                 return html;
             }
-        }).setWidth(80);
+        }).setWidth(160);
         _userList.addColumnDefn("role", "Role", "Role type", new WidgetFormatter<ProjectUser, ProjectRoleType>() {
 
             @SuppressWarnings("unchecked")
@@ -442,10 +445,10 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                     }
                     notifyOfChangeInState();
                 });
-                combo.setWidth(130);
+                combo.setWidth(160);
                 return combo;
             }
-        }).setWidth(140);
+        }).setWidth(170);
 
         _userList.addColumnDefn("data-use", "Data Use", "Data use", new WidgetFormatter<ProjectUser, DataUse>() {
 
@@ -464,10 +467,10 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                     pu.setDataUse(cb.value());
                     notifyOfChangeInState();
                 });
-                combo.setWidth(110);
+                combo.setWidth(120);
                 return combo;
             }
-        }).setWidth(120);
+        }).setWidth(130);
 
         _userList.enableDropTarget(false);
         _userList.setDropHandler(new DropHandler() {
@@ -521,12 +524,19 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
     public Validity valid() {
         Validity v = super.valid();
         if (v.valid()) {
-            if (_users.isEmpty()) {
-                v = new IsNotValid("No project user is set. At least one project user is required.");
+            if (_users.isEmpty() && _roleUsers.isEmpty()) {
+                v = new IsNotValid(
+                        "No project user or role user is set. At least one project user or role user is required.");
             } else {
                 boolean hasAdmin = false;
                 for (ProjectUser user : _users) {
                     if (user.role() == ProjectRoleType.PROJECT_ADMINISTRATOR) {
+                        hasAdmin = true;
+                        break;
+                    }
+                }
+                for (ProjectRoleUser roleUser : _roleUsers) {
+                    if (roleUser.role() == ProjectRoleType.PROJECT_ADMINISTRATOR) {
                         hasAdmin = true;
                         break;
                     }

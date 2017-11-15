@@ -108,7 +108,6 @@ public class MetadataFilter extends AbstractFilter {
         return IsValid.INSTANCE;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public MetadataFilter duplicate() {
         return new MetadataFilter(_xpath, _name, _op, _value, _ignoreCase);

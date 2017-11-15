@@ -8,5 +8,5 @@ public interface Filter {
 
     Validity valid();
 
-    <T extends Filter> T duplicate();
+    Filter duplicate();
 }

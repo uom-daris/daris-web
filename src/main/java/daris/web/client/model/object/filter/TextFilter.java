@@ -62,7 +62,6 @@ public class TextFilter extends AbstractFilter {
         return _value;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public TextFilter duplicate() {
         return new TextFilter(_op, _value);
