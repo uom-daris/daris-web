@@ -29,7 +29,8 @@ public class DaRIS implements EntryPoint, SessionHandler {
             /*
              * start mediaflux session
              */
-            LoginDialog dlg = new DefaultLoginDialog();
+            DefaultLoginDialog dlg = new DefaultLoginDialog();
+            dlg.setBaseWidth(360);
             dlg.setTitle("DaRIS");
             dlg.setVersion(Version.VERSION);
 //            Session.setAutoLogonCredentials("system", "manager", "change_me");
