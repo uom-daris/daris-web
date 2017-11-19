@@ -141,7 +141,7 @@ public class EnumerationTypeFormItem implements FormItem {
             };
 
         } else {
-            DataSource<ComboBoxEntry<?>> ds = createRemoteDataSource(type); // TODO: Modified by Wilson Liu
+            DataSource<ComboBoxEntry> ds = createRemoteDataSource(type); // TODO: Modified by Wilson Liu
             
             if ( ses != null ) {
                 ds = new CompoundDataSource(ds,new SpecialValuesDataSource(ses));
