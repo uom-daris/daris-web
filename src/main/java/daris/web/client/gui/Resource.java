@@ -157,6 +157,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/tasks_16.png")
     ImageResource tasks16();
 
+    @Source("resource/upload_16.png")
+    ImageResource upload16();
+
     @Source("resource/waiting_16.gif")
     ImageResource waiting16();
 

@@ -22,6 +22,7 @@ import arc.gui.form.FormItem.Property;
 import arc.gui.form.FormItemListener;
 import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.widget.HTML;
+import arc.gui.gwt.widget.panel.SimplePanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
@@ -45,6 +46,7 @@ import daris.web.client.model.dicom.exports.DicomSendCallingAETitleEnum;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
 import daris.web.client.util.SizeUtil;
+import daris.web.client.util.StringUtils;
 
 @SuppressWarnings("rawtypes")
 public class DicomSendForm extends ValidatedInterfaceComponent implements AsynchronousAction {
@@ -73,6 +75,7 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
     }
 
     private VerticalPanel _vp;
+    private SimplePanel _formSP;
     private Form _form;
     private HTML _status;
     private DicomSend _ds;
@@ -87,17 +90,22 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         _vp = new VerticalPanel();
         _vp.fitToParent();
 
+        _formSP = new SimplePanel();
+        _formSP.fitToParent();
+        _vp.add(_formSP);
+
         _form = new Form(FormEditMode.CREATE);
-        _form.setPaddingTop(25);
-        _form.setPaddingLeft(50);
+        _form.setPadding(25);
+        _form.setWidth100();
 
         FieldGroup sourceFieldGroup = new FieldGroup(
-                new FieldDefinition("Source", DocType.DEFAULT, "Source DICOM collection", null, 1, 1));
+                new FieldDefinition("Source Collection", DocType.DEFAULT, "Source collection", null, 1, 1));
 
-        Field<String> sourceCollectionField = new Field<String>(
-                new FieldDefinition("Collection", ConstantType.DEFAULT, "Source collection", null, 1, 1));
-        sourceCollectionField.setValue(_object.typeAndId(), false);
-        sourceFieldGroup.add(sourceCollectionField);
+        Field<String> sourceRootCIDField = new Field<String>(
+                new FieldDefinition(StringUtils.upperCaseFirst(_object.objectType().name().toLowerCase()),
+                        ConstantType.DEFAULT, "root citeable ID of the collection", null, 1, 1));
+        sourceRootCIDField.setValue(_object.typeAndId(), false);
+        sourceFieldGroup.add(sourceRootCIDField);
 
         Field<String> sourceSummaryField = new Field<String>(
                 new FieldDefinition("Summary", ConstantType.DEFAULT, "Source summary", null, 1, 1));
@@ -625,7 +633,8 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         _form.add(overrideFieldGroup);
         addMustBeValid(_form);
         _form.render();
-        _vp.add(new ScrollPanel(_form, ScrollPolicy.AUTO));
+        _formSP.setContent(new ScrollPanel(_form, ScrollPolicy.AUTO));
+        
         _status = new HTML();
         _status.setTextAlign(TextAlign.CENTER);
         _status.setFontSize(11);

@@ -88,7 +88,7 @@ public class SinkForm extends ValidatedInterfaceComponent {
         _sinkSettingsFormSP.setPaddingRight(50);
         _sinkSettingsFormSP.setPaddingBottom(20);
         _sinkSettingsFormSP.fitToParent();
-        _sinkSettingsFormSP.setBorder(2, RGB.GREY_DDD);
+        _sinkSettingsFormSP.setBorder(1, RGB.GREY_DDD);
         _vp.add(_sinkSettingsFormSP);
 
         _status = new HTML();
@@ -99,6 +99,7 @@ public class SinkForm extends ValidatedInterfaceComponent {
         _status.setFontWeight(FontWeight.BOLD);
         _status.setMarginLeft(20);
         _status.setColour(RGBA.RED);
+        _status.setBorder(1, RGB.GREY_DDD);
         _vp.add(_status);
 
     }
@@ -108,16 +109,16 @@ public class SinkForm extends ValidatedInterfaceComponent {
         _sinkSelectForm.setSpacing(10);
         _sinkSelectForm.setWidth100();
         _sinkSelectForm.setShowHelp(false);
-        _sinkSelectForm.setShowDescriptions(false);
-        FieldGroup sourceCollection = new FieldGroup(new FieldDefinition("Source Collection", "source", DocType.DEFAULT,
-                "Source collection information", null, 1, 1));
+        // _sinkSelectForm.setShowDescriptions(false);
+        FieldGroup sourceCollection = new FieldGroup(
+                new FieldDefinition("Source Collection", DocType.DEFAULT, "Source collection information", null, 1, 1));
         _sinkSelectForm.add(sourceCollection);
-        Field<String> sourceID = new Field<String>(
-                new FieldDefinition(StringUtils.upperCaseFirst(_o.objectType().name().toLowerCase()), "cid",
+        Field<String> rootCID = new Field<String>(
+                new FieldDefinition(StringUtils.upperCaseFirst(_o.objectType().name().toLowerCase()),
                         ConstantType.DEFAULT, null, null, 1, 1));
-        sourceID.setInitialValue(_o.citeableId(), false);
-        sourceID.setRenderOptions(new FieldRenderOptions().setWidth100());
-        sourceCollection.add(sourceID);
+        rootCID.setInitialValue(_o.citeableId(), false);
+        rootCID.setRenderOptions(new FieldRenderOptions().setWidth100());
+        sourceCollection.add(rootCID);
         Field<Long> sourceDatasetCount = new Field<Long>(
                 new FieldDefinition("Number of datasets", "nb-datasets", ConstantType.DEFAULT, null, null, 1, 1));
         sourceDatasetCount.setInitialValue(_summary.numberOfDatasets(), false);

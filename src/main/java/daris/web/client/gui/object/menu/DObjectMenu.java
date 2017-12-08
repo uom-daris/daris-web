@@ -200,16 +200,17 @@ public class DObjectMenu extends ObjectMenu<DObject> {
              */
             add(new ActionEntry(ICON_DOWNLOAD, "Download " + _o.typeAndId() + "...",
                     new DownloadAction(_o, os, _owner)));
-            
-            /*
-             * send to sink...
-             */
-            add(new ActionEntry(ICON_SINK_SEND, "Send " + _o.typeAndId() + " to sink...", new SinkSendAction(_o, os, _owner)));
 
             /*
              * share url
              */
             add(new ActionEntry(ICON_SHARE1, "Share " + _o.typeAndId() + "...", new ShareAction(_o, os, _owner)));
+
+            /*
+             * send to sink...
+             */
+            add(new ActionEntry(ICON_SINK_SEND, "Send " + _o.typeAndId() + " to sink...",
+                    new SinkSendAction(_o, os, _owner)));
 
             if (os.numberOfDicomDatasets() > 0) {
                 /*

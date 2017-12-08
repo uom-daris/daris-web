@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import arc.gui.InterfaceCreateHandler;
 import arc.gui.object.action.ActionInterface;
 import arc.gui.object.action.precondition.ActionPrecondition;
-import daris.web.client.gui.sink.SinkForm;
 import daris.web.client.gui.util.WindowUtil;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;

@@ -1,7 +1,5 @@
 TODO:
 
-send to sink action...
-fix dicom send -> override -> set value action does not render value field.
 layout pattern in export options...
 shopping cart support...
 tags...
@@ -15,6 +13,8 @@ save filtering, sorting settings in user.self.settings
 Doing:
 
 Resolved issues:
+- dicom send form - not updated after action change.
+- send to sink
 - dataset import: add functions to remove files from file upload form.
 - dataset import: fix dicom import at project level.
 - dataset import: disallow dropping more files to file upload form while adding files.

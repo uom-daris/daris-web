@@ -17,6 +17,7 @@ import daris.web.client.gui.AboutDialog;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.background.BackgroundServiceManager;
+import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.gui.object.menu.DObjectMenu;
 import daris.web.client.gui.widget.MenuButtonBar;
 import daris.web.client.model.CiteableIdUtils;
@@ -46,6 +47,9 @@ public class Explorer extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_BACKGROUND = new arc.gui.image.Image(
             Resource.INSTANCE.tasks16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_UPLOAD = new arc.gui.image.Image(
+            Resource.INSTANCE.upload16().getSafeUri().asString(), 16, 16);
 
     private VerticalPanel _vp;
     private MenuButtonBar _menuBar;
@@ -211,6 +215,13 @@ public class Explorer extends ContainerWidget {
             @Override
             public void execute() {
                 new BackgroundServiceManager().show(window());
+            }
+        }));
+        viewMenu.add(new ActionEntry(ICON_UPLOAD, "View upload tasks...", new Action() {
+
+            @Override
+            public void execute() {
+                FileUploadTaskManager.get().show(window());
             }
         }));
         _menuBar.addMenuButton("View", ICON_VIEW, viewMenu);
