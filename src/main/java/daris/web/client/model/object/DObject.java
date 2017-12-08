@@ -244,4 +244,13 @@ public abstract class DObject {
         return objectType().toString() + " " + citeableId();
     }
 
+    public String projectCiteableId() {
+        if (objectType() == Type.PROJECT) {
+            return _citeableId;
+        } else {
+            int n = CiteableIdUtils.depth(citeableId()) - CiteableIdUtils.PROJECT_CID_DEPTH;
+            return CiteableIdUtils.parent(_citeableId, n);
+        }
+    }
+
 }

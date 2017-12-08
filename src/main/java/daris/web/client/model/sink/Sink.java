@@ -127,7 +127,6 @@ public class Sink {
     }
 
     public boolean isAdminArg(String argName) {
-        // TODO Auto-generated method stub
         ArgumentDefinition argDefn = _type.argDefn(argName);
         if (argDefn != null) {
             return argDefn.admin();
@@ -206,6 +205,11 @@ public class Sink {
 
     public String description() {
         return _description;
+    }
+    
+    @Override
+    public String toString(){
+        return name();
     }
 
 }

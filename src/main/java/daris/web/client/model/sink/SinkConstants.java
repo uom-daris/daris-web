@@ -9,4 +9,6 @@ public class SinkConstants {
 
     public static final String SINK_ARG_ASSET_SPECIFIC_OUTPUT_DESCRIPTION = "Output path of the specific input asset. Ignored in multiple transfer context.";
 
+    public static final String SINK_ARG_LAYOUT_PATTERN = "layout-pattern";
+
 }

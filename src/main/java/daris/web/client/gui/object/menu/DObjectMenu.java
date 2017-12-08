@@ -18,12 +18,13 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.dataset.action.DatasetUpdateAction;
 import daris.web.client.gui.dataset.action.DerivedDatasetCreateAction;
 import daris.web.client.gui.dataset.action.PrimaryDatasetCreateAction;
-import daris.web.client.gui.dicom.exports.DicomSendAction;
 import daris.web.client.gui.dicom.imports.DicomIngestAction;
 import daris.web.client.gui.exmethod.action.ExMethodUpdateAction;
 import daris.web.client.gui.object.action.DObjectDestroyAction;
+import daris.web.client.gui.object.exports.DicomSendAction;
 import daris.web.client.gui.object.exports.DownloadAction;
 import daris.web.client.gui.object.exports.ShareAction;
+import daris.web.client.gui.object.exports.SinkSendAction;
 import daris.web.client.gui.project.action.ProjectCreateAction;
 import daris.web.client.gui.project.action.ProjectUpdateAction;
 import daris.web.client.gui.study.action.StudyCreateAction;
@@ -55,6 +56,8 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DICOM_SEND = new arc.gui.image.Image(
             Resource.INSTANCE.send16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_SINK_SEND = new arc.gui.image.Image(
+            Resource.INSTANCE.arrowRight16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DESTROY = new arc.gui.image.Image(
             Resource.INSTANCE.delete16().getSafeUri().asString(), 16, 16);
 
@@ -197,6 +200,11 @@ public class DObjectMenu extends ObjectMenu<DObject> {
              */
             add(new ActionEntry(ICON_DOWNLOAD, "Download " + _o.typeAndId() + "...",
                     new DownloadAction(_o, os, _owner)));
+            
+            /*
+             * send to sink...
+             */
+            add(new ActionEntry(ICON_SINK_SEND, "Send " + _o.typeAndId() + " to sink...", new SinkSendAction(_o, os, _owner)));
 
             /*
              * share url

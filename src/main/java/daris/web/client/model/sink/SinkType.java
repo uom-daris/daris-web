@@ -308,6 +308,10 @@ public class SinkType {
         return _args != null && _args.containsKey(argName);
     }
 
+    public static boolean isLayoutPatternArg(String argName) {
+        return SinkConstants.SINK_ARG_LAYOUT_PATTERN.equals(argName);
+    }
+
     public boolean isSecureArg(String argName) {
         if (argExists(argName)) {
             ArgumentDefinition argDefn = _args.get(argName);

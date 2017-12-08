@@ -207,6 +207,7 @@ public class DicomSend extends BackgroundObjectMessage {
         _calledPort = 104;
         _calledAET = null;
         _elements = new HashMap<String, DicomElement>();
+        setDescription("send dicom data");
     }
 
     public void setCallingAETitle(String title) {

@@ -19,6 +19,9 @@ public interface Resource extends ClientBundle {
     @Source("resource/alert_16.png")
     ImageResource alert16();
 
+    @Source("resource/arrow_right_16.png")
+    ImageResource arrowRight16();
+
     @Source("resource/check_16.png")
     ImageResource check16();
 

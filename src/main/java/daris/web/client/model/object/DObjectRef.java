@@ -302,16 +302,6 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         return _parent;
     }
 
-    public void setParent(DObjectRef parent) {
-        if (parent == null) {
-            assert isProject();
-            _parent = null;
-            return;
-        }
-        assert CiteableIdUtils.isParent(parent.citeableId(), _citeableId);
-        _parent = parent;
-    }
-
     public boolean forEdit() {
         return _foredit;
     }
@@ -325,6 +315,15 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
 
     public String typeAndId() {
         return referentTypeName() + " " + citeableId();
+    }
+
+    public String projectCiteableId() {
+        if (isProject()) {
+            return _citeableId;
+        } else {
+            int n = CiteableIdUtils.depth(citeableId()) - CiteableIdUtils.PROJECT_CID_DEPTH;
+            return CiteableIdUtils.parent(_citeableId, n);
+        }
     }
 
 }

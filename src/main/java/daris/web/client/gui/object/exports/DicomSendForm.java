@@ -1,4 +1,4 @@
-package daris.web.client.gui.dicom.exports;
+package daris.web.client.gui.object.exports;
 
 import java.util.List;
 
@@ -27,6 +27,7 @@ import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.client.util.ActionListener;
 import arc.mf.client.util.AsynchronousAction;
+import arc.mf.client.util.IsNotValid;
 import arc.mf.client.util.Validity;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.DocType;
@@ -79,7 +80,7 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
     private CollectionSummary _summary;
 
     DicomSendForm(DObject object, CollectionSummary summary) {
-        _ds = new DicomSend(object.citeableId(),null);
+        _ds = new DicomSend(object.citeableId(), null);
         _object = object;
         _summary = summary;
 
@@ -206,7 +207,15 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         patientNameAction.setRenderOptions(new FieldRenderOptions().setWidth(200));
         patientNameFG.add(patientNameAction);
         Field<String> patientNameValue = new Field<String>(
-                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name());
+                }
+                return v;
+            }
+        };
         patientNameValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         patientNameValue.setVisible(false);
         patientNameFG.add(patientNameValue);
@@ -251,7 +260,15 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         patientIdAction.setInitialValue(ElementAction.NONE, false);
         patientIdFG.add(patientIdAction);
         Field<String> patientIdValue = new Field<String>(
-                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name());
+                }
+                return v;
+            }
+        };
         patientIdValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         patientIdValue.setVisible(false);
         patientIdFG.add(patientIdValue);
@@ -295,7 +312,15 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         studyIdAction.setInitialValue(ElementAction.NONE, false);
         studyIdFG.add(studyIdAction);
         Field<String> studyIdValue = new Field<String>(
-                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name());
+                }
+                return v;
+            }
+        };
         studyIdValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         studyIdValue.setVisible(false);
         studyIdFG.add(studyIdValue);
@@ -339,7 +364,15 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         performingPhysicianNameAction.setInitialValue(ElementAction.NONE, false);
         performingPhysicianNameFG.add(performingPhysicianNameAction);
         Field<String> performingPhysicianNameValue = new Field<String>(
-                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name());
+                }
+                return v;
+            }
+        };
         performingPhysicianNameValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         performingPhysicianNameValue.setVisible(false);
         performingPhysicianNameFG.add(performingPhysicianNameValue);
@@ -383,7 +416,15 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         referringPhysicianNameAction.setInitialValue(ElementAction.NONE, false);
         referringPhysicianNameFG.add(referringPhysicianNameAction);
         Field<String> referringPhysicianNameValue = new Field<String>(
-                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name());
+                }
+                return v;
+            }
+        };
         referringPhysicianNameValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         referringPhysicianNameValue.setVisible(false);
         referringPhysicianNameFG.add(referringPhysicianNameValue);
@@ -427,7 +468,15 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         referringPhysicianPhoneAction.setInitialValue(ElementAction.NONE, false);
         referringPhysicianPhoneFG.add(referringPhysicianPhoneAction);
         Field<String> referringPhysicianPhoneValue = new Field<String>(
-                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+                new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name());
+                }
+                return v;
+            }
+        };
         referringPhysicianPhoneValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         referringPhysicianPhoneValue.setVisible(false);
         referringPhysicianPhoneFG.add(referringPhysicianPhoneValue);
@@ -463,8 +512,8 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         });
         overrideFieldGroup.add(referringPhysicianPhoneFG);
         // Generic Element
-        FieldGroup genericElementFG = new FieldGroup(new FieldDefinition("DICOM Element", "element", DocType.DEFAULT,
-                "A generic DICOM element.", null, 0, 255));
+        FieldGroup genericElementFG = new FieldGroup(
+                new FieldDefinition("DICOM Element", DocType.DEFAULT, "A generic DICOM element.", null, 0, 255));
         FieldValueValidator<String> validator = new FieldValueValidator<String>() {
             @Override
             public void validate(Field<String> f, FieldValidHandler vh) {
@@ -477,7 +526,7 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
             }
         };
         Field<String> geTag = new Field<String>(
-                new FieldDefinition("Tag", "tag", new StringType(8, 8, 8), "The DICOM element tag.", null, 0, 1));
+                new FieldDefinition("Tag", new StringType(8, 8, 8), "The DICOM element tag.", null, 0, 1));
         geTag.setRenderOptions(new FieldRenderOptions().setWidth(182));
         geTag.addValueValidator(validator);
         genericElementFG.add(geTag);
@@ -486,7 +535,17 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         geAction.setRenderOptions(new FieldRenderOptions().setWidth(200));
         geAction.setInitialValue(ElementAction.NONE, false);
         genericElementFG.add(geAction);
-        Field<String> geValue = new Field<String>(new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1));
+        Field<String> geValue = new Field<String>(new FieldDefinition("Value", StringType.DEFAULT, null, null, 0, 1)) {
+            public Validity valid() {
+                Validity v = super.valid();
+                if (v.valid() && value() == null && fieldSet().field("Action").value() == ElementAction.SET_VALUE
+                        && fieldSet().field("Tag").value() != null) {
+                    v = new IsNotValid("Missing value for " + fieldSet().name() + "/[Tag="
+                            + fieldSet().field("Tag").value() + "]");
+                }
+                return v;
+            }
+        };
         geValue.setVisible(false);
         geValue.setRenderOptions(new FieldRenderOptions().setWidth(182));
         genericElementFG.add(geValue);
@@ -594,6 +653,7 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         @SuppressWarnings("unchecked")
         @Override
         public void updatedFieldValue(FieldSet s, FormItem f) {
+            Form form = f.form();
             FormItem actionItem = s.field("Action");
             ElementAction action = (ElementAction) actionItem.value();
             FormItem valueItem = s.field("Value");
@@ -603,6 +663,10 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
                     ((Field<String>) valueItem).setValue(null);
                 }
                 valueItem.setVisible(action == ElementAction.SET_VALUE);
+                if (form != null) {
+                    form.setInstructions(null);
+                    form.render();
+                }
             }
             elementChanged(action, value);
         }
