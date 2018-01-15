@@ -118,7 +118,9 @@ public class ShoppingCartListView implements InterfaceComponent {
                     if (carts != null && !carts.isEmpty()) {
                         List<ListGridEntry<ShoppingCartRef>> entries = new ArrayList<ListGridEntry<ShoppingCartRef>>(
                                 carts.size());
-                        for (ShoppingCartRef cart : carts) {
+                        int total = carts.size();
+                        for (int i = total - 1; i >= 0; i--) {
+                            ShoppingCartRef cart = carts.get(i);
                             ListGridEntry<ShoppingCartRef> entry = new ListGridEntry<ShoppingCartRef>(cart);
                             entry.set("id", cart.id());
                             entry.set("status", cart.status());
@@ -183,7 +185,7 @@ public class ShoppingCartListView implements InterfaceComponent {
             }
         }).setWidth(20);
         _list.addColumnDefn("title", "Shopping Cart", "Shopping Cart", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
-                .setWidth(100);
+                .setWidth(130);
         _list.addColumnDefn("status", "Status", "Status", new WidgetFormatter<ShoppingCartRef, Status>() {
 
             @Override
@@ -230,12 +232,12 @@ public class ShoppingCartListView implements InterfaceComponent {
                 }
                 AbsolutePanel ap = new AbsolutePanel();
                 ap.setHeight(22);
-                ap.setWidth(250);
+                ap.setWidth(220);
                 ap.add(pb);
                 ap.add(title);
                 return ap;
             }
-        }).setWidth(300);
+        }).setWidth(250);
 
         _vp.add(_list);
 

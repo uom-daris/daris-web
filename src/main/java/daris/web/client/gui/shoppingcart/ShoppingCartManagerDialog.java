@@ -15,6 +15,7 @@ import arc.gui.gwt.widget.window.WindowCloseListener;
 import arc.gui.window.WindowProperties;
 import daris.web.client.gui.Resource;
 import daris.web.client.model.shoppingcart.ActiveShoppingCart;
+import daris.web.client.model.shoppingcart.ShoppingCart;
 import daris.web.client.model.shoppingcart.ShoppingCartCollectionRef;
 import daris.web.client.model.shoppingcart.ShoppingCartRef;
 
@@ -53,7 +54,7 @@ public class ShoppingCartManagerDialog implements ActiveShoppingCart.Listener, S
 
         _scc = ShoppingCartCollectionRef.ALL_CARTS;
         _list = new ShoppingCartListView(_scc);
-        _list.widget().setPreferredWidth(0.4);
+        _list.widget().setPreferredWidth(0.45);
         _scc.addListener(this);
 
         _detailHP = new HorizontalPanel();
@@ -85,7 +86,14 @@ public class ShoppingCartManagerDialog implements ActiveShoppingCart.Listener, S
 
         _switchAP.add(_switchButton);
 
-        _detail = new ShoppingCartDetailedView();
+        _detail = new ShoppingCartDetailedView() {
+            protected void ordered(ShoppingCart cart) {
+                if (!_showList) {
+                    _showList = true;
+                }
+                showHideList();
+            }
+        };
         _detailHP.add(_detail.widget());
 
         _list.addSelectionHandler(new SelectionHandler<ShoppingCartRef>() {

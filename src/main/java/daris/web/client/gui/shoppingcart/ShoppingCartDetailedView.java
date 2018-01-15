@@ -259,7 +259,12 @@ public class ShoppingCartDetailedView extends ValidatedInterfaceComponent {
                 ShoppingCartCollectionRef.ALL_CARTS.reset();
                 ShoppingCartCollectionRef.ALL_CARTS.notifyOfCollectionChange();
             });
+            ordered(_cart);
         });
+    }
+
+    protected void ordered(ShoppingCart cart) {
+
     }
 
     void refresh() {
