@@ -18,7 +18,6 @@ import com.google.gwt.user.client.Timer;
 import arc.mf.client.util.DateTime;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.client.xml.XmlElement;
-import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.client.xml.XmlWriter;
 import arc.mf.object.ObjectMessageResponse;
 import arc.mf.session.Session;
@@ -1026,7 +1025,6 @@ public class ShoppingCart {
          */
         w.add("decompress-archive", _decompressArchive);
         
-     System.out.println(((XmlStringWriter)w).document());
     }
 
     public boolean idEquals(ShoppingCartRef cart) {
