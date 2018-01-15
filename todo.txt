@@ -1,4 +1,6 @@
 TODO:
+drag widget ...
+
 
 layout pattern in export options...
 shopping cart support...
@@ -9,6 +11,8 @@ permissions for destroying ex-method...
 size of project user combobox
 message box -> option to view newly created object
 save filtering, sorting settings in user.self.settings
+project summary
+find studies by date
 
 Doing:
 

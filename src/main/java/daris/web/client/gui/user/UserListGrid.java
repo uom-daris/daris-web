@@ -20,10 +20,8 @@ import arc.gui.gwt.data.DataLoadAction;
 import arc.gui.gwt.data.DataLoadHandler;
 import arc.gui.gwt.data.DataSource;
 import arc.gui.gwt.data.filter.Filter;
-import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.ContainerWidget;
 import arc.gui.gwt.widget.HTML;
-import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.panel.SimplePanel;
@@ -40,6 +38,7 @@ import arc.mf.object.ObjectMessageResponse;
 import arc.mf.session.Session;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridStyles;
 import daris.web.client.model.user.messages.UserDescribe;
 
 public class UserListGrid extends ContainerWidget {
@@ -100,36 +99,12 @@ public class UserListGrid extends ContainerWidget {
         _list.setEmptyMessage("");
         _list.setLoadingMessage("");
         _list.setCursorSize(Integer.MAX_VALUE);
-        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.fitToParent();
-        _list.addColumnDefn("domain", "Domain", null, new WidgetFormatter<UserRef, DomainRef>() {
-
-            @Override
-            public BaseWidget format(UserRef user, DomainRef domain) {
-                return createCellHtml(domain.name());
-            }
-        }).setWidth(200);
-        _list.addColumnDefn("user", "User", null, new WidgetFormatter<UserRef, String>() {
-
-            @Override
-            public BaseWidget format(UserRef user, String userName) {
-                return createCellHtml(userName);
-            }
-        }).setWidth(150);
-        _list.addColumnDefn("name", "Name", null, new WidgetFormatter<UserRef, String>() {
-
-            @Override
-            public BaseWidget format(UserRef user, String personName) {
-                return createCellHtml(personName);
-            }
-        }).setWidth(150);
-        _list.addColumnDefn("email", "Email", null, new WidgetFormatter<UserRef, String>() {
-
-            @Override
-            public BaseWidget format(UserRef user, String email) {
-                return createCellHtml(email);
-            }
-        }).setWidth(200);
+        _list.addColumnDefn("domain", "Domain", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
+        _list.addColumnDefn("user", "User", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(150);
+        _list.addColumnDefn("name", "Name", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(150);
+        _list.addColumnDefn("email", "Email", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
         _list.setObjectRegistry(DObjectGUIRegistry.get());
         _list.enableRowDrag();
         _vp.add(_list);
@@ -154,7 +129,7 @@ public class UserListGrid extends ContainerWidget {
 
         HTML title = new HTML("Filters");
         title.setFontFamily(DefaultStyles.FONT_FAMILY);
-        title.setFontSize(11);
+        title.setFontSize(DefaultStyles.FONT_SIZE);
         title.setFontWeight(FontWeight.BOLD);
         title.setTextAlign(TextAlign.CENTER);
         title.setHeight(22);
@@ -259,15 +234,6 @@ public class UserListGrid extends ContainerWidget {
 
         _filterSP.setContent(vp);
 
-    }
-
-    private static HTML createCellHtml(String value) {
-        HTML html = value == null ? new HTML() : new HTML(value);
-        html.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        html.setFontFamily(DefaultStyles.FONT_FAMILY);
-        html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
-        html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
-        return html;
     }
 
     private static Filter createFilterFor(String value) {

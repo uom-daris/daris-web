@@ -12,8 +12,6 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -29,6 +27,7 @@ import arc.gui.gwt.widget.event.SelectionHandler;
 import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.image.LinearGradient;
 import arc.gui.gwt.widget.list.ListGrid;
+import arc.gui.gwt.widget.list.ListGridColumn;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.list.ListGridRowContextMenuHandler;
 import arc.gui.gwt.widget.list.ListGridRowDoubleClickHandler;
@@ -41,6 +40,7 @@ import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.gui.gwt.widget.table.Table.Row;
+import arc.gui.util.HTMLUtil;
 import arc.mf.client.util.ListUtil;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.event.Filter;
@@ -54,6 +54,7 @@ import arc.mf.session.Session;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectGUI;
+import daris.web.client.gui.widget.ListGridStyles;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectChildrenRef;
 import daris.web.client.model.object.DObjectChildrenRef.SortKey;
@@ -70,8 +71,8 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
     public static final SortKey DEFAULT_SORT_KEY = SortKey.CID;
     public static final SortOrder DEFAULT_SORT_ORDER = SortOrder.ASC;
     public static final int MAX_MAP_ENTRIES = 100;
-    public static final int MIN_ROW_HEIGHT = 28;
-    public static final int FONT_SIZE = 11;
+    // public static final int MIN_ROW_HEIGHT = 28;
+    // public static final int FONT_SIZE = 11;
 
     public static final arc.gui.image.Image ICON_OPTIONS = new arc.gui.image.Image(
             Resource.INSTANCE.options16().getSafeUri().asString(), 12, 12);
@@ -95,6 +96,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
     private VerticalPanel _vp;
     private VerticalPanel _listVP;
     private ListGrid<DObjectRef> _list;
+    private HTML _columnHeader;
     private ListViewOptionsForm _viewOptionsForm;
     private PagingControl _pc;
     private ImageButton _optionsButton;
@@ -168,8 +170,9 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
         };
         _list.setObjectRegistry(DObjectGUIRegistry.get());
+        _list.enableRowDrag();
         _list.fitToParent();
-        _list.setMinRowHeight(MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
 
         _list.setClearSelectionOnRefresh(false);
 
@@ -203,6 +206,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         _list.setEmptyMessage("");
         _list.setLoadingMessage("loading...");
         _list.setCursorSize(_pageSize);
+
         _list.addColumnDefn("nbc", "", null, new WidgetFormatter<DObjectRef, Integer>() {
 
             @Override
@@ -211,58 +215,32 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
             }
         }).setWidth(28);
 
-        _list.addColumnDefn("cid", "ID", "Object identifier", new WidgetFormatter<DObjectRef, String>() {
+        _columnHeader = new HTML(HTMLUtil.noWrap("Object"));
 
-            @Override
-            public BaseWidget format(DObjectRef o, String cid) {
-                HTML html = new HTML(StringUtils.upperCaseFirst(o.referentTypeName()) + " " + cid);
-                html.setFontSize(FONT_SIZE);
-                html.setFontFamily("Roboto,Helvetica,sans-serif");
-                html.setFontWeight(FontWeight.BOLD);
-                if (!o.isDataset() && o.numberOfChildren() != 0) {
-                    html.setCursor(Cursor.POINTER);
-                }
-                html.element().getStyle().setProperty("letterSpacing", "0.0625em");
-                return html;
-            }
-        }).setWidth(150);
-
-        _list.addColumnDefn("name", "Name", "Object name", new WidgetFormatter<DObjectRef, String>() {
-
-            @Override
-            public BaseWidget format(DObjectRef o, String name) {
-                HTML html = new HTML(name);
-                html.setFontSize(FONT_SIZE);
-                html.setFontFamily("Roboto,Helvetica,sans-serif");
-                html.setFontWeight(FontWeight.BOLD);
-                if (!o.isDataset() && o.numberOfChildren() != 0) {
-                    html.setCursor(Cursor.POINTER);
-                }
-                html.element().getStyle().setProperty("letterSpacing", "0.0625em");
-                return html;
-            }
-        }).setWidth(500);
-
-        _list.addColumnDefn("nbc", "Number of Members", "Number of member objects",
-                new WidgetFormatter<DObjectRef, Integer>() {
+        ListGridColumn<String> column = new ListGridColumn<String>("name", _columnHeader, null,
+                new WidgetFormatter<DObjectRef, String>() {
 
                     @Override
-                    public BaseWidget format(DObjectRef o, Integer nbc) {
-                        HTML html = (nbc == null || nbc < 0) ? new HTML() : new HTML(Integer.toString(nbc));
-                        html.setFontSize(FONT_SIZE);
-                        html.setFontFamily("Roboto,Helvetica,sans-serif");
+                    public BaseWidget format(DObjectRef o, String name) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(o.citeableId());
+                        if (o.name() != null) {
+                            sb.append(": ").append(o.name());
+                        }
+                        HTML html = ListGridStyles.formatCellHtml(sb.toString());
+                        html.setPaddingTop(3);
                         html.setFontWeight(FontWeight.BOLD);
                         if (!o.isDataset() && o.numberOfChildren() != 0) {
                             html.setCursor(Cursor.POINTER);
                         }
-                        html.setTextAlign(TextAlign.CENTER);
-                        html.setVerticalAlign(VerticalAlign.MIDDLE);
-                        html.element().getStyle().setLineHeight(MIN_ROW_HEIGHT, Unit.PX);
-                        html.setHeight(MIN_ROW_HEIGHT);
-                        html.setWidth100();
                         return html;
                     }
-                }).setWidth(120);
+                });
+        column.setWidth(800);
+        _list.add(column);
+
+        _list.addColumnDefn("nbc", "Number of Members", "Number of member objects",
+                ListGridStyles.getHtmlFormatter(TextAlign.RIGHT)).setWidth(120);
 
         _list.setRowDoubleClickHandler(new ListGridRowDoubleClickHandler<DObjectRef>() {
 
@@ -297,6 +275,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         hp.addSpacer(10);
 
         _optionsButton = new ImageButton(ICON_OPTIONS);
+        _optionsButton.setCursor(Cursor.POINTER);
         _optionsButton.addClickHandler(event -> {
             if (_viewOptionsForm != null) {
                 hideViewOptionsForm();
@@ -387,6 +366,11 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
     @Override
     public void gotoOffset(final long offset) {
+        if (_parent == null) {
+            _columnHeader.setHTML(HTMLUtil.noWrap("Project"));
+        } else {
+            _columnHeader.setHTML(HTMLUtil.noWrap(StringUtils.upperCaseFirst(_parent.childTypeName())));
+        }
         final DObjectChildrenRef childrenRef = childrenRef();
         _list.setBusyLoading();
         childrenRef.resolve(offset, offset + _pageSize, new CollectionResolveHandler<DObjectRef>() {
@@ -453,7 +437,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
             _ap = new AbsolutePanel();
             _ap.setWidth100();
-            _ap.setHeight(MIN_ROW_HEIGHT);
+            _ap.setHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
             _ap.setCursor(Cursor.POINTER);
 
             if (o.isDataset()) {

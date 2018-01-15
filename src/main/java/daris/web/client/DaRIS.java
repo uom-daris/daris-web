@@ -10,12 +10,12 @@ import arc.mf.client.plugin.Plugin;
 import arc.mf.event.SystemEventChannel;
 import arc.mf.model.shopping.events.ShoppingEvents;
 import arc.mf.session.DefaultLoginDialog;
-import arc.mf.session.LoginDialog;
 import arc.mf.session.Session;
 import arc.mf.session.SessionHandler;
 import daris.web.client.gui.explorer.Explorer;
 import daris.web.client.gui.theme.DaRISTheme;
 import daris.web.client.model.object.event.DObjectEvents;
+import daris.web.client.model.shoppingcart.ActiveShoppingCart;
 
 public class DaRIS implements EntryPoint, SessionHandler {
     public void onModuleLoad() {
@@ -55,6 +55,7 @@ public class DaRIS implements EntryPoint, SessionHandler {
          * Enable shopping cart events
          */
         ShoppingEvents.initialize();
+        ActiveShoppingCart.subscribe();
 
         /*
          * Subscribes to system event channel

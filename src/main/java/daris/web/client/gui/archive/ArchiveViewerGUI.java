@@ -3,7 +3,7 @@ package daris.web.client.gui.archive;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.TextAlign;
 
 import arc.gui.gwt.widget.BaseWidget;
 import arc.gui.gwt.widget.ContainerWidget;
@@ -28,6 +28,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.dataset.NiftiViewer;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridStyles;
 import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.archive.messages.ArchiveContentGet;
@@ -74,7 +75,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
                 }
             }
         };
-        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setClearSelectionOnRefresh(false);
         _list.setMultiSelect(false);
         _list.setSelectionHandler(new SelectionHandler<ArchiveEntry>() {
@@ -96,56 +97,22 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
         _list.setLoadingMessage("");
         _list.setCursorSize(_arc.defaultPagingSize());
         _list.fitToParent();
-        _list.addColumnDefn("idx", "Index", "Ordinal index", new WidgetFormatter<ArchiveEntry, Integer>() {
-
-            @Override
-            public BaseWidget format(ArchiveEntry ae, Integer idx) {
-                HTML html = new HTML(String.valueOf(idx));
-                html.setFontFamily(DefaultStyles.FONT_FAMILY);
-                html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
-                html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
-                return html;
-            }
-        }).setWidth(50);
-        _list.addColumnDefn("name", "Name", "File name/path.", new WidgetFormatter<ArchiveEntry, String>() {
-
-            @Override
-            public BaseWidget format(ArchiveEntry ae, String name) {
-                HTML html = new HTML(name);
-                html.setFontFamily(DefaultStyles.FONT_FAMILY);
-                html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
-                return html;
-            }
-        }).setWidth(350);
+        _list.addColumnDefn("idx", "Index", "Ordinal index", ListGridStyles.getHtmlFormatter(TextAlign.CENTER))
+                .setWidth(50);
+        _list.addColumnDefn("name", "Name", "File name/path.", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+                .setWidth(350);
         _list.addColumnDefn("size", "Size", "File size", new WidgetFormatter<ArchiveEntry, Long>() {
 
             @Override
             public BaseWidget format(ArchiveEntry ae, Long size) {
-                HTML html = new HTML(size >= 0 ? SizeUtil.getHumanReadableSize(size, true) : "");
-                html.setFontFamily(DefaultStyles.FONT_FAMILY);
-                html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
-                html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
+                BaseWidget w = ListGridStyles.formatCellHtml(size >= 0 ? SizeUtil.getHumanReadableSize(size, true) : "",
+                        TextAlign.RIGHT);
                 if (size != null && size >= 0) {
-                    html.setToolTip(Long.toString(size) + " bytes");
+                    w.setToolTip(Long.toString(size) + " bytes");
                 }
-                return html;
+                return w;
             }
-        }).setWidth(150);
-        // _list.addColumnDefn("idx", "download", "Download", new
-        // WidgetFormatter<ArchiveEntry, Integer>() {
-        //
-        // @Override
-        // public BaseWidget format(final ArchiveEntry ae, Integer idx) {
-        // Button button = new Button("Download");
-        // button.addClickHandler(new ClickHandler() {
-        // @Override
-        // public void onClick(ClickEvent event) {
-        // new ArchiveContentGet(_arc, ae).send();
-        // }
-        // });
-        // return button;
-        // }
-        // }).setWidth(80);
+        }).setWidth(100);
         listVP.add(_list);
 
         _pc = new PagingControl(_arc.defaultPagingSize());
@@ -231,7 +198,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
 
     private static AbsolutePanel createInfoPanel(ArchiveEntry ae) {
         String tdStyle = "font-family:" + DefaultStyles.FONT_FAMILY + "; font-size:"
-                + DefaultStyles.LIST_GRID_CELL_FONT_SIZE + "px; border: 1px inset #ddd;";
+                + ListGridStyles.LIST_GRID_CELL_FONT_SIZE + "px; border: 1px inset #ddd;";
         StringBuilder sb = new StringBuilder();
         sb.append("<div style=\"position:absolute; top:50%; left:50%; transform:translateX(-50%) translateY(-50%);\">");
         sb.append(

@@ -27,15 +27,19 @@ import daris.web.client.gui.object.exports.ShareAction;
 import daris.web.client.gui.object.exports.SinkSendAction;
 import daris.web.client.gui.project.action.ProjectCreateAction;
 import daris.web.client.gui.project.action.ProjectUpdateAction;
+import daris.web.client.gui.shoppingcart.ShoppingCartManagerDialog;
 import daris.web.client.gui.study.action.StudyCreateAction;
 import daris.web.client.gui.study.action.StudyUpdateAction;
 import daris.web.client.gui.subject.action.SubjectCreateAction;
 import daris.web.client.gui.subject.action.SubjectUpdateAction;
+import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.CollectionSummaryRef;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.project.Project;
+import daris.web.client.model.shoppingcart.ActiveShoppingCart;
+import daris.web.client.model.shoppingcart.messages.ShoppingCartContentAdd;
 import daris.web.client.model.subject.Subject;
 
 public class DObjectMenu extends ObjectMenu<DObject> {
@@ -60,6 +64,8 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             Resource.INSTANCE.arrowRight16().getSafeUri().asString(), 16, 16);
     public static arc.gui.image.Image ICON_DESTROY = new arc.gui.image.Image(
             Resource.INSTANCE.delete16().getSafeUri().asString(), 16, 16);
+    public static arc.gui.image.Image ICON_SHOPPINGCART = new arc.gui.image.Image(
+            Resource.INSTANCE.shoppingcartPurple16().getSafeUri().asString(), 16, 16);
 
     private DObjectRef _po;
     private DObjectRef _o;
@@ -218,6 +224,18 @@ public class DObjectMenu extends ObjectMenu<DObject> {
                  */
                 add(new ActionEntry(ICON_DICOM_SEND, "Send DICOM data in " + _o.typeAndId() + "...",
                         new DicomSendAction(_o, os, _owner)));
+            }
+
+            if (os.numberOfDatasets() > 0) {
+                add(new ActionEntry(ICON_SHOPPINGCART, "Add " + _o.typeAndId() + " to shopping cart", () -> {
+                    ActiveShoppingCart.resolve(false, ac -> {
+                        new ShoppingCartContentAdd(ac.id(), _o).send(r -> {
+                            ShoppingCartManagerDialog.get().refresh();
+                            MessageBox.show(320, 50, MessageBox.Position.CENTER,
+                                    _o.typeAndId() + " has been added shopping cart " + ac.id(), 3000);
+                        });
+                    });
+                }));
             }
 
             add(new ActionEntry(ICON_DESTROY, "Destroy " + _o.typeAndId() + "...",

@@ -35,6 +35,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.user.RoleUserListGrid;
 import daris.web.client.gui.user.UserListGrid;
 import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridStyles;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.ProjectRoleType;
 import daris.web.client.model.project.ProjectRoleUser;
@@ -43,21 +44,8 @@ import daris.web.client.model.user.RoleUser;
 
 public class ProjectUserForm extends ValidatedInterfaceComponent {
 
-    // public static interface ProjectUserChangeHandler {
-    // void changed(List<ProjectUser> user, List<ProjectRoleUser> roleUsers);
-    // }
-
     public static final arc.gui.image.Image ICON_DELETE = new arc.gui.image.Image(
             Resource.INSTANCE.delete12x16().getSafeUri().asString(), 12, 16);
-
-    private static HTML createCellHtml(String value) {
-        HTML html = value == null ? new HTML() : new HTML(value);
-        html.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        html.setFontFamily(DefaultStyles.FONT_FAMILY);
-        html.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
-        html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
-        return html;
-    }
 
     private static ComboBox<DataUse> createDataUseComboBox() {
         ComboBox<DataUse> combo = new ComboBox<DataUse>(DataUse.comboBoxEntries());
@@ -257,7 +245,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _roleUserList.setHeight100();
         _roleUserList.setMultiSelect(false);
         _roleUserList.setEmptyMessage("");
-        _roleUserList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _roleUserList.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _roleUserList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectRoleUser, ProjectRoleUser>() {
 
             @Override
@@ -272,14 +260,8 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                 return deleteIcon;
             }
         }).setWidth(24);
-        _roleUserList.addColumnDefn("name", "Name", "Role name", new WidgetFormatter<ProjectRoleUser, String>() {
-
-            @Override
-            public BaseWidget format(ProjectRoleUser pru, String name) {
-                HTML html = createCellHtml(name);
-                return html;
-            }
-        }).setWidth(120);
+        _roleUserList.addColumnDefn("name", "Name", "Role name", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+                .setWidth(120);
         _roleUserList
                 .addColumnDefn("role", "Role", "Role type", new WidgetFormatter<ProjectRoleUser, ProjectRoleType>() {
 
@@ -384,7 +366,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _userList.fitToParent();
         _userList.setMultiSelect(false);
         _userList.setEmptyMessage("");
-        _userList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _userList.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _userList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectUser, ProjectUser>() {
 
             @Override
@@ -404,17 +386,17 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
 
                     @Override
                     public BaseWidget format(ProjectUser pu, DomainRef domain) {
-                        HTML html = createCellHtml(domain.name());
-                        html.setToolTip(toolTipFor(domain));
-                        return html;
+                        BaseWidget w = ListGridStyles.formatCellHtml(domain.name());
+                        w.setToolTip(toolTipFor(domain));
+                        return w;
                     }
                 }).setWidth(80);
         _userList.addColumnDefn("user", "User", "User login", new WidgetFormatter<ProjectUser, UserRef>() {
 
             @Override
             public BaseWidget format(ProjectUser pu, final UserRef user) {
-                HTML html = createCellHtml(user.name());
-                html.setToolTip(new ToolTip<UserRef>() {
+                BaseWidget w = ListGridStyles.formatCellHtml(user.name());
+                w.setToolTip(new ToolTip<UserRef>() {
 
                     @Override
                     public void generate(UserRef ctx, ToolTipHandler th) {
@@ -423,7 +405,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                         });
                     }
                 });
-                return html;
+                return w;
             }
         }).setWidth(160);
         _userList.addColumnDefn("role", "Role", "Role type", new WidgetFormatter<ProjectUser, ProjectRoleType>() {

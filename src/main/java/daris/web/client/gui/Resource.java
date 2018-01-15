@@ -7,160 +7,226 @@ import com.google.gwt.resources.client.ImageResource;
 public interface Resource extends ClientBundle {
     Resource INSTANCE = GWT.create(Resource.class);
 
-    @Source("resource/about_16.png")
+    @Source("resource/about-16.png")
     ImageResource about16();
 
-    @Source("resource/add_blue_16.png")
+    @Source("resource/add-blue-16.png")
     ImageResource addBlue16();
 
-    @Source("resource/add_green_16.png")
+    @Source("resource/add-green-16.png")
     ImageResource addGreen16();
 
-    @Source("resource/alert_16.png")
+    @Source("resource/alert-16.png")
     ImageResource alert16();
 
-    @Source("resource/arrow_right_16.png")
+    @Source("resource/arrow-down-in-circle-gold-16.png")
+    ImageResource arrowDownInCircleGold16();
+
+    @Source("resource/arrow-right-16.png")
     ImageResource arrowRight16();
 
-    @Source("resource/check_16.png")
+    @Source("resource/arrow-right-in-circle-16.png")
+    ImageResource arrowRightInCircle16();
+
+    @Source("resource/check-16.png")
     ImageResource check16();
 
-    @Source("resource/checkbox_checked16.png")
+    @Source("resource/checkbox-checked-16.png")
     ImageResource checkboxCheckedIcon();
 
-    @Source("resource/checkbox_intermediate16.png")
+    @Source("resource/checkbox-intermediate-16.png")
     ImageResource checkboxIntermediateIcon();
 
-    @Source("resource/checkbox_unchecked16.png")
+    @Source("resource/checkbox-unchecked-16.png")
     ImageResource checkboxUncheckedIcon();
 
-    @Source("resource/cross_16.png")
+    @Source("resource/clear-16.png")
+    ImageResource clear16();
+
+    @Source("resource/cross-16.png")
     ImageResource cross16();
 
-    @Source("resource/daris_16.png")
+    @Source("resource/cross-red-16.png")
+    ImageResource crossRed16();
+
+    @Source("resource/daris-16.png")
     ImageResource daris16();
 
-    @Source("resource/delete_12x16.png")
+    @Source("resource/delete-12x16.png")
     ImageResource delete12x16();
 
-    @Source("resource/delete_16.png")
+    @Source("resource/delete-16.png")
     ImageResource delete16();
 
-    @Source("resource/document_32.png")
+    @Source("resource/document-32.png")
     ImageResource document32();
 
-    @Source("resource/down_16.png")
+    @Source("resource/double-left-chevron-16.png")
+    ImageResource doubleLeftChevron16();
+
+    @Source("resource/double-right-chevron-16.png")
+    ImageResource doubleRightChevron16();
+
+    @Source("resource/down-16.png")
     ImageResource down16();
 
-    @Source("resource/down_20.png")
+    @Source("resource/down-20.png")
     ImageResource down20();
 
-    @Source("resource/download_blue_16.png")
+    @Source("resource/download-blue-16.png")
     ImageResource downloadBlue16();
 
-    @Source("resource/download_gold_16.png")
+    @Source("resource/download-gold-16.png")
     ImageResource downloadGold16();
 
-    @Source("resource/edit_blue_16.png")
+    @Source("resource/edit-blue-16.png")
     ImageResource editBlue16();
 
-    @Source("resource/edit_green_16.png")
+    @Source("resource/edit-green-16.png")
     ImageResource editGreen16();
 
-    @Source("resource/error_16.png")
+    @Source("resource/error-16.png")
     ImageResource error16();
 
-    @Source("resource/exclamation_16.png")
+    @Source("resource/exclamation-16.png")
     ImageResource exclamation16();
 
-    @Source("resource/exit_16.png")
+    @Source("resource/exclamation-triangle-16.png")
+    ImageResource exclamationTriangle16();
+
+    @Source("resource/exit-16.png")
     ImageResource exit16();
 
-    @Source("resource/fa-desktop-monitor_16.png")
+    @Source("resource/fa-desktop-monitor-16.png")
     ImageResource faDesktopMonitor16();
 
-    @Source("resource/folder_16.png")
+    @Source("resource/folder-16.png")
     ImageResource folder16();
 
-    @Source("resource/folder_open_16.png")
+    @Source("resource/folder-open-16.png")
     ImageResource folderOpen16();
 
-    @Source("resource/folder_32.png")
+    @Source("resource/folder-32.png")
     ImageResource folder32();
 
-    @Source("resource/folder_enter_32.png")
+    @Source("resource/folder-enter-32.png")
     ImageResource folderEnter32();
 
-    @Source("resource/group_20.png")
+    @Source("resource/group-20.png")
     ImageResource group20();
 
-    @Source("resource/image_32.png")
+    @Source("resource/image-32.png")
     ImageResource image32();
 
-    @Source("resource/import_16.gif")
+    @Source("resource/import-16.gif")
     ImageResource import16();
 
-    @Source("resource/launch_16.png")
+    @Source("resource/launch-16.png")
     ImageResource launch16();
 
-    @Source("resource/link_blue_16.png")
+    @Source("resource/link-blue-16.png")
     ImageResource linkBlue16();
 
-    @Source("resource/link_green_16.png")
+    @Source("resource/link-green-16.png")
     ImageResource linkGreen16();
 
-    @Source("resource/loading_16.gif")
+    @Source("resource/loading-16.gif")
     ImageResource loading16();
 
-    @Source("resource/loading_56.gif")
+    @Source("resource/loading-56.gif")
     ImageResource loading56();
 
-    @Source("resource/loading_bar_128x15.gif")
+    @Source("resource/loading-bar-128x15.gif")
     ImageResource loadingBar();
 
-    @Source("resource/loading_bar_aborted_128x15.png")
+    @Source("resource/loading-bar-aborted-128x15.png")
     ImageResource loadingBarAborted();
 
-    @Source("resource/loading_bar_completed_128x15.png")
+    @Source("resource/loading-bar-completed-128x15.png")
     ImageResource loadingBarCompleted();
 
-    @Source("resource/loading_bar_pending_128x15.png")
+    @Source("resource/loading-bar-pending-128x15.png")
     ImageResource loadingBarPending();
 
-    @Source("resource/options_16.png")
+    @Source("resource/options-16.png")
     ImageResource options16();
 
-    @Source("resource/order_asc_16.png")
+    @Source("resource/order-asc-16.png")
     ImageResource orderAsc16();
 
-    @Source("resource/order_desc_16.png")
+    @Source("resource/order-desc-16.png")
     ImageResource orderDesc16();
 
-    @Source("resource/right_16.png")
+    @Source("resource/refresh-blue-16.png")
+    ImageResource refreshBlue16();
+
+    @Source("resource/refresh-green-16.png")
+    ImageResource refreshGreen16();
+
+    @Source("resource/remove-16.png")
+    ImageResource remove16();
+
+    @Source("resource/right-16.png")
     ImageResource right16();
 
-    @Source("resource/search_16.png")
+    @Source("resource/search-16.png")
     ImageResource search16();
 
-    @Source("resource/send_16.png")
+    @Source("resource/send-16.png")
     ImageResource send16();
 
-    @Source("resource/settings_16.png")
+    @Source("resource/settings-16.png")
     ImageResource settings16();
 
-    @Source("resource/sub_16.png")
-    ImageResource sub16();
+    @Source("resource/shoppingcart-black-16.png")
+    ImageResource shoppingcartBlack16();
 
-    @Source("resource/suspended_16.gif")
+    @Source("resource/shoppingcart-blue-16.png")
+    ImageResource shoppingcartBlue16();
+
+    @Source("resource/shoppingcart-color-16.png")
+    ImageResource shoppingcartColor16();
+
+    @Source("resource/shoppingcart-green-16.png")
+    ImageResource shoppingcartGreen16();
+
+    @Source("resource/shoppingcart-purple-16.png")
+    ImageResource shoppingcartPurple16();
+
+    @Source("resource/shoppingcart-red-16.png")
+    ImageResource shoppingcartRed16();
+
+    @Source("resource/shoppingcart-yellow-16.png")
+    ImageResource shoppingcartYellow16();
+
+    @Source("resource/star-blue-16.png")
+    ImageResource starBlue16();
+
+    @Source("resource/star-border-blue-16.png")
+    ImageResource starBorderBlue16();
+
+    @Source("resource/sub-16.png")
+    ImageResource sub16();
+    
+    @Source("resource/submit-16.png")
+    ImageResource submit16();
+
+    @Source("resource/suspended-16.gif")
     ImageResource suspended16();
 
-    @Source("resource/tasks_16.png")
+    @Source("resource/tasks-16.png")
     ImageResource tasks16();
 
-    @Source("resource/upload_16.png")
+    @Source("resource/tick-green-16.png")
+    ImageResource tickGreen16();
+
+    @Source("resource/upload-16.png")
     ImageResource upload16();
 
-    @Source("resource/waiting_16.gif")
+    @Source("resource/waiting-16.gif")
     ImageResource waiting16();
+
+    @Source("resource/warning-16.png")
+    ImageResource warning16();
 
 }

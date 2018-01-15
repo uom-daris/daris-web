@@ -6,6 +6,7 @@ import java.util.List;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.object.ObjectRef;
+import arc.mf.object.ObjectResolveHandler;
 
 public class PathExpressionSetRef extends ObjectRef<List<PathExpression>> {
 
@@ -50,6 +51,20 @@ public class PathExpressionSetRef extends ObjectRef<List<PathExpression>> {
     @Override
     public String idToString() {
         return _projectCID;
+    }
+
+    public void resolvePathExpression(String expression, ObjectResolveHandler<PathExpression> rh) {
+        resolve(pes -> {
+            if (pes != null) {
+                for (PathExpression pe : pes) {
+                    if (pe.expression.equals(expression)) {
+                        rh.resolved(pe);
+                        return;
+                    }
+                }
+            }
+            rh.resolved(null);
+        });
     }
 
 }

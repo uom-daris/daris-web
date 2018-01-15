@@ -1,6 +1,5 @@
 package daris.web.client.gui.theme;
 
-import arc.gui.gwt.colour.Colour;
 import arc.gui.gwt.colour.RGB;
 import arc.gui.gwt.style.Style;
 import arc.gui.gwt.style.StyleSet;
@@ -11,15 +10,8 @@ public class DaRISTheme extends StandardTheme {
 
     private static Style createListSelect() {
         Style s = StyleSet.INSTANCE.createNewStyle("action_highlight");
-
-        Colour bgColor = new RGB(0x42, 0x85, 0xf4);
-
-        // s.setBackgroundImage(new
-        // LinearGradient(LinearGradient.Orientation.TOP_TO_BOTTOM,
-        // new Colour[] { bgColor, base.lighter(0.1), base }));
-
-        s.setBackgroundColour(bgColor);
-        s.setForegroundColour(RGB.WHITE);
+        s.setBackgroundColour(new RGB(0xd0, 0xdf, 0xf6));
+        s.setForegroundColour(RGB.BLACK);
         return s;
     }
 

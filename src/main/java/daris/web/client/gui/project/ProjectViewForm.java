@@ -4,19 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Unit;
 
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.Form;
 import arc.gui.gwt.colour.RGB;
-import arc.gui.gwt.widget.BaseWidget;
-import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.button.Button;
 import arc.gui.gwt.widget.button.ButtonBar;
 import arc.gui.gwt.widget.button.ButtonBar.Alignment;
 import arc.gui.gwt.widget.button.ButtonBar.Position;
-import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.panel.TabPanel;
@@ -29,7 +25,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.gui.project.user.ProjectUserDialog;
 import daris.web.client.gui.util.ButtonUtil;
-import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridStyles;
 import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
@@ -135,18 +131,11 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         ListGrid<ProjectUser> list = new ListGrid<ProjectUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        WidgetFormatter<ProjectUser, String> formatter = new WidgetFormatter<ProjectUser, String>() {
-
-            @Override
-            public BaseWidget format(ProjectUser user, String value) {
-                return createListGridCellHtml(value);
-            }
-        };
-        list.addColumnDefn("domain", "Domain", null, formatter).setWidth(120);
-        list.addColumnDefn("user", "User", null, formatter).setWidth(120);
-        list.addColumnDefn("role", "Role", null, formatter).setWidth(200);
-        list.addColumnDefn("data-use", "Data Use", null, formatter).setWidth(180);
+        list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        list.addColumnDefn("domain", "Domain", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(120);
+        list.addColumnDefn("user", "User", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(120);
+        list.addColumnDefn("role", "Role", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
+        list.addColumnDefn("data-use", "Data Use", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(180);
         if (users != null && !users.isEmpty()) {
             List<ListGridEntry<ProjectUser>> entries = new ArrayList<ListGridEntry<ProjectUser>>(users.size());
             for (ProjectUser pu : users) {
@@ -171,17 +160,10 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         ListGrid<ProjectRoleUser> list = new ListGrid<ProjectRoleUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        WidgetFormatter<ProjectRoleUser, String> formatter = new WidgetFormatter<ProjectRoleUser, String>() {
-
-            @Override
-            public BaseWidget format(ProjectRoleUser user, String value) {
-                return createListGridCellHtml(value);
-            }
-        };
-        list.addColumnDefn("name", "Name", null, formatter).setWidth(200);
-        list.addColumnDefn("role", "Role", null, formatter).setWidth(200);
-        list.addColumnDefn("data-use", "Data Use", null, formatter).setWidth(180);
+        list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        list.addColumnDefn("name", "Name", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
+        list.addColumnDefn("role", "Role", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
+        list.addColumnDefn("data-use", "Data Use", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(180);
         if (roleUsers != null && !roleUsers.isEmpty()) {
             List<ListGridEntry<ProjectRoleUser>> entries = new ArrayList<ListGridEntry<ProjectRoleUser>>(
                     roleUsers.size());
@@ -199,18 +181,6 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         list.setAutoColumnWidths(true);
         list.setEmptyMessage("");
         return list;
-    }
-
-    private static HTML createListGridCellHtml(String value) {
-        if (value != null) {
-            HTML html = new HTML(value);
-            html.setFontSize(11);
-            html.setFontFamily(DefaultStyles.FONT_FAMILY);
-            html.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
-            html.element().getStyle().setLineHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT, Unit.PX);
-            return html;
-        }
-        return null;
     }
 
 }

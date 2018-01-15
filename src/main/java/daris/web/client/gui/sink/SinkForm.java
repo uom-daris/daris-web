@@ -1,8 +1,5 @@
 package daris.web.client.gui.sink;
 
-import java.util.Date;
-import java.util.Set;
-
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.user.client.ui.Widget;
@@ -13,7 +10,6 @@ import arc.gui.form.FieldDefinition;
 import arc.gui.form.FieldGroup;
 import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.Form;
-import arc.gui.form.Form.BooleanAs;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItem.Property;
 import arc.gui.form.FormItemListener;
@@ -27,24 +23,13 @@ import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.client.util.IsNotValid;
 import arc.mf.client.util.Validity;
 import arc.mf.dtype.ConstantType;
-import arc.mf.dtype.DataType;
-import arc.mf.dtype.DateType;
 import arc.mf.dtype.DocType;
-import arc.mf.dtype.DoubleType;
 import arc.mf.dtype.EnumerationType;
-import arc.mf.dtype.FloatType;
-import arc.mf.dtype.IntegerType;
-import arc.mf.object.ObjectResolveHandler;
-import arc.mf.session.Session;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
-import daris.web.client.model.object.exports.PathExpression;
-import daris.web.client.model.object.exports.PathExpressionEnum;
 import daris.web.client.model.object.exports.PathExpressionSetRef;
 import daris.web.client.model.sink.Sink;
-import daris.web.client.model.sink.SinkConstants;
 import daris.web.client.model.sink.SinkEnum;
-import daris.web.client.model.sink.SinkType;
 import daris.web.client.util.SizeUtil;
 import daris.web.client.util.StringUtils;
 
@@ -53,20 +38,18 @@ public class SinkForm extends ValidatedInterfaceComponent {
     private DObject _o;
     private CollectionSummary _summary;
     private Sink _sink;
-    private PathExpressionSetRef _pes;
 
     private VerticalPanel _vp;
     private SimplePanel _sinkSelectFormSP;
     private Form _sinkSelectForm;
     private SimplePanel _sinkSettingsFormSP;
-    private Form _sinkSettingsForm;
+    private SinkSettingsForm _sinkSettingsForm;
     private HTML _status;
 
     public SinkForm(DObject o, CollectionSummary summary) {
         _o = o;
         _summary = summary;
         _sink = null;
-        _pes = new PathExpressionSetRef(o.projectCiteableId());
 
         _vp = new VerticalPanel();
         _vp.fitToParent();
@@ -160,157 +143,10 @@ public class SinkForm extends ValidatedInterfaceComponent {
             _sinkSettingsFormSP.clear();
             _sinkSettingsForm = null;
         }
-        _sinkSettingsForm = new Form();
-        _sinkSettingsForm.setSpacing(10);
-        _sinkSettingsForm.setBooleanAs(BooleanAs.CHECKBOX);
-        _sinkSettingsForm.fitToParent();
-
-        Set<String> argNames = _sink.type().argNames();
-        if (argNames != null) {
-            for (String argName : argNames) {
-                if (_summary.numberOfObjects() > 1 && _sink.isAssetSpecific(argName)) {
-                    // skip single consumption arg if there are multiple inputs.
-                    continue;
-                }
-                if (_sink.isAdminArg(argName)) {
-                    // skip admin only arguments.
-                    continue;
-                }
-                _sinkSettingsForm.add(fieldFor(_sink, argName));
-            }
-        }
+        _sinkSettingsForm = new SinkSettingsForm(_sink, _summary.numberOfObjects() > 1, new PathExpressionSetRef(_o.projectCiteableId()));
         _sinkSettingsForm.render();
         _sinkSettingsFormSP.setContent(new ScrollPanel(_sinkSettingsForm, ScrollPolicy.AUTO));
         addMustBeValid(_sinkSettingsForm);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private Field<?> fieldFor(final Sink sink, final String argName) {
-        final SinkType.ArgumentDefinition argDefn = sink.type().argDefn(argName);
-        boolean mutable = sink.isMutableArg(argName);
-        DataType type = argDefn.type();
-        if (SinkType.isLayoutPatternArg(argName)) {
-            type = new EnumerationType<PathExpression>(new PathExpressionEnum(_pes));
-        }
-        String argValue = sink.argValue(argName);
-
-        Field<?> field = new Field(new FieldDefinition(argName, mutable ? type : ConstantType.DEFAULT,
-                argDefn.description(), null, argDefn.optional() ? 0 : 1, 1)) {
-            public Validity valid() {
-                Validity v = super.valid();
-                if (v.valid()) {
-                    if (!hasSomeValue() && argDefn.xorArgs() != null) {
-                        boolean anyHasValue = false;
-                        String[] xorArgs = argDefn.xorArgs();
-                        for (String xorArg : xorArgs) {
-                            Field f = (Field) fieldSet().fieldByName(xorArg);
-                            if (f.hasSomeValue()) {
-                                anyHasValue = true;
-                                break;
-                            }
-                        }
-                        if (!anyHasValue) {
-                            StringBuilder sb = new StringBuilder("One of the following fields: ");
-                            sb.append(name());
-                            for (String xorArg : xorArgs) {
-                                sb.append(", ").append(xorArg);
-                            }
-                            sb.append(" must be specified.");
-                            return new IsNotValid(sb.toString());
-                        }
-                    }
-                }
-                return v;
-            }
-        };
-        if (argValue == null && argDefn.defaultValue() != null) {
-            setInitialValue(field, type, argDefn.defaultValue(), false);
-        } else {
-            setInitialValue(field, type, argValue, false);
-        }
-        FormItemListener listener = new FormItemListener() {
-
-            @Override
-            public void itemValueChanged(FormItem f) {
-                Object v = f.value();
-                if (v != null && SinkType.isLayoutPatternArg(argName) && (v instanceof PathExpression)) {
-                    sink.setArg(argName, ((PathExpression) v).expression);
-                } else {
-                    sink.setArg(argName, f.valueAsString());
-                }
-            }
-
-            @Override
-            public void itemPropertyChanged(FormItem f, Property property) {
-
-            }
-        };
-        if (mutable) {
-            field.addListener(listener);
-        }
-        field.setRenderOptions(new FieldRenderOptions().setWidth100());
-        return field;
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void setInitialValue(Field f, DataType type, Object value, boolean fireEvents) {
-        if (value == null) {
-            f.setValue(null, fireEvents);
-        } else {
-            if ((type instanceof EnumerationType) && SinkConstants.SINK_ARG_LAYOUT_PATTERN.equals(f.name())) {
-                if (value instanceof PathExpression) {
-                    f.setInitialValue(value, fireEvents);
-                } else {
-                    resolvePathExpressionFromValue(String.valueOf(value), pe -> {
-                        f.setInitialValue(pe, fireEvents);
-                    });
-                }
-            } else if (type instanceof IntegerType) {
-                if (value instanceof Integer) {
-                    f.setInitialValue((Integer) value, fireEvents);
-                } else {
-                    f.setInitialValue(Integer.parseInt(String.valueOf(value)), fireEvents);
-                }
-            } else if (type instanceof FloatType) {
-                if (value instanceof Float) {
-                    f.setInitialValue((Float) value, fireEvents);
-                } else {
-                    f.setInitialValue(Float.parseFloat(String.valueOf(value)), fireEvents);
-                }
-            } else if (type instanceof DoubleType) {
-                if (value instanceof DoubleType) {
-                    f.setInitialValue((Double) value, fireEvents);
-                } else {
-                    f.setInitialValue(Double.parseDouble(String.valueOf(value)), fireEvents);
-                }
-            } else if (type instanceof DateType) {
-                if (value instanceof Date) {
-                    f.setInitialValue((Date) value, fireEvents);
-                } else {
-                    try {
-                        f.setInitialValue(DateType.parseDate(String.valueOf(value)), fireEvents);
-                    } catch (Throwable e) {
-                        Session.displayError("Failed to parse date value: '" + value + "' Error: " + e.getMessage(), e);
-                    }
-                }
-            } else {
-                f.setInitialValue(String.valueOf(value), fireEvents);
-            }
-        }
-    }
-
-    private void resolvePathExpressionFromValue(String value, ObjectResolveHandler<PathExpression> rh) {
-        _pes.resolve(pes -> {
-            if (pes != null) {
-                for (PathExpression pe : pes) {
-                    if (value.equals(pe.expression)) {
-                        rh.resolved(pe);
-                        return;
-                    }
-                }
-            }
-            rh.resolved(null);
-        });
     }
 
     @Override

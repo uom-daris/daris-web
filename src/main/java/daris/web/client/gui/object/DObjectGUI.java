@@ -1,7 +1,10 @@
 package daris.web.client.gui.object;
 
+import com.google.gwt.dom.client.Style.TextAlign;
+
 import arc.gui.gwt.dnd.DragWidget;
 import arc.gui.gwt.dnd.DropHandler;
+import arc.gui.gwt.widget.HTML;
 import arc.gui.menu.Menu;
 import arc.gui.object.SelectedObjectSet;
 import arc.gui.object.display.ObjectDetailsDisplay;
@@ -9,7 +12,9 @@ import arc.gui.object.register.ObjectGUI;
 import arc.gui.object.register.ObjectUpdateHandle;
 import arc.gui.object.register.ObjectUpdateListener;
 import arc.gui.window.Window;
+import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.menu.DObjectMenu;
+import daris.web.client.gui.widget.HtmlBuilder;
 import daris.web.client.model.object.DObjectRef;
 
 public class DObjectGUI implements ObjectGUI {
@@ -81,6 +86,17 @@ public class DObjectGUI implements ObjectGUI {
 
     @Override
     public DragWidget dragWidget(Object o) {
+        if (o != null) {
+            DObjectRef obj = (DObjectRef) o;
+            String iconUrl = obj.isDataset() ? Resource.INSTANCE.document32().getSafeUri().asString()
+                    : Resource.INSTANCE.folder32().getSafeUri().asString();
+
+            HTML w = new HtmlBuilder().setFontSize(11).setLineHeight(20).setTextAlign(TextAlign.CENTER).build();
+            w.setHTML("<div style=\"text-align:center;\"><img src=\"" + iconUrl
+                    + "\" style=\"width:16px;height:16px;vertical-align:middle\"><span style=\"\">&nbsp;"
+                    + obj.typeAndId() + "</span></div>");
+            return new DragWidget(w);
+        }
         return null;
     }
 

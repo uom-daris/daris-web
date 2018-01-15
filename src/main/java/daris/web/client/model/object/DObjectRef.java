@@ -8,7 +8,7 @@ import arc.mf.object.lock.LockToken;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObject.Type;
 
-public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObjectRef> {
+public class DObjectRef extends ObjectRef<DObject> implements HasCiteableId, HasAssetId, Comparable<DObjectRef> {
 
     private String _citeableId;
     private String _assetId;
@@ -66,6 +66,7 @@ public class DObjectRef extends ObjectRef<DObject> implements Comparable<DObject
         return super.resolved();
     }
 
+    @Override
     public String citeableId() {
         return _citeableId;
     }

@@ -20,6 +20,10 @@ public class PathExpressionEnum implements DynamicEnumerationDataSource<PathExpr
         _pes = pes == null ? new PathExpressionSetRef(null) : pes;
     }
 
+    public PathExpressionEnum() {
+        this((String) null);
+    }
+
     @Override
     public boolean supportPrefix() {
         return false;

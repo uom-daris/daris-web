@@ -19,6 +19,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.background.BackgroundServiceManager;
 import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.gui.object.menu.DObjectMenu;
+import daris.web.client.gui.shoppingcart.ShoppingCartManagerDialog;
 import daris.web.client.gui.widget.MenuButtonBar;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectRef;
@@ -50,6 +51,9 @@ public class Explorer extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_UPLOAD = new arc.gui.image.Image(
             Resource.INSTANCE.upload16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_SHOPPINGCART = new arc.gui.image.Image(
+            Resource.INSTANCE.shoppingcartColor16().getSafeUri().asString(), 16, 16);
 
     private VerticalPanel _vp;
     private MenuButtonBar _menuBar;
@@ -210,18 +214,25 @@ public class Explorer extends ContainerWidget {
          * view menu
          */
         Menu viewMenu = new Menu();
-        viewMenu.add(new ActionEntry(ICON_BACKGROUND, "View background tasks...", new Action() {
+        viewMenu.add(new ActionEntry(ICON_BACKGROUND, "Background tasks...", new Action() {
 
             @Override
             public void execute() {
                 new BackgroundServiceManager().show(window());
             }
         }));
-        viewMenu.add(new ActionEntry(ICON_UPLOAD, "View upload tasks...", new Action() {
+        viewMenu.add(new ActionEntry(ICON_UPLOAD, "Upload tasks...", new Action() {
 
             @Override
             public void execute() {
                 FileUploadTaskManager.get().show(window());
+            }
+        }));
+        viewMenu.add(new ActionEntry(ICON_SHOPPINGCART, "Shopping cart...", new Action() {
+
+            @Override
+            public void execute() {
+                ShoppingCartManagerDialog.get().show(window(), true);
             }
         }));
         _menuBar.addMenuButton("View", ICON_VIEW, viewMenu);

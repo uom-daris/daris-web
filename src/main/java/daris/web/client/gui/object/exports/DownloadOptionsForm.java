@@ -143,8 +143,8 @@ public class DownloadOptionsForm extends ExportOptionsForm<DownloadOptions> impl
          * decompress
          */
         if (!object.isLeaf() || object.hasArchiveContent()) {
-            final Field<Boolean> decompressField = new Field<Boolean>(new FieldDefinition("Unpack", "Unpack",
-                    BooleanType.DEFAULT_TRUE_FALSE, "Unpack archive content", null, 1, 1));
+            final Field<Boolean> decompressField = new Field<Boolean>(new FieldDefinition("Unpack Archives", "Unpack Archives",
+                    BooleanType.DEFAULT_TRUE_FALSE, "Unpack archive contents", null, 1, 1));
             decompressField.setInitialValue(options.decompress());
             decompressField.addListener(new FormItemListener<Boolean>() {
 

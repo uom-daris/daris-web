@@ -52,7 +52,7 @@ public class SinkType {
             _admin = false;
             _text = false;
             _time = false;
-            _optional = false;
+            _optional = true;
             _mutable = false;
             _pattern = null;
             _defaultValue = null;

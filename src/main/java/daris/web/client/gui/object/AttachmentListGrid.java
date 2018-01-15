@@ -25,7 +25,6 @@ import arc.gui.gwt.widget.button.ButtonBar.Alignment;
 import arc.gui.gwt.widget.button.ButtonBar.Position;
 import arc.gui.gwt.widget.dialog.Dialog;
 import arc.gui.gwt.widget.event.SelectionHandler;
-import arc.gui.gwt.widget.format.WidgetFormatter;
 import arc.gui.gwt.widget.list.ListGrid;
 import arc.gui.gwt.widget.list.ListGridEntry;
 import arc.gui.gwt.widget.panel.SimplePanel;
@@ -38,6 +37,7 @@ import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridStyles;
 import daris.web.client.model.object.Attachment;
 import daris.web.client.model.object.AttachmentRef;
 import daris.web.client.model.object.DObject;
@@ -61,8 +61,6 @@ public class AttachmentListGrid extends ContainerWidget {
             Resource.INSTANCE.cross16().getSafeUri().asString(), 12, 12);
 
     public static final int FONT_SIZE = 11;
-
-    public static final int MIN_ROW_HEIGHT = 22;
 
     private DObject _o;
     private List<Attachment> _data;
@@ -168,19 +166,14 @@ public class AttachmentListGrid extends ContainerWidget {
             }
         });
 
-        WidgetFormatter<Attachment, String> formatter = (attachment, str) -> {
-            HTML html = new HTML(str);
-            html.setFontFamily(DefaultStyles.FONT_FAMILY);
-            html.setFontSize(FONT_SIZE);
-            html.setVerticalAlign(VerticalAlign.MIDDLE);
-            return html;
-        };
-
-        _list.addColumnDefn("name", "Name", "Attachment file name.", formatter).setWidth(200);
-        _list.addColumnDefn("size", "Size", "Attachment file size.", formatter).setWidth(200);
-        _list.addColumnDefn("mimeType", "MIME Type", "MIME type", formatter).setWidth(200);
+        _list.addColumnDefn("name", "Name", "Attachment file name.", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+                .setWidth(200);
+        _list.addColumnDefn("size", "Size", "Attachment file size.", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+                .setWidth(200);
+        _list.addColumnDefn("mimeType", "MIME Type", "MIME type", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+                .setWidth(200);
         _list.setMultiSelect(true);
-        _list.setMinRowHeight(MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setEmptyMessage("");
         _list.setLoadingMessage("Loading attachments ...");
         _list.setCursorSize(Integer.MAX_VALUE);

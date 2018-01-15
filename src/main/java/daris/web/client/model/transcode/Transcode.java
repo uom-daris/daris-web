@@ -89,7 +89,6 @@ public class Transcode {
     }
 
     public static List<Transcode> instantiateList(List<XmlElement> tes) throws Throwable {
-
         if (tes != null && !tes.isEmpty()) {
             List<Transcode> transcodes = new ArrayList<Transcode>();
             for (XmlElement te : tes) {
@@ -100,5 +99,9 @@ public class Transcode {
             }
         }
         return null;
+    }
+
+    public static Transcode none(String from) {
+        return new Transcode(from);
     }
 }

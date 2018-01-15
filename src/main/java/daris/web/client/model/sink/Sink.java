@@ -16,6 +16,7 @@ import arc.mf.session.Session;
 import daris.web.client.model.sink.SinkType.ArgumentDefinition;
 
 public class Sink {
+    public static final String TYPE_NAME = "sink";
 
     private String _name;
 
@@ -206,9 +207,9 @@ public class Sink {
     public String description() {
         return _description;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return name();
     }
 
