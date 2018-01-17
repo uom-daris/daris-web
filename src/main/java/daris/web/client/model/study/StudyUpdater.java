@@ -19,6 +19,7 @@ public class StudyUpdater extends DObjectUpdater<Study> {
         super(obj);
         _processed = obj.processed();
         _methodMetadataForEdit = obj.methodMetadataForEdit();
+        _otherIds = obj.otherIds();
     }
 
     public XmlElement methodMetadataForEdit() {
