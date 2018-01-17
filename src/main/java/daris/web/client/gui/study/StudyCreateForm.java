@@ -8,11 +8,13 @@ import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
 import arc.gui.form.FieldGroup;
 import arc.gui.form.FieldRenderOptions;
+import arc.gui.form.FieldSet;
 import arc.gui.form.Form;
 import arc.gui.form.FormEditMode;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItem.Property;
 import arc.gui.form.FormItemListener;
+import arc.gui.form.FormListener;
 import arc.gui.gwt.widget.scroll.ScrollPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
 import arc.mf.client.util.ActionListener;
@@ -186,45 +188,45 @@ public class StudyCreateForm extends DObjectCreateForm<StudyCreator> {
         } else if (builder instanceof StudyCreator) {
             otherIds = ((StudyCreator) builder).otherIds();
         }
-        FormItemListener<String> fil = new FormItemListener<String>() {
-
-            @SuppressWarnings("rawtypes")
-            @Override
-            public void itemValueChanged(FormItem<String> f) {
-                Form form = f.form();
-                List<FormItem> items = form.fieldsByName("other-id");
-                List<SimpleEntry<String, String>> otherIds = new ArrayList<SimpleEntry<String, String>>();
-                for (FormItem item : items) {
-                    FieldGroup fg = (FieldGroup) item;
-                    String type = fg.fieldsByName("type").get(0).valueAsString();
-                    String value = fg.fieldsByName("value").get(0).valueAsString();
-                    if (type != null && value != null) {
-                        SimpleEntry<String, String> entry = new SimpleEntry<String, String>(type, value);
-                        if (!otherIds.contains(entry)) {
-                            otherIds.add(entry);
-                        }
-                    }
-                }
-                if (builder instanceof StudyUpdater) {
-                    if (otherIds.isEmpty()) {
-                        ((StudyUpdater) builder).setOtherIds(null);
-                    } else {
-                        ((StudyUpdater) builder).setOtherIds(otherIds);
-                    }
-                } else if (builder instanceof StudyCreator) {
-                    if (otherIds.isEmpty()) {
-                        ((StudyCreator) builder).setOtherIds(null);
-                    } else {
-                        ((StudyCreator) builder).setOtherIds(otherIds);
-                    }
-                }
-            }
-
-            @Override
-            public void itemPropertyChanged(FormItem<String> f, Property property) {
-
-            }
-        };
+//        FormItemListener<String> fil = new FormItemListener<String>() {
+//
+//            @SuppressWarnings("rawtypes")
+//            @Override
+//            public void itemValueChanged(FormItem<String> f) {
+//                Form form = f.form();
+//                List<FormItem> items = form.fieldsByName("other-id");
+//                List<SimpleEntry<String, String>> otherIds = new ArrayList<SimpleEntry<String, String>>();
+//                for (FormItem item : items) {
+//                    FieldGroup fg = (FieldGroup) item;
+//                    String type = fg.fieldsByName("type").get(0).valueAsString();
+//                    String value = fg.fieldsByName("value").get(0).valueAsString();
+//                    if (type != null && value != null) {
+//                        SimpleEntry<String, String> entry = new SimpleEntry<String, String>(type, value);
+//                        if (!otherIds.contains(entry)) {
+//                            otherIds.add(entry);
+//                        }
+//                    }
+//                }
+//                if (builder instanceof StudyUpdater) {
+//                    if (otherIds.isEmpty()) {
+//                        ((StudyUpdater) builder).setOtherIds(null);
+//                    } else {
+//                        ((StudyUpdater) builder).setOtherIds(otherIds);
+//                    }
+//                } else if (builder instanceof StudyCreator) {
+//                    if (otherIds.isEmpty()) {
+//                        ((StudyCreator) builder).setOtherIds(null);
+//                    } else {
+//                        ((StudyCreator) builder).setOtherIds(otherIds);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void itemPropertyChanged(FormItem<String> f, Property property) {
+//
+//            }
+//        };
         if (otherIds != null) {
             for (SimpleEntry<String, String> entry : otherIds) {
                 FieldGroup otherIdFG = new FieldGroup(
@@ -235,14 +237,14 @@ public class StudyCreateForm extends DObjectCreateForm<StudyCreator> {
                         "The type (authority) of this identifier.", null, 1, 1));
                 otherIdTypeField.setInitialValue(entry.getKey());
                 otherIdTypeField.setRenderOptions(new FieldRenderOptions().setWidth(338));
-                otherIdTypeField.addListener(fil);
+//                otherIdTypeField.addListener(fil);
                 otherIdFG.add(otherIdTypeField);
 
                 Field<String> otherIdValueField = new Field<String>(new FieldDefinition("value", StringType.DEFAULT,
                         "An arbitrary identifier for the Study supplied by some other authority.", null, 1, 1));
                 otherIdValueField.setInitialValue(entry.getValue());
                 otherIdValueField.setRenderOptions(new FieldRenderOptions().setWidth(320));
-                otherIdValueField.addListener(fil);
+//                otherIdValueField.addListener(fil);
                 otherIdFG.add(otherIdValueField);
                 interfaceForm.add(otherIdFG);
             }
@@ -254,16 +256,65 @@ public class StudyCreateForm extends DObjectCreateForm<StudyCreator> {
                             new DictionaryEnumerationSource("daris:pssd.study.other-id.types", false)),
                     "The type (authority) of this identifier.", null, 1, 1));
             otherIdTypeField.setRenderOptions(new FieldRenderOptions().setWidth(338));
-            otherIdTypeField.addListener(fil);
+//            otherIdTypeField.addListener(fil);
             otherIdFG.add(otherIdTypeField);
 
             Field<String> otherIdValueField = new Field<String>(new FieldDefinition("value", StringType.DEFAULT,
                     "An arbitrary identifier for the Study supplied by some other authority.", null, 1, 1));
             otherIdValueField.setRenderOptions(new FieldRenderOptions().setWidth(320));
-            otherIdValueField.addListener(fil);
+//            otherIdValueField.addListener(fil);
             otherIdFG.add(otherIdValueField);
             interfaceForm.add(otherIdFG);
         }
+
+        interfaceForm.addListener(new FormListener() {
+
+            @Override
+            public void rendering(Form f) {
+
+            }
+
+            @Override
+            public void rendered(Form f) {
+
+            }
+
+            @SuppressWarnings("rawtypes")
+            @Override
+            public void formValuesUpdated(Form f) {
+                List<FormItem> is = f.fieldsByName("other-id");
+                if (is != null && !is.isEmpty()) {
+                    List<SimpleEntry<String, String>> otherIds = new ArrayList<SimpleEntry<String, String>>();
+                    for (FormItem i : is) {
+                        FieldSet fs = (FieldSet) i;
+                        String type = fs.fieldByName("type").valueAsString();
+                        String value = fs.fieldByName("value").valueAsString();
+                        if (type != null && value != null) {
+                            SimpleEntry<String, String> otherId = new SimpleEntry<String, String>(type, value);
+                            otherIds.add(otherId);
+                        }
+                    }
+                    if (builder instanceof StudyUpdater) {
+                        if (otherIds.isEmpty()) {
+                            ((StudyUpdater) builder).setOtherIds(null);
+                        } else {
+                            ((StudyUpdater) builder).setOtherIds(otherIds);
+                        }
+                    } else if (builder instanceof StudyCreator) {
+                        if (otherIds.isEmpty()) {
+                            ((StudyCreator) builder).setOtherIds(null);
+                        } else {
+                            ((StudyCreator) builder).setOtherIds(otherIds);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void formStateUpdated(Form f, Property p) {
+            }
+        });
+    
     }
 
 }

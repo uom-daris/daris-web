@@ -16,7 +16,7 @@ import arc.gui.gwt.widget.tip.ToolTipHandler;
 import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.model.user.RoleUser;
-import daris.web.client.model.user.messages.RoleUserCandidateList;
+import daris.web.client.model.user.messages.RoleUserList;
 
 public class RoleUserListGrid extends ListGrid<RoleUser> {
 
@@ -38,7 +38,7 @@ public class RoleUserListGrid extends ListGrid<RoleUser> {
             @Override
             public void load(Filter f, final long start, final long end,
                     final DataLoadHandler<ListGridEntry<RoleUser>> lh) {
-                new RoleUserCandidateList().send(new ObjectMessageResponse<List<RoleUser>>() {
+                new RoleUserList().send(new ObjectMessageResponse<List<RoleUser>>() {
 
                     @Override
                     public void responded(List<RoleUser> rus) {

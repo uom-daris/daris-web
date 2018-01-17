@@ -8,9 +8,9 @@ import arc.mf.client.xml.XmlWriter;
 import arc.mf.object.ObjectMessage;
 import daris.web.client.model.user.RoleUser;
 
-public class RoleUserCandidateList extends ObjectMessage<List<RoleUser>> {
+public class RoleUserList extends ObjectMessage<List<RoleUser>> {
 
-    public RoleUserCandidateList() {
+    public RoleUserList() {
     }
 
     @Override
@@ -20,14 +20,14 @@ public class RoleUserCandidateList extends ObjectMessage<List<RoleUser>> {
     @Override
     protected String messageServiceName() {
 
-        return "daris.project.role-user.candidate.list";
+        return "daris.role-user.list";
     }
 
     @Override
     protected List<RoleUser> instantiate(XmlElement xe) throws Throwable {
 
         if (xe != null) {
-            List<XmlElement> res = xe.elements("role");
+            List<XmlElement> res = xe.elements("role-user");
             if (res != null && !res.isEmpty()) {
                 List<RoleUser> rus = new ArrayList<RoleUser>(res.size());
                 for (XmlElement re : res) {

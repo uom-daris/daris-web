@@ -36,7 +36,7 @@ public class Project extends DObject {
         /*
          * members
          */
-        List<XmlElement> ues = oe.elements("member");
+        List<XmlElement> ues = oe.elements("user");
         if (ues != null && !ues.isEmpty()) {
             _users = new ArrayList<ProjectUser>(ues.size());
             for (XmlElement ue : ues) {
@@ -46,7 +46,7 @@ public class Project extends DObject {
         /*
          * role-members
          */
-        List<XmlElement> rues = oe.elements("role-member");
+        List<XmlElement> rues = oe.elements("role-user");
         if (rues != null && !rues.isEmpty()) {
             _roleUsers = new ArrayList<ProjectRoleUser>(rues.size());
             for (XmlElement rue : rues) {

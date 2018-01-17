@@ -14,7 +14,7 @@ public class ProjectRoleUser implements Comparable<ProjectRoleUser> {
     public ProjectRoleUser(XmlElement rme) {
 
         _roleId = rme.value("@id");
-        _roleName = rme.value("@member");
+        _roleName = rme.value("@name");
         _role = ProjectRoleType.fromString(rme.value("@role"));
         _dataUse = DataUse.fromString(rme.value("@data-use"));
     }

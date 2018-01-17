@@ -222,17 +222,13 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
                     @Override
                     public BaseWidget format(DObjectRef o, String name) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(o.citeableId());
-                        if (o.name() != null) {
-                            sb.append(": ").append(o.name());
-                        }
-                        HTML html = ListGridStyles.formatCellHtml(sb.toString());
+
+                        HTML html = ListGridStyles.formatCellHtml(null);
                         html.setPaddingTop(3);
                         html.setFontWeight(FontWeight.BOLD);
-                        if (!o.isDataset() && o.numberOfChildren() != 0) {
-                            html.setCursor(Cursor.POINTER);
-                        }
+
+                        updateTitle(html, o);
+
                         return html;
                     }
                 });
@@ -337,6 +333,18 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
     protected void updated(DObjectRef o) {
 
+    }
+
+    private void updateTitle(HTML html, DObjectRef o) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(o.citeableId());
+        if (o.name() != null) {
+            sb.append(": ").append(o.name());
+        }
+        html.setHTML(sb.toString());
+        if (!o.isDataset() && o.numberOfChildren() != 0) {
+            html.setCursor(Cursor.POINTER);
+        }
     }
 
     private DObjectChildrenRef childrenRef() {
@@ -490,11 +498,11 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
             // col 0: icon
             ObjectIcon icon = (ObjectIcon) row.cell(0).widget();
             icon.update(object);
-            // col 2: name
-            HTML name = (HTML) row.cell(2).widget();
-            name.setHTML(object.name());
-            // col 3: nbc
-            HTML nbc = (HTML) row.cell(3).widget();
+            // col 1: title
+            HTML html = (HTML) row.cell(1).widget();
+            updateTitle(html, object);
+            // col 2: nbc
+            HTML nbc = (HTML) row.cell(2).widget();
             if (object.numberOfChildren() < 0) {
                 nbc.clear();
             } else {
