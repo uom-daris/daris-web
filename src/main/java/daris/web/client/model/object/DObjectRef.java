@@ -1,5 +1,9 @@
 package daris.web.client.model.object;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
@@ -7,8 +11,13 @@ import arc.mf.object.ObjectRef;
 import arc.mf.object.lock.LockToken;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObject.Type;
+import daris.web.client.model.query.HasXValue;
+import daris.web.client.model.query.IsQueryResult;
+import daris.web.client.model.query.XPath;
+import daris.web.client.model.query.XValue;
 
-public class DObjectRef extends ObjectRef<DObject> implements HasCiteableId, HasAssetId, Comparable<DObjectRef> {
+public class DObjectRef extends ObjectRef<DObject>
+        implements HasCiteableId, HasAssetId, HasName, HasXValue, IsQueryResult, Comparable<DObjectRef> {
 
     private String _citeableId;
     private String _assetId;
@@ -222,7 +231,12 @@ public class DObjectRef extends ObjectRef<DObject> implements HasCiteableId, Has
 
     @Override
     public String toString() {
-        return _citeableId;
+        StringBuilder sb = new StringBuilder(_citeableId);
+        if(name()!=null) {
+            sb.append(": ");
+            sb.append(name());
+        }
+        return sb.toString();
     }
 
     public boolean isProject() {
@@ -325,6 +339,42 @@ public class DObjectRef extends ObjectRef<DObject> implements HasCiteableId, Has
             int n = CiteableIdUtils.depth(citeableId()) - CiteableIdUtils.PROJECT_CID_DEPTH;
             return CiteableIdUtils.parent(_citeableId, n);
         }
+    }
+
+    private Map<XPath, XValue> _xvalues;
+
+    @Override
+    public Collection<XValue> xvalues() {
+        return _xvalues.values();
+    }
+
+    @Override
+    public XValue xvalue(XPath xpath) {
+        if (_xvalues != null) {
+            return _xvalues.get(xpath);
+        }
+        return null;
+    }
+
+    @Override
+    public void setXValue(XPath xpath, Collection<String> values) {
+        if (_xvalues == null) {
+            _xvalues = new LinkedHashMap<XPath, XValue>();
+        }
+        _xvalues.put(xpath, new XValue(xpath, values));
+    }
+
+    @Override
+    public void setXValue(XPath xpath, String value) {
+        if (_xvalues == null) {
+            _xvalues = new LinkedHashMap<XPath, XValue>();
+        }
+        _xvalues.put(xpath, new XValue(xpath, value));
+    }
+
+    @Override
+    public boolean hasXValues() {
+        return _xvalues != null && !_xvalues.isEmpty();
     }
 
 }

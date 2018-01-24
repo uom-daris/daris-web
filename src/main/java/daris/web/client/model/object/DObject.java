@@ -11,7 +11,7 @@ import daris.web.client.model.project.Project;
 import daris.web.client.model.study.Study;
 import daris.web.client.model.subject.Subject;
 
-public abstract class DObject implements HasCiteableId, HasAssetId {
+public abstract class DObject implements HasCiteableId, HasAssetId, HasName {
 
     public static enum Type {
         PROJECT, SUBJECT, EX_METHOD, STUDY, DATASET;

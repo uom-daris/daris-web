@@ -22,11 +22,23 @@ public interface Resource extends ClientBundle {
     @Source("resource/arrow-down-in-circle-gold-16.png")
     ImageResource arrowDownInCircleGold16();
 
+    @Source("resource/arrow-left-black-16.png")
+    ImageResource arrowLeftBlack16();
+
+    @Source("resource/arrow-refresh-black-16.png")
+    ImageResource arrowRefreshBlack16();
+
     @Source("resource/arrow-right-16.png")
     ImageResource arrowRight16();
 
+    @Source("resource/arrow-right-black-16.png")
+    ImageResource arrowRightBlack16();
+
     @Source("resource/arrow-right-in-circle-16.png")
     ImageResource arrowRightInCircle16();
+
+    @Source("resource/caret-down-black-16.png")
+    ImageResource caretDownBlack16();
 
     @Source("resource/check-16.png")
     ImageResource check16();
@@ -48,6 +60,9 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/cross-red-16.png")
     ImageResource crossRed16();
+
+    @Source("resource/csv-16.png")
+    ImageResource csv16();
 
     @Source("resource/daris-16.png")
     ImageResource daris16();
@@ -207,7 +222,7 @@ public interface Resource extends ClientBundle {
 
     @Source("resource/sub-16.png")
     ImageResource sub16();
-    
+
     @Source("resource/submit-16.png")
     ImageResource submit16();
 
@@ -229,4 +244,6 @@ public interface Resource extends ClientBundle {
     @Source("resource/warning-16.png")
     ImageResource warning16();
 
+    @Source("resource/xml-16.png")
+    ImageResource xml16();
 }

@@ -19,6 +19,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.background.BackgroundServiceManager;
 import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.gui.object.menu.DObjectMenu;
+import daris.web.client.gui.query.DicomStudyFinder;
 import daris.web.client.gui.shoppingcart.ShoppingCartManagerDialog;
 import daris.web.client.gui.widget.MenuButtonBar;
 import daris.web.client.model.CiteableIdUtils;
@@ -54,6 +55,9 @@ public class Explorer extends ContainerWidget {
 
     public static final arc.gui.image.Image ICON_SHOPPINGCART = new arc.gui.image.Image(
             Resource.INSTANCE.shoppingcartColor16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_FIND = new arc.gui.image.Image(
+            Resource.INSTANCE.search16().getSafeUri().asString(), 16, 16);
 
     private VerticalPanel _vp;
     private MenuButtonBar _menuBar;
@@ -237,6 +241,16 @@ public class Explorer extends ContainerWidget {
         }));
         _menuBar.addMenuButton("View", ICON_VIEW, viewMenu);
 
+        Menu findMenu = new Menu();
+        findMenu.add(new ActionEntry("Find DICOM study...", new Action() {
+
+            @Override
+            public void execute() {
+                new DicomStudyFinder().show(window());
+            }
+        }));
+        _menuBar.addMenuButton("Find", ICON_FIND, findMenu);
+
     }
 
     private static String historyTokenFor(DObjectRef parent, DObjectRef object) {
@@ -259,16 +273,24 @@ public class Explorer extends ContainerWidget {
         return historyTokenFor(parent, object);
     }
 
-    private static void updateHistoryToken(String token) {
+    public static void updateHistoryToken(String token) {
+        updateHistoryToken(token, false);
+    }
+
+    public static void updateHistoryToken(String token, boolean fireEvent) {
         if (!ObjectUtil.equals(token, History.getToken())) {
-            History.newItem(token, false);
+            History.newItem(token, fireEvent);
         }
     }
 
-    private static void updateHistoryToken(DObjectRef parent, DObjectRef object) {
+    public static void updateHistoryToken(DObjectRef parent, DObjectRef object, boolean fireEvent) {
         String token = historyTokenFor(parent, object);
-        updateHistoryToken(token);
+        updateHistoryToken(token, fireEvent);
         updateWindowTitle(object);
+    }
+
+    public static void updateHistoryToken(DObjectRef parent, DObjectRef object) {
+        updateHistoryToken(parent, object, false);
     }
 
     private static void updateHistoryToken(DObjectRef object) {
