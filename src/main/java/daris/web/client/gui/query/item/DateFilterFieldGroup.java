@@ -8,184 +8,179 @@ import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItemListener;
 import arc.mf.client.util.DateTime;
-import arc.mf.client.util.ObjectUtil;
 import arc.mf.dtype.DateType;
 import arc.mf.dtype.EnumerationType;
-import daris.web.client.model.query.DateAction;
-import daris.web.client.model.query.DatePeriod;
+import arc.mf.expr.Operator;
+import arc.mf.expr.RangeOperator;
+import arc.mf.expr.StandardOperators;
 
 public class DateFilterFieldGroup extends FilterFieldGroup {
 
-    private DateAction _action;
+    private Operator _op;
+    private Date _value;
     private Date _from;
     private Date _to;
-    private DatePeriod _period;
 
-    private Field<DateAction> _actionField;
-    private Field<DatePeriod> _periodField;
+    private Field<Operator> _opField;
+    private Field<Date> _valueField;
     private Field<Date> _fromField;
     private Field<Date> _toField;
+    private boolean _includeTime;
 
-    public DateFilterFieldGroup(String xpath, String name, String description) {
-        this(xpath, name, name, description, null, 0, 1, DateAction.TIME_PERIOD, new Date(), new Date(),
-                DatePeriod.ALL_THE_TIME);
+    public DateFilterFieldGroup(String xpath, String name, String description, boolean includeTime) {
+        this(xpath, name, name, description, null, 0, 1, StandardOperators.EQUALS, new Date(0), new Date(0), new Date(),
+                includeTime);
     }
 
-    public DateFilterFieldGroup(String xpath, String title, String name, String description, String helpText,
-            int minOccurs, int maxOccurs, DateAction action, Date from, Date to, DatePeriod period) {
+    public DateFilterFieldGroup(String xpath, String name, String description, Operator op, Date value, Date from,
+            Date to, boolean includeTime) {
+        this(xpath, name, name, description, null, 0, 1, op, value, from, to, includeTime);
+    }
+
+    protected DateFilterFieldGroup(String xpath, String title, String name, String description, String helpText,
+            int minOccurs, int maxOccurs, Operator op, Date value, Date from, Date to, boolean includeTime) {
         super(xpath, title, name, description, helpText, minOccurs, maxOccurs);
-        _action = action;
+        _op = op;
+        _value = value;
         _from = from;
         _to = to;
-        _period = period;
+        _includeTime = includeTime;
         updateGUI();
     }
 
     private void updateGUI() {
         FieldGroupUtil.removeAllFields(this);
-        if (_actionField == null) {
-            _actionField = new Field<DateAction>(new FieldDefinition(null, null,
-                    new EnumerationType<DateAction>(DateAction.values()), null, null, 1, 1));
-            _actionField.setRenderOptions(new FieldRenderOptions().setWidth(135));
-            _actionField.setInitialValue(_action);
-            _actionField.addListener(new FormItemListener<DateAction>() {
+        if (_opField == null) {
+            _opField = new Field<Operator>(new FieldDefinition(null, null,
+                    new EnumerationType<Operator>(StandardOperators.NUMERIC_OPERATORS), null, null, 1, 1));
+            _opField.setRenderOptions(new FieldRenderOptions().setWidth(_includeTime ? 135 : 200));
+            _opField.setInitialValue(_op);
+            _opField.addListener(new FormItemListener<Operator>() {
 
                 @Override
-                public void itemValueChanged(FormItem<DateAction> f) {
-                    if (!ObjectUtil.equals(_action, f.value())) {
-                        _action = f.value();
-                        updateGUI();
-                    }
+                public void itemValueChanged(FormItem<Operator> f) {
+                    _op = f.value();
+                    updateGUI();
                 }
 
                 @Override
-                public void itemPropertyChanged(FormItem<DateAction> f, Property property) {
+                public void itemPropertyChanged(FormItem<Operator> f, Property property) {
+
                 }
             });
         }
-        add(_actionField);
-        if (_action == DateAction.CHOOSE_DATES) {
-            DateType dateType = new DateType(null, new Date());
-            dateType.setIncludeTime(false);
-            if (_fromField == null) {
-                _fromField = new Field<Date>(
-                        new FieldDefinition("from", "from", dateType, "From date(inclusive)", null, 1, 1));
-                _fromField.setInitialValue(_from);
-                _fromField.addListener(new FormItemListener<Date>() {
+        add(_opField);
+        if (_op != null) {
+            if (RangeOperator.DEFAULT.equals(_op)) {
 
-                    @Override
-                    public void itemValueChanged(FormItem<Date> f) {
-                        _from = f.value();
-                    }
+                if (_fromField == null) {
+                    _fromField = new Field<Date>(new FieldDefinition("from", "from",
+                            _includeTime ? DateType.DATE_AND_TIME : DateType.DATE_ONLY, "From(inclusive)", null, 1, 1));
+                    _fromField.setInitialValue(_from);
+                    _fromField.addListener(new FormItemListener<Date>() {
 
-                    @Override
-                    public void itemPropertyChanged(FormItem<Date> f, Property property) {
-                    }
-                });
+                        @Override
+                        public void itemValueChanged(FormItem<Date> f) {
+                            _from = f.value();
+                        }
+
+                        @Override
+                        public void itemPropertyChanged(FormItem<Date> f, Property property) {
+                        }
+                    });
+                }
+                add(_fromField);
+                if (_toField == null) {
+                    _toField = new Field<Date>(new FieldDefinition("to", "to",
+                            _includeTime ? DateType.DATE_AND_TIME : DateType.DATE_ONLY, "To(inclusive)", null, 1, 1));
+                    _toField.setInitialValue(_to);
+                    _toField.addListener(new FormItemListener<Date>() {
+
+                        @Override
+                        public void itemValueChanged(FormItem<Date> f) {
+                            _to = f.value();
+                        }
+
+                        @Override
+                        public void itemPropertyChanged(FormItem<Date> f, Property property) {
+                        }
+                    });
+                }
+                add(_toField);
+            } else {
+                if (_valueField == null) {
+                    _valueField = new Field<Date>(new FieldDefinition(null, null,
+                            _includeTime ? DateType.DATE_AND_TIME : DateType.DATE_ONLY, null, null, 1, 1));
+                    _valueField.setValue(_value);
+                    _valueField.addListener(new FormItemListener<Date>() {
+
+                        @Override
+                        public void itemValueChanged(FormItem<Date> f) {
+                            _value = f.value();
+                        }
+
+                        @Override
+                        public void itemPropertyChanged(FormItem<Date> f, Property property) {
+
+                        }
+                    });
+                }
+                add(_valueField);
             }
-            add(_fromField);
-            if (_toField == null) {
-                _toField = new Field<Date>(new FieldDefinition("to", "to", dateType, "To date(inclusive)", null, 1, 1));
-                _toField.setInitialValue(_to);
-                _toField.addListener(new FormItemListener<Date>() {
-
-                    @Override
-                    public void itemValueChanged(FormItem<Date> f) {
-                        _to = f.value();
-                    }
-
-                    @Override
-                    public void itemPropertyChanged(FormItem<Date> f, Property property) {
-                    }
-                });
-            }
-            add(_toField);
-        } else {
-            if (_periodField == null) {
-                _periodField = new Field<DatePeriod>(new FieldDefinition(null, null,
-                        new EnumerationType<DatePeriod>(DatePeriod.values()), "Time period", null, 1, 1));
-                _periodField.setRenderOptions(new FieldRenderOptions().setWidth(135));
-                _periodField.setInitialValue(_period);
-                _periodField.addListener(new FormItemListener<DatePeriod>() {
-
-                    @Override
-                    public void itemValueChanged(FormItem<DatePeriod> f) {
-                        _period = f.value();
-                    }
-
-                    @Override
-                    public void itemPropertyChanged(FormItem<DatePeriod> f, Property property) {
-
-                    }
-                });
-            }
-            add(_periodField);
         }
     }
 
     @Override
     public void save(StringBuilder sb) {
-        if (_action == DateAction.TIME_PERIOD) {
-            if (_period.numberOfDays() >= 0) {
-                int nbDays = _period.numberOfDays();
-                sb.append("xpath(").append(xpath()).append(")");
-                if (nbDays == 0) {
-                    sb.append("='today'");
-                } else {
-                    sb.append("='today-" + nbDays + "day'");
-                }
+        if (_op != null) {
+            if (xpath().indexOf('/') != -1) {
+                sb.append("xpath(");
             }
-        } else {
-            Date fromDate = _from.compareTo(_to) <= 0 ? _from : _to;
-            Date toDate = _from.compareTo(_to) <= 0 ? _to : _from;
-            String fromDateStr = DateTime.dateAsServerString(fromDate);
-            String toDateStr = DateTime.dateAsServerString(toDate);
-            sb.append("xpath(").append(xpath()).append(")");
-            if (ObjectUtil.equals(fromDateStr, toDateStr)) {
-                sb.append("=");
-                sb.append("'").append(toDateStr).append("'");
-            } else {
+            sb.append(xpath());
+            if (xpath().indexOf('/') != -1) {
+                sb.append(")");
+            }
+            if (RangeOperator.DEFAULT.equals(_op)) {
                 sb.append(" in range [");
-                sb.append("'").append(fromDateStr).append("',");
-                sb.append("'").append(toDateStr).append("'");
+                Date fromDate = _from.compareTo(_to) <= 0 ? _from : _to;
+                Date toDate = _from.compareTo(_to) <= 0 ? _to : _from;
+                String fromStr = _includeTime ? DateTime.dateAsServerString(fromDate)
+                        : DateTime.dateTimeAsServerString(fromDate);
+                String toStr = _includeTime ? DateTime.dateAsServerString(toDate)
+                        : DateTime.dateTimeAsServerString(toDate);
+                sb.append("'").append(fromStr).append("',");
+                sb.append("'").append(toStr).append("'");
                 sb.append("]");
+            } else {
+                sb.append(_op.value());
+                sb.append("'").append(
+                        _includeTime ? DateTime.dateAsServerString(_value) : DateTime.dateTimeAsServerString(_value))
+                        .append("'");
             }
         }
-    }
-
-    public DatePeriod period() {
-        if (_action == DateAction.TIME_PERIOD) {
-            return _period;
-        }
-        return null;
-    }
-
-    public DateAction action() {
-        return _action;
     }
 
     public Date fromDate() {
-        if (_action == DateAction.CHOOSE_DATES) {
-            return _from;
-        }
-        return null;
+        return _from;
     }
 
     public Date toDate() {
-        if (_action == DateAction.CHOOSE_DATES) {
-            return _to;
-        }
-        return null;
+        return _to;
+    }
+
+    public Date date() {
+        return _value;
     }
 
     public void reset() {
-        _actionField.reset();
-        _periodField.reset();
         if (_fromField != null) {
             _fromField.reset();
         }
         if (_toField != null) {
             _toField.reset();
+        }
+        if (_valueField != null) {
+            _valueField.reset();
         }
     }
 

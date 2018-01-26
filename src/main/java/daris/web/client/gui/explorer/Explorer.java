@@ -19,7 +19,10 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.background.BackgroundServiceManager;
 import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.gui.object.menu.DObjectMenu;
+import daris.web.client.gui.query.DObjectFinder;
+import daris.web.client.gui.query.DicomDatasetFinder;
 import daris.web.client.gui.query.DicomStudyFinder;
+import daris.web.client.gui.query.DicomSubjectFinder;
 import daris.web.client.gui.shoppingcart.ShoppingCartManagerDialog;
 import daris.web.client.gui.widget.MenuButtonBar;
 import daris.web.client.model.CiteableIdUtils;
@@ -242,11 +245,32 @@ public class Explorer extends ContainerWidget {
         _menuBar.addMenuButton("View", ICON_VIEW, viewMenu);
 
         Menu findMenu = new Menu();
+        findMenu.add(new ActionEntry("Find DaRIS object...", new Action() {
+
+            @Override
+            public void execute() {
+                new DObjectFinder().show(window());
+            }
+        }));
+        findMenu.add(new ActionEntry("Find DICOM subject (patient)...", new Action() {
+
+            @Override
+            public void execute() {
+                new DicomSubjectFinder().show(window());
+            }
+        }));
         findMenu.add(new ActionEntry("Find DICOM study...", new Action() {
 
             @Override
             public void execute() {
                 new DicomStudyFinder().show(window());
+            }
+        }));
+        findMenu.add(new ActionEntry("Find DICOM data set (series)...", new Action() {
+
+            @Override
+            public void execute() {
+                new DicomDatasetFinder().show(window());
             }
         }));
         _menuBar.addMenuButton("Find", ICON_FIND, findMenu);

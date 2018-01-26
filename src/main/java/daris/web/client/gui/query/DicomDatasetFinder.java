@@ -1,5 +1,50 @@
 package daris.web.client.gui.query;
 
-public class DicomDatasetFinder {
+import arc.mf.dtype.DictionaryEnumerationSource;
+import arc.mf.dtype.EnumerationType;
+import arc.mf.dtype.IntegerType;
+import arc.mf.expr.StandardOperators;
+import daris.web.client.gui.query.item.EnumFilterField;
+import daris.web.client.gui.query.item.FilterForm;
+import daris.web.client.gui.query.item.IntegerFilterFieldGroup;
+import daris.web.client.gui.query.item.StringFilterFieldGroup;
+import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
+import daris.web.client.model.query.DObjectQueryResultCollectionRef;
+import daris.web.client.model.query.SortOrder;
+
+public class DicomDatasetFinder extends QueryInterface {
+
+    public DicomDatasetFinder() {
+        super("model='om.pssd.dataset' and mf-dicom-series has value");
+    }
+
+    @Override
+    protected void initializeQuery(DObjectQueryResultCollectionRef rc) {
+        rc.addXPath("mf-dicom-series/sdate", "series-date");
+        rc.addXPath("mf-dicom-series/modality", "modality");
+        rc.addXPath("mf-dicom-series/protocol", "protocol");
+        rc.addXPath("mf-dicom-series/description", "description");
+        rc.addXPath("mf-dicom-series/size", "size");
+        rc.addSortKey("mf-dicom-series/sdate", SortOrder.DESCEND);
+        rc.addSortKey("cid", SortOrder.DESCEND);
+
+    }
+
+    @Override
+    protected void addFilterItems(FilterForm form) {
+        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "name", "Object name"));
+        form.add(new TimePeriodFilterFieldGroup("daris:pssd-object/sdate", "series date", "Series date"));
+        form.add(new EnumFilterField<String>("mf-dicom-series/modality", "modality", "Modality",
+                new EnumerationType<String>(new DictionaryEnumerationSource("daris:pssd.dicom.modality", false))));
+        form.add(new StringFilterFieldGroup("mf-dicom-series/protocol", "protocol", "Protocol"));
+        form.add(new StringFilterFieldGroup("mf-dicom-series/description", "description", "Description."));
+        form.add(new IntegerFilterFieldGroup("mf-dicom-series/size", "size", "Number of image instances.",
+                StandardOperators.GREATER_THAN_OR_EQUAL, IntegerType.POSITIVE_ONE, 1, 1, 10000));
+    }
+
+    @Override
+    protected String title() {
+        return "Find DICOM datasets (series)";
+    }
 
 }
