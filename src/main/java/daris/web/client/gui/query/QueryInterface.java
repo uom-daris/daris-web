@@ -1,5 +1,10 @@
 package daris.web.client.gui.query;
 
+import java.util.Date;
+import java.util.List;
+
+import com.google.gwt.i18n.shared.DateTimeFormat;
+
 import arc.gui.gwt.widget.button.Button;
 import arc.gui.gwt.widget.button.ButtonBar;
 import arc.gui.gwt.widget.event.SelectionHandler;
@@ -13,12 +18,19 @@ import arc.gui.menu.Menu;
 import arc.gui.window.WindowProperties;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.explorer.Explorer;
+import daris.web.client.gui.object.exports.DownloadAction;
+import daris.web.client.gui.object.exports.ShareAction;
 import daris.web.client.gui.query.item.FilterForm;
 import daris.web.client.gui.util.ButtonUtil;
+import daris.web.client.gui.widget.MessageBox;
+import daris.web.client.gui.widget.SyncDialog;
+import daris.web.client.model.object.CollectionSummaryRef;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.query.Action;
 import daris.web.client.model.query.DObjectQueryResultCollectionRef;
+import daris.web.client.model.query.QueryResultCollectionRef;
 import daris.web.client.model.shoppingcart.ActiveShoppingCart;
+import daris.web.client.model.shoppingcart.messages.ShoppingCartContentAdd;
 
 public abstract class QueryInterface {
 
@@ -42,6 +54,9 @@ public abstract class QueryInterface {
 
     public static final arc.gui.image.Image ICON_DOWNLOAD_ALL = new arc.gui.image.Image(
             Resource.INSTANCE.downloadGold16().getSafeUri().asString(), 16, 16);
+
+    public static final arc.gui.image.Image ICON_SHARE_ALL = new arc.gui.image.Image(
+            Resource.INSTANCE.linkBlue16().getSafeUri().asString(), 16, 16);
 
     public static final arc.gui.image.Image ICON_EXPORT_XML = new arc.gui.image.Image(
             Resource.INSTANCE.xml16().getSafeUri().asString(), 16, 16);
@@ -83,7 +98,7 @@ public abstract class QueryInterface {
     private Button _actionButton;
     private Menu _actionMenu;
 
-    private boolean _viewSelectedResult = true;
+    private boolean _viewSelectedResult = false;
 
     @SuppressWarnings("rawtypes")
     protected QueryInterface(String prefixFilter) {
@@ -157,7 +172,13 @@ public abstract class QueryInterface {
         _resultVP = new VerticalPanel();
         _resultVP.fitToParent();
 
-        _resultForm = new QueryResultForm<DObjectRef>(_rc);
+        _resultForm = new QueryResultForm<DObjectRef>(_rc) {
+            protected void postLoad(QueryResultCollectionRef<DObjectRef> rc, long offset, List<DObjectRef> ros) {
+                if (_actionButton != null) {
+                    _actionButton.setEnabled(_rc.totalNumberOfMembers() > 0);
+                }
+            }
+        };
         _resultForm.addSelectionHandler(new SelectionHandler<DObjectRef>() {
 
             @Override
@@ -197,6 +218,7 @@ public abstract class QueryInterface {
         _actionButton.addClickHandler(e -> {
             ActionMenu.showAt(e.getClientX(), e.getClientY(), _actionMenu);
         });
+        _actionButton.setEnabled(_rc.totalNumberOfMembers() > 0);
         resultBB.add(_actionButton);
 
         CheckBox cb = new CheckBox("View selected result", _viewSelectedResult);
@@ -205,6 +227,9 @@ public abstract class QueryInterface {
             @Override
             public void changed(CheckBox cb) {
                 _viewSelectedResult = cb.checked();
+                if (_viewSelectedResult && _resultForm.selected() != null) {
+                    Explorer.updateHistoryToken(_resultForm.selected().parent(), _resultForm.selected(), true);
+                }
             }
         });
         resultBB.add(cb);
@@ -239,19 +264,49 @@ public abstract class QueryInterface {
             _actionMenu.add(new ActionEntry(ICON_SHOPPINGCART_ALL, "Add all to shopping cart",
                     "Add all to shopping cart", () -> {
                         ActiveShoppingCart.resolve(false, cart -> {
-                            // TODO
-                            // new ShoppingCartContentAdd(cart, _rc);
+                            new ShoppingCartContentAdd(cart, _rc).send(r -> {
+                                MessageBox.show(200, 80, MessageBox.Position.CENTER,
+                                        "Query results has been added to shopping cart " + cart.id(), 3);
+                            });
                         });
                     }));
             _actionMenu.add(
-                    new ActionEntry(ICON_DOWNLOAD_ALL, "Download all as archive", "Download all as archive", () -> {
-                        // TODO
+                    new ActionEntry(ICON_DOWNLOAD_ALL, "Download all results...", "Download all as archive", () -> {
+                        CollectionSummaryRef request = new CollectionSummaryRef(_rc.toQueryString(true));
+                        SyncDialog dlg = new SyncDialog("Communicating to sever",
+                                "Resovling result collection summary...", 280, 120, _tp.window()) {
+                            protected void aborted() {
+                                request.cancel();
+                            }
+                        };
+                        dlg.show();
+                        request.resolve(cs -> {
+                            dlg.complete();
+                            new DownloadAction(_rc.toQueryString(true), cs, _tp.window()).execute();
+                        });
+                    }));
+            _actionMenu.add(new ActionEntry(ICON_SHARE_ALL, "Share all results...",
+                    "Generate sharable download url for all results.", () -> {
+                        CollectionSummaryRef request = new CollectionSummaryRef(_rc.toQueryString(true));
+                        SyncDialog dlg = new SyncDialog("Communicating to sever",
+                                "Resovling result collection summary...", 280, 120, _tp.window()) {
+                            protected void aborted() {
+                                request.cancel();
+                            }
+                        };
+                        dlg.show();
+                        request.resolve(cs -> {
+                            dlg.complete();
+                            new ShareAction(_rc.toQueryString(true), cs, _tp.window()).execute();
+                        });
                     }));
             _actionMenu.add(new ActionEntry(ICON_EXPORT_CSV, "Export CSV", "Export CSV", () -> {
-                // TODO
+                _rc.exportCSV(
+                        "daris_query_result_" + DateTimeFormat.getFormat("yyyyMMddHHmmss").format(new Date()) + ".csv");
             }));
             _actionMenu.add(new ActionEntry(ICON_EXPORT_XML, "Export XML", "Export XML", () -> {
-                // TODO
+                _rc.exportXML(
+                        "daris_query_result_" + DateTimeFormat.getFormat("yyyyMMddHHmmss").format(new Date()) + ".xml");
             }));
             if (_resultForm.haveSelections()) {
 

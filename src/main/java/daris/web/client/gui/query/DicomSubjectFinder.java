@@ -18,7 +18,8 @@ public class DicomSubjectFinder extends QueryInterface {
 
     @Override
     protected void initializeQuery(DObjectQueryResultCollectionRef rc) {
-        rc.addXPath("mf-dicom-patient/name", "patient-name");
+        rc.addXPath("mf-dicom-patient/name[@type='first']", "patient-first-name");
+        rc.addXPath("mf-dicom-patient/name[@type='last']", "patient-last-name");
         rc.addXPath("mf-dicom-patient/sex", "patient-sex");
         rc.addXPath("mf-dicom-patient/dob", "patient-birth-date");
         rc.addXPath("mtime", "last-modified");
@@ -29,10 +30,18 @@ public class DicomSubjectFinder extends QueryInterface {
     protected void addFilterItems(FilterForm form) {
         form.add(new ProjectFilterField());
         form.add(new StringFilterFieldGroup("daris:pssd-object/name", "name", "Subject name"));
-        form.add(new StringFilterFieldGroup("mf-dicom-patient/name", "patient name", "Patient name"));
+        form.add(new StringFilterFieldGroup("mf-dicom-patient/name[@type='first']", "patient first name",
+                "Patient first name"));
+        form.add(new StringFilterFieldGroup("mf-dicom-patient/name[@type='last']", "patient last name",
+                "Patient last name"));
         form.add(new EnumFilterField<String>("mf-dicom-patient/sex", "patient sex", "Patient sex",
                 new EnumerationType<String>(new String[] { "male", "female", "other" })));
-        form.add(new DateFilterFieldGroup("mf-dicom-patient/dob", "patient birth date", "Patient birth date", false));
+        try {
+            form.add(new DateFilterFieldGroup("mf-dicom-patient/dob", "patient birth date", "Patient birth date",
+                    false));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         form.add(new TimePeriodFilterFieldGroup("mtime", "last modified", "Last modified"));
     }
 

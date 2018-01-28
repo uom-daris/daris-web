@@ -12,6 +12,7 @@ import daris.web.client.model.object.DObjectRef;
 
 public class DownloadAction extends ActionInterface<DObject> {
 
+    private String _where;
     private CollectionSummary _summary;
 
     public DownloadAction(DObjectRef o, CollectionSummary summary, arc.gui.window.Window owner) {
@@ -20,11 +21,22 @@ public class DownloadAction extends ActionInterface<DObject> {
         _summary = summary;
     }
 
+    public DownloadAction(String where, CollectionSummary summary, arc.gui.window.Window owner) {
+        super("object", new ArrayList<ActionPrecondition>(), owner, WindowUtil.calcWindowWidth(owner, 0.5),
+                WindowUtil.calcWindowHeight(owner, 0.5));
+        _where = where;
+        _summary = summary;
+    }
+
     @Override
     public void createInterface(InterfaceCreateHandler ch) {
-        object().resolve(o -> {
-            ch.created(new DownloadOptionsForm(o, _summary));
-        });
+        if (object() != null) {
+            object().resolve(o -> {
+                ch.created(new DownloadOptionsForm(o, null, _summary));
+            });
+        } else {
+            ch.created(new DownloadOptionsForm(null, _where, _summary));
+        }
     }
 
     @Override
@@ -34,7 +46,11 @@ public class DownloadAction extends ActionInterface<DObject> {
 
     @Override
     public String title() {
-        return actionName() + " " + ((DObjectRef) object()).typeAndId();
+        if (object() != null) {
+            return actionName() + " " + ((DObjectRef) object()).typeAndId();
+        } else {
+            return actionName() + " collection";
+        }
     }
 
 }

@@ -210,7 +210,7 @@ public class DObjectMenu extends ObjectMenu<DObject> {
             /*
              * share url
              */
-            add(new ActionEntry(ICON_SHARE1, "Share " + _o.typeAndId() + "...", new ShareAction(_o, os, _owner)));
+            add(new ActionEntry(ICON_SHARE1, "Share " + _o.typeAndId() + "...", new ShareAction(_o, null, os, _owner)));
 
             /*
              * send to sink...

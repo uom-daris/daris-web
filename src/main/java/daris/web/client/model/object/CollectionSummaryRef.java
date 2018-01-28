@@ -6,15 +6,30 @@ import arc.mf.object.ObjectRef;
 
 public class CollectionSummaryRef extends ObjectRef<CollectionSummary> {
 
-    private DObjectRef _o;
+    private String _cid;
+    private String _where;
 
     public CollectionSummaryRef(DObjectRef o) {
-        _o = o;
+        this(null, o.citeableId());
+    }
+
+    public CollectionSummaryRef(String where) {
+        this(where, null);
+    }
+
+    protected CollectionSummaryRef(String where, String cid) {
+        _where = where;
+        _cid = cid;
     }
 
     @Override
     protected void resolveServiceArgs(XmlStringWriter w) {
-        w.add("cid", _o.citeableId());
+        if (_where != null) {
+            w.add("where", _where);
+        }
+        if (_cid != null) {
+            w.add("cid", _cid);
+        }
         w.add("async", true);
     }
 
@@ -35,7 +50,7 @@ public class CollectionSummaryRef extends ObjectRef<CollectionSummary> {
 
     @Override
     public String idToString() {
-        return _o.citeableId();
+        return _cid == null ? null : _cid;
     }
 
 }

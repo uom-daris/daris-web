@@ -3,9 +3,6 @@ package daris.web.client.model.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import arc.mf.client.util.IsNotValid;
-import arc.mf.client.util.IsValid;
-import arc.mf.client.util.Validity;
 import arc.mf.model.asset.query.AssetQueryClause.Operand;
 
 public class ComplexFilter extends AbstractFilter {
@@ -35,19 +32,17 @@ public class ComplexFilter extends AbstractFilter {
         StringBuilder sb = new StringBuilder();
         int n = 0;
         for (Filter filter : _filters) {
-            if (filter.valid().valid()) {
-                String qs = filter.toQueryString();
-                if (qs != null && !qs.isEmpty()) {
-                    if (n > 0) {
-                        if (_operand == Operand.AND) {
-                            sb.append(" and ");
-                        } else {
-                            sb.append(") or (");
-                        }
+            String qs = filter.toQueryString();
+            if (qs != null && !qs.isEmpty()) {
+                if (n > 0) {
+                    if (_operand == Operand.AND) {
+                        sb.append(" and ");
+                    } else {
+                        sb.append(") or (");
                     }
-                    sb.append(qs);
-                    n++;
                 }
+                sb.append(qs);
+                n++;
             }
         }
         if (n > 1 && _operand == Operand.OR) {
@@ -57,18 +52,4 @@ public class ComplexFilter extends AbstractFilter {
         }
     }
 
-    @Override
-    public Validity valid() {
-        int n = _filters.size();
-        if (n == 0) {
-            return new IsNotValid("No filter is added.");
-        }
-        for (Filter f : _filters) {
-            Validity v = f.valid();
-            if (!v.valid()) {
-                return v;
-            }
-        }
-        return IsValid.INSTANCE;
-    }
 }

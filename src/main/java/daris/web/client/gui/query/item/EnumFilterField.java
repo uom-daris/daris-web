@@ -9,6 +9,7 @@ public class EnumFilterField<T> extends FilterField<T> {
 
     public EnumFilterField(String xpath, String name, String description, EnumerationType<T> type) {
         super(new FieldDefinition(name, type, description, null, 0, 1));
+        _xpath = xpath;
     }
 
     public String xpath() {
@@ -17,15 +18,18 @@ public class EnumFilterField<T> extends FilterField<T> {
 
     @Override
     public void save(StringBuilder sb) {
-        if (xpath().indexOf('/') != -1) {
-            sb.append("xpath(");
+        String value = valueAsString();
+        if (value != null) {
+            if (xpath().indexOf('/') != -1) {
+                sb.append("xpath(");
+            }
+            sb.append(xpath());
+            if (xpath().indexOf('/') != -1) {
+                sb.append(")");
+            }
+            sb.append("=");
+            sb.append("'").append(valueAsString()).append("'");
         }
-        sb.append(xpath());
-        if (xpath().indexOf('/') != -1) {
-            sb.append(")");
-        }
-        sb.append("=");
-        sb.append("'").append(valueAsString()).append("'");
     }
 
 }

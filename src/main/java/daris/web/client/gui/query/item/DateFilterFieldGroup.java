@@ -1,6 +1,7 @@
 package daris.web.client.gui.query.item;
 
 import java.util.Date;
+import java.util.List;
 
 import arc.gui.form.Field;
 import arc.gui.form.FieldDefinition;
@@ -8,6 +9,7 @@ import arc.gui.form.FieldRenderOptions;
 import arc.gui.form.FormItem;
 import arc.gui.form.FormItemListener;
 import arc.mf.client.util.DateTime;
+import arc.mf.client.util.ListUtil;
 import arc.mf.dtype.DateType;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.expr.Operator;
@@ -15,6 +17,12 @@ import arc.mf.expr.RangeOperator;
 import arc.mf.expr.StandardOperators;
 
 public class DateFilterFieldGroup extends FilterFieldGroup {
+
+    public static final Operator ANY = new Operator("any", "", -1);
+
+    public static final List<Operator> OPERATORS = ListUtil.list(ANY, StandardOperators.EQUALS,
+            StandardOperators.NOT_EQUALS, StandardOperators.GREATER_THAN, StandardOperators.GREATER_THAN_OR_EQUAL,
+            StandardOperators.LESS_THAN, StandardOperators.LESS_THAN_OR_EQUAL, RangeOperator.DEFAULT);
 
     private Operator _op;
     private Date _value;
@@ -28,8 +36,7 @@ public class DateFilterFieldGroup extends FilterFieldGroup {
     private boolean _includeTime;
 
     public DateFilterFieldGroup(String xpath, String name, String description, boolean includeTime) {
-        this(xpath, name, name, description, null, 0, 1, StandardOperators.EQUALS, new Date(0), new Date(0), new Date(),
-                includeTime);
+        this(xpath, name, name, description, null, 0, 1, ANY, new Date(0), new Date(0), new Date(), includeTime);
     }
 
     public DateFilterFieldGroup(String xpath, String name, String description, Operator op, Date value, Date from,
@@ -51,8 +58,8 @@ public class DateFilterFieldGroup extends FilterFieldGroup {
     private void updateGUI() {
         FieldGroupUtil.removeAllFields(this);
         if (_opField == null) {
-            _opField = new Field<Operator>(new FieldDefinition(null, null,
-                    new EnumerationType<Operator>(StandardOperators.NUMERIC_OPERATORS), null, null, 1, 1));
+            _opField = new Field<Operator>(
+                    new FieldDefinition(null, null, new EnumerationType<Operator>(OPERATORS), null, null, 1, 1));
             _opField.setRenderOptions(new FieldRenderOptions().setWidth(_includeTime ? 135 : 200));
             _opField.setInitialValue(_op);
             _opField.addListener(new FormItemListener<Operator>() {
@@ -70,9 +77,8 @@ public class DateFilterFieldGroup extends FilterFieldGroup {
             });
         }
         add(_opField);
-        if (_op != null) {
+        if (_op != null && !_op.equals(ANY)) {
             if (RangeOperator.DEFAULT.equals(_op)) {
-
                 if (_fromField == null) {
                     _fromField = new Field<Date>(new FieldDefinition("from", "from",
                             _includeTime ? DateType.DATE_AND_TIME : DateType.DATE_ONLY, "From(inclusive)", null, 1, 1));
@@ -111,7 +117,7 @@ public class DateFilterFieldGroup extends FilterFieldGroup {
                 if (_valueField == null) {
                     _valueField = new Field<Date>(new FieldDefinition(null, null,
                             _includeTime ? DateType.DATE_AND_TIME : DateType.DATE_ONLY, null, null, 1, 1));
-                    _valueField.setValue(_value);
+                    _valueField.setInitialValue(_value);
                     _valueField.addListener(new FormItemListener<Date>() {
 
                         @Override
@@ -132,7 +138,7 @@ public class DateFilterFieldGroup extends FilterFieldGroup {
 
     @Override
     public void save(StringBuilder sb) {
-        if (_op != null) {
+        if (_op != null && !_op.equals(ANY)) {
             if (xpath().indexOf('/') != -1) {
                 sb.append("xpath(");
             }
@@ -144,17 +150,17 @@ public class DateFilterFieldGroup extends FilterFieldGroup {
                 sb.append(" in range [");
                 Date fromDate = _from.compareTo(_to) <= 0 ? _from : _to;
                 Date toDate = _from.compareTo(_to) <= 0 ? _to : _from;
-                String fromStr = _includeTime ? DateTime.dateAsServerString(fromDate)
-                        : DateTime.dateTimeAsServerString(fromDate);
-                String toStr = _includeTime ? DateTime.dateAsServerString(toDate)
-                        : DateTime.dateTimeAsServerString(toDate);
+                String fromStr = _includeTime ? DateTime.dateTimeAsServerString(fromDate)
+                        : DateTime.dateAsServerString(fromDate);
+                String toStr = _includeTime ? DateTime.dateTimeAsServerString(toDate)
+                        : DateTime.dateAsServerString(toDate);
                 sb.append("'").append(fromStr).append("',");
                 sb.append("'").append(toStr).append("'");
                 sb.append("]");
             } else {
                 sb.append(_op.value());
                 sb.append("'").append(
-                        _includeTime ? DateTime.dateAsServerString(_value) : DateTime.dateTimeAsServerString(_value))
+                        _includeTime ? DateTime.dateTimeAsServerString(_value) : DateTime.dateAsServerString(_value))
                         .append("'");
             }
         }

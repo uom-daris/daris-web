@@ -11,7 +11,9 @@ import arc.mf.client.xml.XmlWriter;
 import arc.mf.object.Null;
 import arc.mf.object.ObjectMessage;
 import daris.web.client.model.object.HasCiteableId;
+import daris.web.client.model.query.QueryResultCollectionRef;
 import daris.web.client.model.shoppingcart.ShoppingCart;
+import daris.web.client.model.shoppingcart.ShoppingCartRef;
 
 public class ShoppingCartContentAdd extends ObjectMessage<Null> {
 
@@ -70,6 +72,10 @@ public class ShoppingCartContentAdd extends ObjectMessage<Null> {
         for (String assetId : assetIds) {
             _assetIds.add(assetId);
         }
+    }
+
+    public ShoppingCartContentAdd(ShoppingCartRef cart, QueryResultCollectionRef<?> rc) {
+        this(cart.id(), "(" + rc.toQueryString(true) + ") and asset has content");
     }
 
     @Override

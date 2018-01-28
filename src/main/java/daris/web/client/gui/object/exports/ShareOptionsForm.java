@@ -52,8 +52,8 @@ public class ShareOptionsForm extends ExportOptionsForm<ShareOptions> implements
     private Form _form;
     private Field<String> _urlField;
 
-    public ShareOptionsForm(DObject object, CollectionSummary summary) {
-        super(object, summary, new ShareOptions());
+    public ShareOptionsForm(DObject object, String where, CollectionSummary summary) {
+        super(object, where, summary, new ShareOptions());
         _vp = new VerticalPanel();
         _vp.fitToParent();
 
@@ -96,7 +96,7 @@ public class ShareOptionsForm extends ExportOptionsForm<ShareOptions> implements
         if (summary.numberOfAttachments() == 0) {
             options.setIncludeAttachments(false);
         }
-        if (object.isLeaf()) {
+        if (object != null && object.isLeaf()) {
             if (object.hasContent()) {
                 if (object.hasArchiveContent()) {
                     if (object.content().isAAR()) {
@@ -171,7 +171,7 @@ public class ShareOptionsForm extends ExportOptionsForm<ShareOptions> implements
         /*
          * decompress
          */
-        if (!object.isLeaf() || object.hasArchiveContent()) {
+        if (where != null || !object.isLeaf() || object.hasArchiveContent()) {
             final Field<Boolean> decompressField = new Field<Boolean>(new FieldDefinition("Unpack", "Unpack",
                     BooleanType.DEFAULT_TRUE_FALSE, "Unpack archive content", null, 1, 1));
             decompressField.setInitialValue(options.decompress());
@@ -315,8 +315,9 @@ public class ShareOptionsForm extends ExportOptionsForm<ShareOptions> implements
 
         Session.execute("actor.self.describe", (xe, outputs) -> {
             Actor actor = new Actor(xe.value("actor/@name"), xe.value("actor/@type"));
-            if (object.hasContent() && summary.numberOfObjects() == 1 && options.parts() == Parts.CONTENT
-                    && !options.includeAttachments() && !options.hasTranscodes() && !options.decompress()) {
+            if (object != null && object.hasContent() && summary.numberOfObjects() == 1
+                    && options.parts() == Parts.CONTENT && !options.includeAttachments() && !options.hasTranscodes()
+                    && !options.decompress()) {
                 generateContentUrl(actor, al);
             } else {
                 generateArchiveUrl(actor, al);
@@ -361,7 +362,12 @@ public class ShareOptionsForm extends ExportOptionsForm<ShareOptions> implements
         XmlStringWriter w = new XmlStringWriter();
         w.add("role", new String[] { "type", actor.actorType() }, actor.actorName());
         w.push("service", new String[] { "name", "daris.collection.archive.create" });
-        w.add("cid", object.citeableId());
+        if (object != null) {
+            w.add("cid", object.citeableId());
+        }
+        if (where != null) {
+            w.add("where", where);
+        }
         w.add("parts", options.parts());
         w.add("include-attachments", options.includeAttachments());
         w.add("decompress", options.decompress());

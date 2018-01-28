@@ -10,27 +10,36 @@ import daris.web.client.model.object.DObjectRef;
 public class ShareAction implements Action {
 
     private DObjectRef _o;
+    private String _where;
     private CollectionSummary _summary;
 
     private arc.gui.window.Window _owner;
 
-    public ShareAction(DObjectRef o, CollectionSummary summary, arc.gui.window.Window owner) {
+    public ShareAction(DObjectRef o, String where, CollectionSummary summary, arc.gui.window.Window owner) {
         _o = o;
+        _where = where;
         _summary = summary;
         _owner = owner;
     }
 
+    public ShareAction(String where, CollectionSummary summary, arc.gui.window.Window owner) {
+        this(null, where, summary, owner);
+    }
+
     @Override
     public void execute() {
-        _o.resolve(o -> {
-            showDialog(o);
-        });
+        if (_o != null) {
+            _o.resolve(o -> {
+                showDialog(o);
+            });
+        } else {
+            showDialog(null);
+        }
     }
 
     private void showDialog(DObject object) {
-        ShareOptionsForm form = new ShareOptionsForm(object, _summary);
-        DialogProperties dp = new DialogProperties(DialogProperties.Type.ACTION, "Generate Download URL",
-                form);
+        ShareOptionsForm form = new ShareOptionsForm(object, _where, _summary);
+        DialogProperties dp = new DialogProperties(DialogProperties.Type.ACTION, "Generate Download URL", form);
         dp.setButtonAction(form);
         dp.setButtonLabel("Generate");
         dp.setActionEnabled(true);

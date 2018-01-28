@@ -7,11 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import arc.mf.client.Output;
+import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.object.OrderedCollectionRef;
+import arc.mf.session.ServiceResponseHandler;
+import arc.mf.session.Session;
+import daris.web.client.util.DownloadUtil;
 
 public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends OrderedCollectionRef<T>
-        implements HasXPath {
+        implements HasXPath, Filter {
 
     public static final int DEFAULT_PAGE_SIZE = 100;
 
@@ -52,6 +57,13 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
 
     @Override
     protected void resolveServiceArgs(XmlStringWriter w, long start, int size, boolean count) {
+
+        w.add("idx", start + 1);
+        w.add("size", size);
+        queryServiceArgs(w);
+    }
+
+    private void queryServiceArgs(XmlStringWriter w) {
         for (String where : _wheres) {
             w.add("where", where);
         }
@@ -61,8 +73,6 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
             }
         }
         w.add("action", _action.value());
-        w.add("idx", start + 1);
-        w.add("size", size);
         if (!_sortKeys.isEmpty() || _sortOrder != null) {
             w.push("sort");
             if (!_sortKeys.isEmpty()) {
@@ -105,7 +115,7 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
     public void setAction(Action action) {
         _action = action == null ? Action.GET_VALUE : action;
     }
-    
+
     public Action action() {
         return _action;
     }
@@ -137,4 +147,57 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
         _pageSize = pageSize;
     }
 
+    @Override
+    public void save(StringBuilder sb) {
+        if (_wheres != null) {
+            for (int i = 0; i < _wheres.size(); i++) {
+                String where = _wheres.get(i);
+                if (i > 0) {
+                    sb.append(" and ");
+                }
+                sb.append(where);
+            }
+        }
+    }
+
+    @Override
+    public String toQueryString() {
+        StringBuilder sb = new StringBuilder();
+        save(sb);
+        return sb.toString();
+    }
+
+    public String toQueryString(boolean recursive) {
+        String qs = toQueryString();
+        if (qs == null || qs.isEmpty() || !recursive) {
+            return qs;
+        }
+        return new StringBuilder("(").append(qs).append(") or cid contained by (").append(qs).append(")").toString();
+    }
+
+    public void exportCSV(String fileName) {
+        XmlStringWriter w = new XmlStringWriter();
+        queryServiceArgs(w);
+        w.add("output-format", "csv");
+        Session.execute("asset.query", w.document(), 1, new ServiceResponseHandler() {
+
+            @Override
+            public void processResponse(XmlElement xe, List<Output> outputs) throws Throwable {
+                DownloadUtil.download(outputs.get(0), fileName);
+            }
+        });
+    }
+
+    public void exportXML(String fileName) {
+        XmlStringWriter w = new XmlStringWriter();
+        queryServiceArgs(w);
+        w.add("output-format", "xml");
+        Session.execute("asset.query", w.document(), 1, new ServiceResponseHandler() {
+
+            @Override
+            public void processResponse(XmlElement xe, List<Output> outputs) throws Throwable {
+                DownloadUtil.download(outputs.get(0), fileName);
+            }
+        });
+    }
 }

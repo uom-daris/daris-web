@@ -29,8 +29,9 @@ public class CollectionArchiveCreate extends ObjectMessage<Null> {
     private Integer _clevel;
     private Map<String, Transcode> _transcodes;
 
-    public CollectionArchiveCreate(DObjectRef o, DownloadOptions archiveOptions) {
+    public CollectionArchiveCreate(DObjectRef o, String where, DownloadOptions archiveOptions) {
         _o = o;
+        _where = where;
         _parts = archiveOptions.parts();
         _includeAttachments = archiveOptions.includeAttachments();
         _decompress = archiveOptions.decompress();

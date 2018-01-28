@@ -37,8 +37,8 @@ public class DownloadOptionsForm extends ExportOptionsForm<DownloadOptions> impl
     private SimplePanel _formSP;
     private Form _form;
 
-    public DownloadOptionsForm(DObject object, CollectionSummary summary) {
-        super(object, summary, new DownloadOptions());
+    public DownloadOptionsForm(DObject object, String where, CollectionSummary summary) {
+        super(object, where, summary, new DownloadOptions());
         _vp = new VerticalPanel();
         _vp.fitToParent();
 
@@ -67,7 +67,7 @@ public class DownloadOptionsForm extends ExportOptionsForm<DownloadOptions> impl
         if (summary.numberOfAttachments() == 0) {
             options.setIncludeAttachments(false);
         }
-        if (object.isLeaf()) {
+        if (object != null && object.isLeaf()) {
             if (object.hasContent()) {
                 if (object.hasArchiveContent()) {
                     if (object.content().isAAR()) {
@@ -142,9 +142,9 @@ public class DownloadOptionsForm extends ExportOptionsForm<DownloadOptions> impl
         /*
          * decompress
          */
-        if (!object.isLeaf() || object.hasArchiveContent()) {
-            final Field<Boolean> decompressField = new Field<Boolean>(new FieldDefinition("Unpack Archives", "Unpack Archives",
-                    BooleanType.DEFAULT_TRUE_FALSE, "Unpack archive contents", null, 1, 1));
+        if (object == null || !object.isLeaf() || object.hasArchiveContent()) {
+            final Field<Boolean> decompressField = new Field<Boolean>(new FieldDefinition("Unpack Archives",
+                    "Unpack Archives", BooleanType.DEFAULT_TRUE_FALSE, "Unpack archive contents", null, 1, 1));
             decompressField.setInitialValue(options.decompress());
             decompressField.addListener(new FormItemListener<Boolean>() {
 
@@ -209,12 +209,12 @@ public class DownloadOptionsForm extends ExportOptionsForm<DownloadOptions> impl
 
     @Override
     public void execute(ActionListener l) {
-        if (object.hasContent() && summary.numberOfObjects() == 1 && options.parts() == Parts.CONTENT
+        if (object != null && object.hasContent() && summary.numberOfObjects() == 1 && options.parts() == Parts.CONTENT
                 && !options.includeAttachments() && !options.hasTranscodes() && !options.decompress()) {
             l.executed(true);
             DownloadUtil.download(object.contentDownloadUrl());
         } else {
-            new CollectionArchiveCreate(new DObjectRef(object), options).send(r -> {
+            new CollectionArchiveCreate(new DObjectRef(object), where, options).send(r -> {
                 l.executed(true);
             });
         }

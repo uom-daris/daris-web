@@ -61,7 +61,7 @@ public class IntegerFilterFieldGroup extends FilterFieldGroup {
             if (_op.numberOfValues() == 1) {
                 if (_valueField == null) {
                     _valueField = new Field<Integer>(new FieldDefinition(null, null, _type, null, null, 1, 1));
-                    _valueField.setValue(_value);
+                    _valueField.setInitialValue(_value);
                     _valueField.addListener(new FormItemListener<Integer>() {
 
                         @Override
@@ -136,4 +136,16 @@ public class IntegerFilterFieldGroup extends FilterFieldGroup {
         }
     }
 
+    @Override
+    public void reset() {
+        if (_fromField != null) {
+            _fromField.reset();
+        }
+        if (_toField != null) {
+            _toField.reset();
+        }
+        if (_valueField != null) {
+            _valueField.reset();
+        }
+    }
 }

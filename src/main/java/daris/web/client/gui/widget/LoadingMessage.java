@@ -12,7 +12,7 @@ import daris.web.client.gui.Resource;
 public class LoadingMessage extends ContainerWidget {
 
     public static final arc.gui.image.Image DEFAULT_IMAGE = new arc.gui.image.Image(
-            Resource.INSTANCE.loading56().getSafeUri().asString(), 56, 56);
+            Resource.INSTANCE.loading56().getSafeUri().asString(), 24, 24);
 
     private AbsolutePanel _ap;
     private Image _image;

@@ -152,7 +152,12 @@ public class QueryResultForm<T extends IsQueryResult> extends ValidatedInterface
                 }
             }
             _list.setData(entries);
+            postLoad(_rc, offset, os);
         });
+    }
+
+    protected void postLoad(QueryResultCollectionRef<T> rc, long offset, List<T> ros) {
+
     }
 
     public void refresh() {

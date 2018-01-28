@@ -29,4 +29,5 @@ public class DObjectQueryResultCollectionRef extends QueryResultCollectionRef<DO
         }
         return o;
     }
+
 }

@@ -38,7 +38,8 @@ public class TimePeriodFilterFieldGroup extends FilterFieldGroup {
     }
 
     public TimePeriodFilterFieldGroup(String xpath, String title, String name, String description, String helpText,
-            int minOccurs, int maxOccurs, DateAction action, Date from, Date to, DatePeriod period, boolean includeTime) {
+            int minOccurs, int maxOccurs, DateAction action, Date from, Date to, DatePeriod period,
+            boolean includeTime) {
         super(xpath, title, name, description, helpText, minOccurs, maxOccurs);
         _action = action;
         _from = from;
@@ -145,9 +146,9 @@ public class TimePeriodFilterFieldGroup extends FilterFieldGroup {
         } else {
             Date fromDate = _from.compareTo(_to) <= 0 ? _from : _to;
             Date toDate = _from.compareTo(_to) <= 0 ? _to : _from;
-            String fromStr = _includeTime ? DateTime.dateAsServerString(fromDate)
-                    : DateTime.dateTimeAsServerString(fromDate);
-            String toStr = _includeTime ? DateTime.dateAsServerString(toDate) : DateTime.dateTimeAsServerString(toDate);
+            String fromStr = _includeTime ? DateTime.dateTimeAsServerString(fromDate)
+                    : DateTime.dateAsServerString(fromDate);
+            String toStr = _includeTime ? DateTime.dateTimeAsServerString(toDate) : DateTime.dateAsServerString(toDate);
             sb.append("xpath(").append(xpath()).append(")");
             if (ObjectUtil.equals(fromStr, toStr)) {
                 sb.append("=");

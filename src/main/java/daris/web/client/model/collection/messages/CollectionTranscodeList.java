@@ -18,14 +18,16 @@ public class CollectionTranscodeList extends ObjectMessage<Map<String, List<Stri
     private String _cid;
     private String _where;
 
-    public CollectionTranscodeList(String cid) {
+    public CollectionTranscodeList(String cid, String where) {
         _cid = cid;
         _where = null;
     }
 
     @Override
     protected void messageServiceArgs(XmlWriter w) {
-        w.add("cid", _cid);
+        if (_cid != null) {
+            w.add("cid", _cid);
+        }
         if (_where != null) {
             w.add("where", _where);
         }
@@ -49,7 +51,7 @@ public class CollectionTranscodeList extends ObjectMessage<Map<String, List<Stri
 
     @Override
     protected String idToString() {
-        return _cid;
+        return _cid == null ? null : _cid;
     }
 
     public static Map<String, List<String>> instantiateAvailableTranscodes(XmlElement xe) throws Throwable {
