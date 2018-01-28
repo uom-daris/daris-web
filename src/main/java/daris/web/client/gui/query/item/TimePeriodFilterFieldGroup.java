@@ -136,11 +136,17 @@ public class TimePeriodFilterFieldGroup extends FilterFieldGroup {
         if (_action == DateAction.TIME_PERIOD) {
             if (_period.numberOfDays() >= 0) {
                 int nbDays = _period.numberOfDays();
-                sb.append("xpath(").append(xpath()).append(")");
+                if (xpath().indexOf('/') != -1) {
+                    sb.append("xpath(");
+                }
+                sb.append(xpath());
+                if (xpath().indexOf('/') != -1) {
+                    sb.append(")");
+                }
                 if (nbDays == 0) {
                     sb.append("='today'");
                 } else {
-                    sb.append("='today-" + nbDays + "day'");
+                    sb.append(">='today-" + nbDays + "day'");
                 }
             }
         } else {
@@ -149,7 +155,13 @@ public class TimePeriodFilterFieldGroup extends FilterFieldGroup {
             String fromStr = _includeTime ? DateTime.dateTimeAsServerString(fromDate)
                     : DateTime.dateAsServerString(fromDate);
             String toStr = _includeTime ? DateTime.dateTimeAsServerString(toDate) : DateTime.dateAsServerString(toDate);
-            sb.append("xpath(").append(xpath()).append(")");
+            if (xpath().indexOf('/') != -1) {
+                sb.append("xpath(");
+            }
+            sb.append(xpath());
+            if (xpath().indexOf('/') != -1) {
+                sb.append(")");
+            }
             if (ObjectUtil.equals(fromStr, toStr)) {
                 sb.append("=");
                 sb.append("'").append(toStr).append("'");

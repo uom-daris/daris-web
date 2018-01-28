@@ -116,7 +116,7 @@ public class StringFilterFieldGroup extends FilterFieldGroup {
     @Override
     public void save(StringBuilder sb) {
 
-        if (_op != null && _op.numberOfValues() >= 0) {
+        if (_op != null && (_op.numberOfValues() == 0 || (_op.numberOfValues() > 0 && _value != null))) {
             sb.append("xpath(").append(xpath()).append(")");
             sb.append(" ");
             sb.append(_op.value());
