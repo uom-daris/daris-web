@@ -7,6 +7,7 @@ import arc.mf.expr.StandardOperators;
 import daris.web.client.gui.query.item.EnumFilterField;
 import daris.web.client.gui.query.item.FilterForm;
 import daris.web.client.gui.query.item.IntegerFilterFieldGroup;
+import daris.web.client.gui.query.item.ProjectFilterField;
 import daris.web.client.gui.query.item.StringFilterFieldGroup;
 import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
 import daris.web.client.model.query.DObjectQueryResultCollectionRef;
@@ -32,8 +33,9 @@ public class DicomDatasetFinder extends QueryInterface {
 
     @Override
     protected void addFilterItems(FilterForm form) {
+        form.add(new ProjectFilterField());
         form.add(new StringFilterFieldGroup("daris:pssd-object/name", "Name", "Object name"));
-        form.add(new TimePeriodFilterFieldGroup("daris:pssd-object/sdate", "Series Date", "Series date"));
+        form.add(new TimePeriodFilterFieldGroup("mf-dicom-series/sdate", "Series Date", "Series date"));
         form.add(new EnumFilterField<String>("mf-dicom-series/modality", "Modality", "Modality",
                 new EnumerationType<String>(new DictionaryEnumerationSource("daris:pssd.dicom.modality", false))));
         form.add(new StringFilterFieldGroup("mf-dicom-series/protocol", "Protocol", "Protocol"));
