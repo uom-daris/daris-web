@@ -26,9 +26,9 @@ public class DObjectFinder extends QueryInterface {
     protected void addFilterItems(FilterForm form) {
         form.add(new ProjectFilterField());
         form.add(new DObjectTypeFilterField());
-        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "name", "Object name"));
-        form.add(new StringFilterFieldGroup("daris:pssd-object/description", "description", "Object description"));
-        form.add(new TimePeriodFilterFieldGroup("mtime", "last modified", "Last modified"));
+        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "Name", "Object name"));
+        form.add(new StringFilterFieldGroup("daris:pssd-object/description", "Description", "Object description"));
+        form.add(new TimePeriodFilterFieldGroup("mtime", "Last Modified", "Last modified"));
     }
 
     @Override

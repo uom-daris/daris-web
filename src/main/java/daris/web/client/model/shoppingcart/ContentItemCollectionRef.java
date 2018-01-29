@@ -63,5 +63,10 @@ public class ContentItemCollectionRef extends OrderedCollectionRef<ContentItem> 
     protected String[] objectElementNames() {
         return new String[] { "asset" };
     }
+    
+    @Override
+    public boolean supportsPaging() {
+        return true;
+    }
 
 }

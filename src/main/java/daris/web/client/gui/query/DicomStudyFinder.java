@@ -22,9 +22,9 @@ public class DicomStudyFinder extends QueryInterface {
 
     protected void addFilterItems(FilterForm form) {
         form.add(new ProjectFilterField());
-        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "name", "Object name"));
-        form.add(new TimePeriodFilterFieldGroup("mf-dicom-study/sdate", "study date", "Study date"));
-        form.add(new TimePeriodFilterFieldGroup("mf-dicom-study/ingest/date", "Ingest date",
+        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "Name", "Object name"));
+        form.add(new TimePeriodFilterFieldGroup("mf-dicom-study/sdate", "Study Date", "Study date"));
+        form.add(new TimePeriodFilterFieldGroup("mf-dicom-study/ingest/date", "Ingest Date",
                 "The date of ingest into DaRIS."));
     }
 

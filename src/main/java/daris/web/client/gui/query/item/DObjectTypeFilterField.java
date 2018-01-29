@@ -12,7 +12,7 @@ public class DObjectTypeFilterField extends FilterField<DObject.Type> {
     private DObject.Type _type;
 
     public DObjectTypeFilterField() {
-        super(new FieldDefinition("type", new EnumerationType<DObject.Type>(DObject.Type.values()), "Object type", null,
+        super(new FieldDefinition("Type", new EnumerationType<DObject.Type>(DObject.Type.values()), "Object type", null,
                 0, 1));
         this.addListener(new FormItemListener<DObject.Type>() {
 

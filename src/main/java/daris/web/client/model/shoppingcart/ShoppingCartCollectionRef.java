@@ -141,6 +141,11 @@ public class ShoppingCartCollectionRef extends OrderedCollectionRef<ShoppingCart
         return this;
     }
 
+    @Override
+    public boolean supportsPaging() {
+        return true;
+    }
+
     public static final ShoppingCartCollectionRef ALL_CARTS = new ShoppingCartCollectionRef().setPagingSize(-1)
             .subscribe();
 

@@ -200,4 +200,8 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
             }
         });
     }
+    
+    public boolean supportsPaging() {
+        return true;
+    }
 }

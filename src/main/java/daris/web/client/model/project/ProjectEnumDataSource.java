@@ -56,7 +56,7 @@ public class ProjectEnumDataSource implements DynamicEnumerationDataSource<DObje
                             project.citeableId() + ": " + project.name(), project.name(), project);
                     values.add(value);
                 }
-                handler.process(start, end, values.size(), values);
+                handler.process(start, end, _pc.totalNumberOfMembers(), values);
                 return;
             }
             handler.process(0, 0, 0, null);

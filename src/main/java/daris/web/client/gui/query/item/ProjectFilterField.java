@@ -22,10 +22,10 @@ public class ProjectFilterField extends FilterField<DObjectRef> {
     }
 
     public ProjectFilterField(int minOccurs, boolean includeProject) {
-        super(new FieldDefinition("project", new EnumerationType<DObjectRef>(new ProjectEnumDataSource()),
+        super(new FieldDefinition("Project", new EnumerationType<DObjectRef>(new ProjectEnumDataSource()),
                 "Project filter", null, minOccurs, 1));
         _includeProject = includeProject;
-        setRenderOptions(new FieldRenderOptions().setWidth100());
+        setRenderOptions(new FieldRenderOptions().setWidth(560));
         addListener(new FormItemListener<DObjectRef>() {
 
             @Override

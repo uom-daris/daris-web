@@ -32,13 +32,13 @@ public class DicomDatasetFinder extends QueryInterface {
 
     @Override
     protected void addFilterItems(FilterForm form) {
-        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "name", "Object name"));
-        form.add(new TimePeriodFilterFieldGroup("daris:pssd-object/sdate", "series date", "Series date"));
-        form.add(new EnumFilterField<String>("mf-dicom-series/modality", "modality", "Modality",
+        form.add(new StringFilterFieldGroup("daris:pssd-object/name", "Name", "Object name"));
+        form.add(new TimePeriodFilterFieldGroup("daris:pssd-object/sdate", "Series Date", "Series date"));
+        form.add(new EnumFilterField<String>("mf-dicom-series/modality", "Modality", "Modality",
                 new EnumerationType<String>(new DictionaryEnumerationSource("daris:pssd.dicom.modality", false))));
-        form.add(new StringFilterFieldGroup("mf-dicom-series/protocol", "protocol", "Protocol"));
-        form.add(new StringFilterFieldGroup("mf-dicom-series/description", "description", "Description."));
-        form.add(new IntegerFilterFieldGroup("mf-dicom-series/size", "size", "Number of image instances.",
+        form.add(new StringFilterFieldGroup("mf-dicom-series/protocol", "Protocol", "Protocol"));
+        form.add(new StringFilterFieldGroup("mf-dicom-series/description", "Description", "Description."));
+        form.add(new IntegerFilterFieldGroup("mf-dicom-series/size", "Size", "Number of image instances.",
                 StandardOperators.GREATER_THAN_OR_EQUAL, IntegerType.POSITIVE_ONE, 1, 1, 10000));
     }
 
