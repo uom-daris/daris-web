@@ -274,7 +274,7 @@ public abstract class QueryInterface {
                     new ActionEntry(ICON_DOWNLOAD_ALL, "Download all results...", "Download all as archive", () -> {
                         CollectionSummaryRef request = new CollectionSummaryRef(_rc.toQueryString(true));
                         SyncDialog dlg = new SyncDialog("Communicating to sever",
-                                "Resovling result collection summary...", 280, 120, _tp.window()) {
+                                "Resolving result collection summary...", 280, 120, _tp.window()) {
                             protected void aborted() {
                                 request.cancel();
                             }
@@ -289,7 +289,7 @@ public abstract class QueryInterface {
                     "Generate sharable download url for all results.", () -> {
                         CollectionSummaryRef request = new CollectionSummaryRef(_rc.toQueryString(true));
                         SyncDialog dlg = new SyncDialog("Communicating to sever",
-                                "Resovling result collection summary...", 280, 120, _tp.window()) {
+                                "Resolving result collection summary...", 280, 120, _tp.window()) {
                             protected void aborted() {
                                 request.cancel();
                             }

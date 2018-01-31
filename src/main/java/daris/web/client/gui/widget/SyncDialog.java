@@ -21,29 +21,28 @@ public class SyncDialog {
     private Window _win;
 
     public SyncDialog(String title, String message, int width, int height, arc.gui.window.Window owner) {
-
+    
         _vp = new VerticalPanel();
         _vp.fitToParent();
-
+    
         _sp = new SimplePanel();
         _sp.fitToParent();
         _sp.setContent(new LoadingMessage(message));
-
+    
         _vp.add(_sp);
-
+    
         ButtonBar bb = new ButtonBar(ButtonBar.Position.BOTTOM, ButtonBar.Alignment.RIGHT);
         bb.setHeight(32);
-
-        _abortButton = ButtonUtil.createButton(ICON_ABORT, abortButtonLabel(), "Abort the request to server", true);
-        _abortButton.setWidth(80);
+    
+        _abortButton = ButtonUtil.createButton(ICON_ABORT, abortButtonLabel(), "Abort the request to server", false);
         _abortButton.setMarginRight(25);
         _abortButton.addClickHandler(e -> {
             abort();
         });
         bb.add(_abortButton);
-
+    
         _vp.add(bb);
-
+    
         WindowProperties wp = new WindowProperties();
         wp.setTitle(title);
         wp.setOwnerWindow(owner);
