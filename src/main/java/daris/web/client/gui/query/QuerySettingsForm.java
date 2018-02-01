@@ -37,8 +37,8 @@ public abstract class QuerySettingsForm extends ValidatedInterfaceComponent impl
         _formSP.fitToParent();
         _vp.add(_formSP);
 
-        _status = new HtmlBuilder().setHeight(20).setLineHeight(20).setTextAlign(TextAlign.CENTER).setFontSize(11)
-                .setFontFamily(DefaultStyles.FONT_FAMILY).build();
+        _status = new HtmlBuilder().setHeight(20).setLineHeight(20).setTextAlign(TextAlign.CENTER)
+                .setFontSize(DefaultStyles.HTML_FONT_SIZE).setFontFamily(DefaultStyles.FONT_FAMILY).build();
         _status.setWidth100();
         _status.setBorderTop(1, BorderStyle.SOLID, RGB.GREY_DDD);
         _status.setBorderBottom(1, BorderStyle.SOLID, RGB.GREY_DDD);

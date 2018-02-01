@@ -22,17 +22,13 @@ public class HtmlBuilder {
     public HtmlBuilder setFontFamily(String fontFamily) {
         if (fontFamily != null) {
             _html.setFontFamily(fontFamily);
-        } else {
-            _html.element().getStyle().clearProperty("font-family");
         }
         return this;
     }
 
-    public HtmlBuilder setFontSize(Integer fontSize) {
-        if (fontSize != null) {
+    public HtmlBuilder setFontSize(int fontSize) {
+        if (fontSize > 0) {
             _html.setFontSize(fontSize);
-        } else {
-            _html.element().getStyle().clearFontSize();
         }
         return this;
     }
@@ -40,17 +36,13 @@ public class HtmlBuilder {
     public HtmlBuilder setFontWeight(FontWeight fontWeight) {
         if (fontWeight != null) {
             _html.setFontWeight(fontWeight);
-        } else {
-            _html.element().getStyle().clearFontWeight();
         }
         return this;
     }
 
-    public HtmlBuilder setLineHeight(Integer lineHeight) {
-        if (lineHeight != null) {
+    public HtmlBuilder setLineHeight(int lineHeight) {
+        if (lineHeight > 0) {
             _html.element().getStyle().setLineHeight(lineHeight, Unit.PX);
-        } else {
-            _html.element().getStyle().clearLineHeight();
         }
         return this;
     }
@@ -58,8 +50,6 @@ public class HtmlBuilder {
     public HtmlBuilder setCursor(Cursor cursor) {
         if (cursor != null) {
             _html.setCursor(cursor);
-        } else {
-            _html.element().getStyle().clearCursor();
         }
         return this;
     }
@@ -67,8 +57,6 @@ public class HtmlBuilder {
     public HtmlBuilder setTextAlign(TextAlign textAlign) {
         if (textAlign != null) {
             _html.setTextAlign(textAlign);
-        } else {
-            _html.element().getStyle().clearTextAlign();
         }
         return this;
     }

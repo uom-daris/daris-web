@@ -1,117 +1,91 @@
 package daris.web.client.gui.widget;
 
-import java.util.Collection;
-import java.util.Date;
-
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 
+import arc.gui.form.Form;
 import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.SimpleHTML;
-import arc.mf.client.util.DateTime;
+import arc.gui.gwt.widget.list.ListGrid;
 
 public class DefaultStyles {
 
     public static final String FONT_FAMILY = "Helvetica,sans-serif";
 
-    public static final int FONT_SIZE = 11;
+    public static final int HTML_FONT_SIZE = 11;
 
-    @SuppressWarnings("rawtypes")
-    public static SimpleHTML formatText(Object value, String fontFamily, Integer fontSize, Integer lineHeight,
-            TextAlign textAlign) {
-        SimpleHTML fv = new SimpleHTML();
-        if (fontFamily != null) {
-            fv.setFontFamily(fontFamily);
+    public static final int LIST_GRID_CELL_FONT_SIZE = 11;
+
+    public static final int LIST_GRID_MIN_ROW_HEIGHT = 26;
+
+    public static final int FORM_SPACING = 15;
+
+    public static final int FORM_PADDING = 20;
+
+    public static void apply(Form form, int spacing, int padding) {
+        if (spacing > 0) {
+            form.setSpacing(spacing);
         }
-        if (fontSize != null) {
-            fv.setFontSize(fontSize);
+        if (padding > 0) {
+            form.setPadding(padding);
+        }
+    }
+
+    public static void apply(Form form) {
+        apply(form, FORM_SPACING, FORM_PADDING);
+    }
+
+    public static void apply(HTML html, String fontFamily, int fontSize, int lineHeight, TextAlign textAlign) {
+        if (fontFamily != null) {
+            html.setFontFamily(fontFamily);
+        }
+        if (fontSize > 0) {
+            html.setFontSize(fontSize);
+        }
+        if (lineHeight > 0) {
+            html.element().getStyle().setLineHeight(lineHeight, Unit.PX);
         }
         if (textAlign != null) {
-            fv.setTextAlign(textAlign);
-            fv.element().getStyle().setTextAlign(textAlign);
+            html.setTextAlign(textAlign);
         }
-        if (lineHeight != null) {
-            fv.element().getStyle().setLineHeight(lineHeight, Unit.PX);
-        }
-        if (value != null) {
-            if (value instanceof Collection) {
-                String v = null;
-                Collection c = (Collection) value;
-                for (Object o : c) {
-                    String ov = null;
-                    if (o instanceof Date) {
-                        ov = DateTime.dateTimeAsClientString((Date) o);
-                    } else {
-                        ov = o.toString();
-                    }
-                    if (v == null) {
-                        v = ov;
-                    } else {
-                        v += ", " + ov;
-                    }
-                }
-                fv.setText(v);
-            } else {
-                if (value instanceof Date) {
-                    fv.setText(DateTime.dateTimeAsClientString((Date) value));
-                } else {
-                    fv.setText(value.toString());
-                }
-            }
-        }
-        return fv;
     }
 
-    public static SimpleHTML formatText(Object value, TextAlign textAlign) {
-        return formatText(value, FONT_FAMILY, FONT_SIZE, null, textAlign);
+    public static void apply(HTML html) {
+        apply(html, FONT_FAMILY, HTML_FONT_SIZE, 0, null);
     }
 
-    public static SimpleHTML formatText(Object value) {
-        return formatText(value, FONT_FAMILY, FONT_SIZE, null, null);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static HTML formatHtml(Object value, String fontFamily, Integer fontSize, Integer lineHeight,
-            TextAlign textAlign) {
-        HTML fv = new HTML();
+    public static void apply(SimpleHTML text, String fontFamily, int fontSize, int lineHeight, TextAlign textAlign) {
         if (fontFamily != null) {
-            fv.setFontFamily(fontFamily);
+            text.setFontFamily(fontFamily);
         }
-        if (fontSize != null) {
-            fv.setFontSize(fontSize);
+        if (fontSize > 0) {
+            text.setFontSize(fontSize);
+        }
+        if (lineHeight > 0) {
+            text.element().getStyle().setLineHeight(lineHeight, Unit.PX);
         }
         if (textAlign != null) {
-            fv.setTextAlign(textAlign);
-            fv.element().getStyle().setTextAlign(textAlign);
+            text.setTextAlign(textAlign);
         }
-        if (lineHeight != null) {
-            fv.element().getStyle().setLineHeight(lineHeight, Unit.PX);
-        }
-        if (value != null) {
-            if (value instanceof Collection) {
-                String v = null;
-                Collection c = (Collection) value;
-                for (Object o : c) {
-                    if (v == null) {
-                        v = o.toString();
-                    } else {
-                        v += ", " + o.toString();
-                    }
-                }
-                fv.setHTML(v);
-            } else {
-                fv.setHTML(value.toString());
-            }
-        }
-        return fv;
     }
 
-    public static HTML formatHtml(Object value, TextAlign textAlign) {
-        return formatHtml(value, FONT_FAMILY, FONT_SIZE, null, textAlign);
+    public static void apply(SimpleHTML text) {
+        apply(text, FONT_FAMILY, HTML_FONT_SIZE, 0, null);
     }
 
-    public static HTML formatHtml(Object value) {
-        return formatHtml(value, FONT_FAMILY, FONT_SIZE, null, null);
+    public static void apply(ListGrid<?> listGrid, int minRowHeight, int cellPadding, int cellSpacing) {
+        if (minRowHeight > 0) {
+            listGrid.setMinRowHeight(minRowHeight);
+        }
+        if (cellPadding >= 0) {
+            listGrid.setCellPadding(cellPadding);
+        }
+        if (cellSpacing >= 0) {
+            listGrid.setCellSpacing(cellSpacing);
+        }
     }
 
+    public static void apply(ListGrid<?> listGrid) {
+        apply(listGrid, LIST_GRID_MIN_ROW_HEIGHT, -1, -1);
+    }
 }

@@ -25,7 +25,8 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectViewForm;
 import daris.web.client.gui.project.user.ProjectUserDialog;
 import daris.web.client.gui.util.ButtonUtil;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.gui.widget.MessageBox;
 import daris.web.client.model.method.MethodRef;
 import daris.web.client.model.project.DataUse;
@@ -131,11 +132,11 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         ListGrid<ProjectUser> list = new ListGrid<ProjectUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        list.addColumnDefn("domain", "Domain", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(120);
-        list.addColumnDefn("user", "User", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(120);
-        list.addColumnDefn("role", "Role", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
-        list.addColumnDefn("data-use", "Data Use", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(180);
+        list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        list.addColumnDefn("domain", "Domain", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(120);
+        list.addColumnDefn("user", "User", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(120);
+        list.addColumnDefn("role", "Role", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(200);
+        list.addColumnDefn("data-use", "Data Use", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(180);
         if (users != null && !users.isEmpty()) {
             List<ListGridEntry<ProjectUser>> entries = new ArrayList<ListGridEntry<ProjectUser>>(users.size());
             for (ProjectUser pu : users) {
@@ -160,10 +161,10 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
         ListGrid<ProjectRoleUser> list = new ListGrid<ProjectRoleUser>(ScrollPolicy.AUTO);
         list.setMultiSelect(false);
         list.setClearSelectionOnRefresh(true);
-        list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        list.addColumnDefn("name", "Name", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
-        list.addColumnDefn("role", "Role", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
-        list.addColumnDefn("data-use", "Data Use", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(180);
+        list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        list.addColumnDefn("name", "Name", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(200);
+        list.addColumnDefn("role", "Role", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(200);
+        list.addColumnDefn("data-use", "Data Use", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(180);
         if (roleUsers != null && !roleUsers.isEmpty()) {
             List<ListGridEntry<ProjectRoleUser>> entries = new ArrayList<ListGridEntry<ProjectRoleUser>>(
                     roleUsers.size());

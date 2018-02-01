@@ -147,6 +147,8 @@ public class DObjectViewForm<T extends DObject> extends ValidatedInterfaceCompon
 
         Form interfaceForm = new Form(FormEditMode.READ_ONLY);
         interfaceForm.setWidth100();
+        DefaultStyles.apply(interfaceForm);
+        interfaceForm.setFontSize(100);
 
         prependToInterfaceForm(interfaceForm);
 
@@ -171,8 +173,7 @@ public class DObjectViewForm<T extends DObject> extends ValidatedInterfaceCompon
             return;
         }
         Form metadataForm = XmlMetaForm.formFor(_o.metadata(), FormEditMode.READ_ONLY);
-        metadataForm.setMarginTop(10);
-        metadataForm.setMarginLeft(10);
+        DefaultStyles.apply(metadataForm);
         metadataForm.setWidth100();
         metadataForm.render();
         putTab(METADATA_TAB_NAME, "Metadata", new ScrollPanel(metadataForm, ScrollPolicy.AUTO));

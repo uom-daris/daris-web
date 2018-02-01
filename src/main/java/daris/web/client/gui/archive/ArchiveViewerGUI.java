@@ -28,7 +28,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.dataset.NiftiViewer;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DefaultStyles;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.archive.ArchiveEntry;
 import daris.web.client.model.archive.ArchiveEntryCollectionRef;
 import daris.web.client.model.archive.messages.ArchiveContentGet;
@@ -75,7 +75,7 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
                 }
             }
         };
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setClearSelectionOnRefresh(false);
         _list.setMultiSelect(false);
         _list.setSelectionHandler(new SelectionHandler<ArchiveEntry>() {
@@ -97,15 +97,15 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
         _list.setLoadingMessage("");
         _list.setCursorSize(_arc.defaultPagingSize());
         _list.fitToParent();
-        _list.addColumnDefn("idx", "Index", "Ordinal index", ListGridStyles.getHtmlFormatter(TextAlign.CENTER))
+        _list.addColumnDefn("idx", "Index", "Ordinal index", ListGridCellWidget.getHtmlFormatter(TextAlign.CENTER))
                 .setWidth(50);
-        _list.addColumnDefn("name", "Name", "File name/path.", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("name", "Name", "File name/path.", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(350);
         _list.addColumnDefn("size", "Size", "File size", new WidgetFormatter<ArchiveEntry, Long>() {
 
             @Override
             public BaseWidget format(ArchiveEntry ae, Long size) {
-                BaseWidget w = ListGridStyles.formatCellHtml(size >= 0 ? SizeUtil.getHumanReadableSize(size, true) : "",
+                BaseWidget w = ListGridCellWidget.createHtmlWidget(size >= 0 ? SizeUtil.getHumanReadableSize(size, true) : "",
                         TextAlign.RIGHT);
                 if (size != null && size >= 0) {
                     w.setToolTip(Long.toString(size) + " bytes");
@@ -197,8 +197,8 @@ public class ArchiveViewerGUI extends ContainerWidget implements PagingListener 
     }
 
     private static AbsolutePanel createInfoPanel(ArchiveEntry ae) {
-        String tdStyle = "font-family:" + DefaultStyles.FONT_FAMILY + "; font-size:"
-                + ListGridStyles.LIST_GRID_CELL_FONT_SIZE + "px; border: 1px inset #ddd;";
+        String tdStyle = "font-family:" + DefaultStyles.FONT_FAMILY + "; font-size:" + DefaultStyles.HTML_FONT_SIZE
+                + "px; border: 1px inset #ddd;";
         StringBuilder sb = new StringBuilder();
         sb.append("<div style=\"position:absolute; top:50%; left:50%; transform:translateX(-50%) translateY(-50%);\">");
         sb.append(

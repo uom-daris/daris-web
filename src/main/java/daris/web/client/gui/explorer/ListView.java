@@ -54,7 +54,8 @@ import arc.mf.session.Session;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.DObjectGUI;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectChildrenRef;
 import daris.web.client.model.object.DObjectChildrenRef.SortKey;
@@ -172,7 +173,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         _list.setObjectRegistry(DObjectGUIRegistry.get());
         _list.enableRowDrag();
         _list.fitToParent();
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
 
         _list.setClearSelectionOnRefresh(false);
 
@@ -223,7 +224,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                     @Override
                     public BaseWidget format(DObjectRef o, String name) {
 
-                        HTML html = ListGridStyles.formatCellHtml(null);
+                        HTML html = ListGridCellWidget.createHtmlWidget(null);
                         html.setPaddingTop(3);
                         html.setFontWeight(FontWeight.BOLD);
 
@@ -236,7 +237,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         _list.add(column);
 
         _list.addColumnDefn("nbc", "Number of Members", "Number of member objects",
-                ListGridStyles.getHtmlFormatter(TextAlign.RIGHT)).setWidth(120);
+                ListGridCellWidget.getHtmlFormatter(TextAlign.RIGHT)).setWidth(120);
 
         _list.setRowDoubleClickHandler(new ListGridRowDoubleClickHandler<DObjectRef>() {
 
@@ -445,7 +446,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
             _ap = new AbsolutePanel();
             _ap.setWidth100();
-            _ap.setHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+            _ap.setHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
             _ap.setCursor(Cursor.POINTER);
 
             if (o.isDataset()) {

@@ -38,7 +38,7 @@ import arc.gui.gwt.widget.table.Table.Row;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.gui.widget.HtmlBuilder;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.shoppingcart.ActiveShoppingCart;
 import daris.web.client.model.shoppingcart.ShoppingCart;
 import daris.web.client.model.shoppingcart.ShoppingCart.Progress;
@@ -149,7 +149,7 @@ public class ShoppingCartListView implements InterfaceComponent {
         _list.setEmptyMessage("No shopping carts.");
         _list.setLoadingMessage("Loading shopping carts...");
         _list.setCursorSize(Integer.MAX_VALUE);
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setClearSelectionOnRefresh(false);
         _list.setSelectionHandler(new SelectionHandler<ShoppingCartRef>() {
 
@@ -173,7 +173,7 @@ public class ShoppingCartListView implements InterfaceComponent {
             @Override
             public BaseWidget format(ShoppingCartRef cart, Status status) {
                 arc.gui.image.Image icon = iconForStatus(status);
-                HTML w = ListGridStyles.formatCellHtml(
+                HTML w = ListGridCellWidget.createHtmlWidget(
                         "<img style=\"width:16px;height:16px;vertical-align:middle;\" src=\"" + icon.path() + "\">");
                 ActiveShoppingCart.resolve(false, c -> {
                     if (c.id() == cart.id()) {
@@ -184,7 +184,7 @@ public class ShoppingCartListView implements InterfaceComponent {
                 return w;
             }
         }).setWidth(20);
-        _list.addColumnDefn("title", "Shopping Cart", "Shopping Cart", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("title", "Shopping Cart", "Shopping Cart", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(130);
         _list.addColumnDefn("status", "Status", "Status", new WidgetFormatter<ShoppingCartRef, Status>() {
 
@@ -211,8 +211,9 @@ public class ShoppingCartListView implements InterfaceComponent {
                     pb.setProgress(0.0);
                     break;
                 }
-                HTML title = new HtmlBuilder().setFontFamily(DefaultStyles.FONT_FAMILY).setFontSize(11)
-                        .setLineHeight(22).setHtml(status).setTextAlign(TextAlign.CENTER).build();
+                HTML title = new HtmlBuilder().setFontFamily(DefaultStyles.FONT_FAMILY)
+                        .setFontSize(DefaultStyles.HTML_FONT_SIZE).setLineHeight(22).setHtml(status)
+                        .setTextAlign(TextAlign.CENTER).build();
                 title.setPosition(Position.ABSOLUTE);
                 title.fitToParent();
                 if (status == Status.ERROR) {

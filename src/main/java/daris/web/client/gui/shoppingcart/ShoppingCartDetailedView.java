@@ -129,7 +129,7 @@ public class ShoppingCartDetailedView extends ValidatedInterfaceComponent {
         _statusTabId = _tp.addTab("Status", "Shopping cart status", _statusForm.gui());
 
         _status = new HTML();
-        _status.setFontSize(DefaultStyles.FONT_SIZE);
+        _status.setFontSize(DefaultStyles.HTML_FONT_SIZE);
         _status.setColour(RGB.RED);
         _status.setFontWeight(FontWeight.BOLD);
         _status.setWidth100();

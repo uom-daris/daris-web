@@ -14,7 +14,8 @@ import arc.gui.gwt.widget.paging.PagingControl;
 import arc.gui.gwt.widget.paging.PagingListener;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.gui.gwt.widget.scroll.ScrollPolicy;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.query.IsQueryResult;
 import daris.web.client.model.query.QueryResultCollectionRef;
 import daris.web.client.model.query.XPath;
@@ -52,7 +53,7 @@ public class QueryResultForm<T extends IsQueryResult> extends ValidatedInterface
         };
         _list.fitToParent();
         _list.setMultiSelect(true);
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setClearSelectionOnRefresh(false);
         _list.setSelectionHandler(new SelectionHandler<T>() {
 
@@ -69,9 +70,9 @@ public class QueryResultForm<T extends IsQueryResult> extends ValidatedInterface
             }
         });
 
-        _list.addColumnDefn("type", "TYPE", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER);
-        _list.addColumnDefn("cid", "ID", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER);
-        _list.addColumnDefn("name", "NAME", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER);
+        _list.addColumnDefn("type", "TYPE", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER);
+        _list.addColumnDefn("cid", "ID", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER);
+        _list.addColumnDefn("name", "NAME", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER);
         _list.setEmptyMessage("No results found.");
         _list.setLoadingMessage("Searching...");
         Set<XPath> xpaths = _rc.xpaths();
@@ -80,11 +81,11 @@ public class QueryResultForm<T extends IsQueryResult> extends ValidatedInterface
                 if (!"cid".equals(xpath.ename()) && !"type".equals(xpath.ename()) && !"name".equals(xpath.ename())) {
                     _list.addColumnDefn(xpath.ename(), xpath.ename().replace('-', ' ').toUpperCase(),
                             xpath.ename() + "(xpath: " + xpath.xpath() + ")",
-                            ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER);
+                            ListGridCellWidget.DEFAULT_TEXT_FORMATTER);
                 }
             }
         }
-        _list.addColumnDefn("assetId", "ASSET ID", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER);
+        _list.addColumnDefn("assetId", "ASSET ID", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER);
         _vp.add(_list);
 
         _pc = new PagingControl(_rc.pagingSize());

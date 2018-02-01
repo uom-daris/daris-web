@@ -14,6 +14,7 @@ import arc.gui.object.register.ObjectUpdateListener;
 import arc.gui.window.Window;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.object.menu.DObjectMenu;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.gui.widget.HtmlBuilder;
 import daris.web.client.model.object.DObjectRef;
 
@@ -91,7 +92,8 @@ public class DObjectGUI implements ObjectGUI {
             String iconUrl = obj.isDataset() ? Resource.INSTANCE.document32().getSafeUri().asString()
                     : Resource.INSTANCE.folder32().getSafeUri().asString();
 
-            HTML w = new HtmlBuilder().setFontSize(11).setLineHeight(20).setTextAlign(TextAlign.CENTER).build();
+            HTML w = new HtmlBuilder().setFontFamily(DefaultStyles.FONT_FAMILY)
+                    .setFontSize(DefaultStyles.HTML_FONT_SIZE).setLineHeight(20).setTextAlign(TextAlign.CENTER).build();
             w.setHTML("<div style=\"text-align:center;\"><img src=\"" + iconUrl
                     + "\" style=\"width:16px;height:16px;vertical-align:middle\"><span style=\"\">&nbsp;"
                     + obj.typeAndId() + "</span></div>");

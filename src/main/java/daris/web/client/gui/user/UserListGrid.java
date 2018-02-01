@@ -38,7 +38,7 @@ import arc.mf.object.ObjectMessageResponse;
 import arc.mf.session.Session;
 import daris.web.client.gui.DObjectGUIRegistry;
 import daris.web.client.gui.widget.DefaultStyles;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.user.messages.UserDescribe;
 
 public class UserListGrid extends ContainerWidget {
@@ -99,12 +99,12 @@ public class UserListGrid extends ContainerWidget {
         _list.setEmptyMessage("");
         _list.setLoadingMessage("");
         _list.setCursorSize(Integer.MAX_VALUE);
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.fitToParent();
-        _list.addColumnDefn("domain", "Domain", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
-        _list.addColumnDefn("user", "User", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(150);
-        _list.addColumnDefn("name", "Name", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(150);
-        _list.addColumnDefn("email", "Email", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(200);
+        _list.addColumnDefn("domain", "Domain", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(200);
+        _list.addColumnDefn("user", "User", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(150);
+        _list.addColumnDefn("name", "Name", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(150);
+        _list.addColumnDefn("email", "Email", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(200);
         _list.setObjectRegistry(DObjectGUIRegistry.get());
         _list.enableRowDrag();
         _vp.add(_list);
@@ -129,7 +129,7 @@ public class UserListGrid extends ContainerWidget {
 
         HTML title = new HTML("Filters");
         title.setFontFamily(DefaultStyles.FONT_FAMILY);
-        title.setFontSize(DefaultStyles.FONT_SIZE);
+        title.setFontSize(DefaultStyles.HTML_FONT_SIZE);
         title.setFontWeight(FontWeight.BOLD);
         title.setTextAlign(TextAlign.CENTER);
         title.setHeight(22);

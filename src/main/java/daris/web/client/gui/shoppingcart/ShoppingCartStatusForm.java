@@ -22,7 +22,8 @@ import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.mf.client.util.Action;
 import arc.mf.dtype.EnumerationType;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.DefaultStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.shoppingcart.ShoppingCart;
 import daris.web.client.model.shoppingcart.ShoppingCart.Log;
 import daris.web.client.model.shoppingcart.ShoppingCart.Status;
@@ -59,10 +60,10 @@ public class ShoppingCartStatusForm implements InterfaceComponent {
         _logList = new ListGrid<Log>(ScrollPolicy.AUTO);
         _logList.setEmptyMessage("");
         _logList.fitToParent();
-        _logList.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
-        _logList.addColumnDefn("changed", "Modification Time", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _logList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _logList.addColumnDefn("changed", "Modification Time", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(120);
-        _logList.addColumnDefn("status", "Status", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(120);
+        _logList.addColumnDefn("status", "Status", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(120);
         _logList.addColumnDefn("message", "Message", null, new WidgetFormatter<Log, String>() {
 
             @Override
@@ -71,13 +72,13 @@ public class ShoppingCartStatusForm implements InterfaceComponent {
                     return null;
                 }
                 if (message.indexOf('\n') == -1) {
-                    return ListGridStyles.formatCellText(message);
+                    return ListGridCellWidget.createTextWidget(message);
                 } else {
                     TextArea ta = new TextArea();
                     ta.setWidth100();
                     ta.setHeight(100);
-                    ta.setFontFamily(ListGridStyles.LIST_GRID_CELL_FONT_FAMILY);
-                    ta.setFontSize(ListGridStyles.LIST_GRID_CELL_FONT_SIZE);
+                    ta.setFontFamily(DefaultStyles.FONT_FAMILY);
+                    ta.setFontSize(DefaultStyles.LIST_GRID_CELL_FONT_SIZE);
                     ta.setReadOnly(true);
                     ta.setValue(message);
                     ta.selectAll();

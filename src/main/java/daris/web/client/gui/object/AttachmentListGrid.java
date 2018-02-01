@@ -37,7 +37,7 @@ import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.gui.Resource;
 import daris.web.client.gui.util.ButtonUtil;
 import daris.web.client.gui.widget.DefaultStyles;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.object.Attachment;
 import daris.web.client.model.object.AttachmentRef;
 import daris.web.client.model.object.DObject;
@@ -166,14 +166,14 @@ public class AttachmentListGrid extends ContainerWidget {
             }
         });
 
-        _list.addColumnDefn("name", "Name", "Attachment file name.", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("name", "Name", "Attachment file name.", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(200);
-        _list.addColumnDefn("size", "Size", "Attachment file size.", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("size", "Size", "Attachment file size.", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(200);
-        _list.addColumnDefn("mimeType", "MIME Type", "MIME type", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("mimeType", "MIME Type", "MIME type", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(200);
         _list.setMultiSelect(true);
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setEmptyMessage("");
         _list.setLoadingMessage("Loading attachments ...");
         _list.setCursorSize(Integer.MAX_VALUE);

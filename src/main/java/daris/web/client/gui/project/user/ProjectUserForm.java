@@ -35,7 +35,7 @@ import daris.web.client.gui.Resource;
 import daris.web.client.gui.user.RoleUserListGrid;
 import daris.web.client.gui.user.UserListGrid;
 import daris.web.client.gui.widget.DefaultStyles;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.project.DataUse;
 import daris.web.client.model.project.ProjectRoleType;
 import daris.web.client.model.project.ProjectRoleUser;
@@ -245,7 +245,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _roleUserList.setHeight100();
         _roleUserList.setMultiSelect(false);
         _roleUserList.setEmptyMessage("");
-        _roleUserList.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _roleUserList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _roleUserList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectRoleUser, ProjectRoleUser>() {
 
             @Override
@@ -260,7 +260,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
                 return deleteIcon;
             }
         }).setWidth(24);
-        _roleUserList.addColumnDefn("name", "Name", "Role name", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _roleUserList.addColumnDefn("name", "Name", "Role name", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(120);
         _roleUserList
                 .addColumnDefn("role", "Role", "Role type", new WidgetFormatter<ProjectRoleUser, ProjectRoleType>() {
@@ -366,7 +366,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
         _userList.fitToParent();
         _userList.setMultiSelect(false);
         _userList.setEmptyMessage("");
-        _userList.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _userList.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _userList.addColumnDefn("object", "", null, new WidgetFormatter<ProjectUser, ProjectUser>() {
 
             @Override
@@ -386,7 +386,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
 
                     @Override
                     public BaseWidget format(ProjectUser pu, DomainRef domain) {
-                        BaseWidget w = ListGridStyles.formatCellHtml(domain.name());
+                        BaseWidget w = ListGridCellWidget.createHtmlWidget(domain.name());
                         w.setToolTip(toolTipFor(domain));
                         return w;
                     }
@@ -395,7 +395,7 @@ public class ProjectUserForm extends ValidatedInterfaceComponent {
 
             @Override
             public BaseWidget format(ProjectUser pu, final UserRef user) {
-                BaseWidget w = ListGridStyles.formatCellHtml(user.name());
+                BaseWidget w = ListGridCellWidget.createHtmlWidget(user.name());
                 w.setToolTip(new ToolTip<UserRef>() {
 
                     @Override

@@ -31,7 +31,7 @@ import arc.mf.client.util.IsNotValid;
 import arc.mf.client.util.IsValid;
 import arc.mf.client.util.Validity;
 import daris.web.client.gui.widget.DefaultStyles;
-import daris.web.client.gui.widget.ListGridStyles;
+import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.object.HasAssetId;
 import daris.web.client.model.object.HasCiteableId;
 import daris.web.client.model.shoppingcart.ContentItem;
@@ -78,19 +78,19 @@ public class ShoppingCartContentsForm extends ValidatedInterfaceComponent implem
             }
         };
         _list.fitToParent();
-        _list.addColumnDefn("cid", "ID", "Citeable ID", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(100);
-        _list.addColumnDefn("name", "Name", null, ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER).setWidth(500);
-        _list.addColumnDefn("size", "Size", "Content size", ListGridStyles.getHtmlFormatter(TextAlign.RIGHT))
+        _list.addColumnDefn("cid", "ID", "Citeable ID", ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(100);
+        _list.addColumnDefn("name", "Name", null, ListGridCellWidget.DEFAULT_TEXT_FORMATTER).setWidth(500);
+        _list.addColumnDefn("size", "Size", "Content size", ListGridCellWidget.getHtmlFormatter(TextAlign.RIGHT))
                 .setWidth(90);
-        _list.addColumnDefn("mimeType", "MIME Type", "Asset MIME type", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("mimeType", "MIME Type", "Asset MIME type", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(160);
-        _list.addColumnDefn("assetId", "Asset ID", "Asset ID", ListGridStyles.LIST_GRID_CELL_TEXT_FORMATTER)
+        _list.addColumnDefn("assetId", "Asset ID", "Asset ID", ListGridCellWidget.DEFAULT_TEXT_FORMATTER)
                 .setWidth(100);
 
         _list.setEmptyMessage("");
         _list.setLoadingMessage("loading...");
         _list.setMultiSelect(true);
-        _list.setMinRowHeight(ListGridStyles.LIST_GRID_MIN_ROW_HEIGHT);
+        _list.setMinRowHeight(DefaultStyles.LIST_GRID_MIN_ROW_HEIGHT);
         _list.setClearSelectionOnRefresh(false);
         _list.setCursorSize(PAGE_SIZE);
         _list.enableDropTarget(false);
@@ -158,7 +158,7 @@ public class ShoppingCartContentsForm extends ValidatedInterfaceComponent implem
 
         _summary = new HTML();
         _summary.setFontFamily(DefaultStyles.FONT_FAMILY);
-        _summary.setFontSize(DefaultStyles.FONT_SIZE);
+        _summary.setFontSize(DefaultStyles.HTML_FONT_SIZE);
         _summary.setFontWeight(FontWeight.BOLD);
         _summary.setHeight(PagingControl.DEFAULT_HEIGHT);
         _summary.element().getStyle().setLineHeight(PagingControl.DEFAULT_HEIGHT, Unit.PX);
