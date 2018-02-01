@@ -148,7 +148,6 @@ public class DObjectViewForm<T extends DObject> extends ValidatedInterfaceCompon
         Form interfaceForm = new Form(FormEditMode.READ_ONLY);
         interfaceForm.setWidth100();
         DefaultStyles.apply(interfaceForm);
-        interfaceForm.setFontSize(100);
 
         prependToInterfaceForm(interfaceForm);
 
