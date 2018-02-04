@@ -1,9 +1,9 @@
 TODO:
-drag widget ...
 
 
+downloader app
 layout pattern in export options...
-shopping cart support...
+
 tags...
 improve menu performance...
 permissions for editting ex-method...
@@ -12,11 +12,12 @@ size of project user combobox
 message box -> option to view newly created object
 save filtering, sorting settings in user.self.settings
 project summary
-find studies by date
 
 Doing:
 
 Resolved issues:
+- find dicom data by date
+- shopping cart
 - dicom send form - not updated after action change.
 - send to sink
 - dataset import: add functions to remove files from file upload form.
