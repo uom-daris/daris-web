@@ -58,22 +58,16 @@ import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.CiteableIdUtils;
 import daris.web.client.model.object.DObjectChildrenRef;
-import daris.web.client.model.object.DObjectChildrenRef.SortKey;
 import daris.web.client.model.object.DObjectRef;
-import daris.web.client.model.object.SortOrder;
 import daris.web.client.model.object.event.DObjectEvent;
 import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.messages.DObjectChildCursorFromGet;
+import daris.web.client.model.query.sort.SortKey;
 import daris.web.client.util.StringUtils;
 
-public class ListView extends ContainerWidget implements PagingListener, Subscriber {
+public class ListView extends ContainerWidget implements ContextView, PagingListener, Subscriber {
 
-    public static final int DEFAULT_PAGE_SIZE = 100;
-    public static final SortKey DEFAULT_SORT_KEY = SortKey.CID;
-    public static final SortOrder DEFAULT_SORT_ORDER = SortOrder.ASC;
     public static final int MAX_MAP_ENTRIES = 100;
-    // public static final int MIN_ROW_HEIGHT = 28;
-    // public static final int FONT_SIZE = 11;
 
     public static final arc.gui.image.Image ICON_OPTIONS = new arc.gui.image.Image(
             Resource.INSTANCE.options16().getSafeUri().asString(), 12, 12);
@@ -89,8 +83,9 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
     private LinkedHashMap<DObjectRef, DObjectChildrenRef> _childrenMap;
     private LinkedHashMap<DObjectRef, DObjectRef> _selectedMap;
     private HashMap<DObjectRef, SimpleObjectFilter> _filters;
-    private SortKey _sortKey;
-    private SortOrder _sortOrder;
+    private SortKey _sortKey = DEFAULT_SORT_KEY;
+    private int _pageSize = DEFAULT_PAGE_SIZE;
+
     private List<DObjectRef> _childrenInCurrentPage;
     private DObjectRef _toSelect;
 
@@ -98,10 +93,11 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
     private VerticalPanel _listVP;
     private ListGrid<DObjectRef> _list;
     private HTML _columnHeader;
-    private ListViewOptionsForm _viewOptionsForm;
+    private ContextViewOptionsForm _viewOptionsForm;
     private PagingControl _pc;
     private ImageButton _optionsButton;
-    private int _pageSize = DEFAULT_PAGE_SIZE;
+
+    private List<ContextView.Listener> _listeners;
 
     public ListView(DObjectRef parent) {
 
@@ -121,8 +117,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
             }
         };
         _filters = new HashMap<DObjectRef, SimpleObjectFilter>();
-        _sortKey = SortKey.CID;
-        _sortOrder = SortOrder.ASC;
+        _sortKey = SortKey.citeableId();
 
         _vp = new VerticalPanel();
         _vp.fitToParent();
@@ -294,6 +289,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         // gotoOffset(0);
     }
 
+    @Override
     public void open(DObjectRef o) {
         if (o != null) {
             if (o.isDataset()) {
@@ -320,20 +316,36 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         }
     }
 
-    protected void opened(DObjectRef o) {
-
+    private void opened(DObjectRef o) {
+        if (_listeners != null) {
+            for (Listener l : _listeners) {
+                l.opened(o);
+            }
+        }
     }
 
-    protected void selected(DObjectRef o) {
-
+    private void selected(DObjectRef o) {
+        if (_listeners != null) {
+            for (Listener l : _listeners) {
+                l.selected(o);
+            }
+        }
     }
 
-    protected void deselected(DObjectRef o) {
-
+    private void deselected(DObjectRef o) {
+        if (_listeners != null) {
+            for (Listener l : _listeners) {
+                l.deselected(o);
+            }
+        }
     }
 
-    protected void updated(DObjectRef o) {
-
+    private void updated(DObjectRef o) {
+        if (_listeners != null) {
+            for (Listener l : _listeners) {
+                l.updated(o);
+            }
+        }
     }
 
     private void updateTitle(HTML html, DObjectRef o) {
@@ -352,7 +364,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
         DObjectChildrenRef c = _childrenMap.get(_parent);
         SimpleObjectFilter filter = _filters.get(_parent);
         if (c == null) {
-            c = new DObjectChildrenRef(_parent, filter, _sortKey, _sortOrder);
+            c = new DObjectChildrenRef(_parent, filter, _sortKey);
             c.setPageSize(_pageSize);
             _list.setCursorSize(_pageSize);
             _pc.setPageSize(_pageSize);
@@ -364,7 +376,6 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                 c.removeAllFilters();
             }
             c.setSortKey(_sortKey);
-            c.setSortOrder(_sortOrder);
             c.setPageSize(_pageSize);
             c.reset();
             _list.setCursorSize(_pageSize);
@@ -412,6 +423,7 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
     }
 
+    @Override
     public void seekTo(DObjectRef object, boolean refresh) {
         DObjectRef parent = object.parent();
         if (!ObjectUtil.equals(_parent, parent)) {
@@ -526,11 +538,10 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
 
     private void showViewOptionsForm() {
         hideViewOptionsForm();
-        _viewOptionsForm = new ListViewOptionsForm(_filters.get(_parent), _sortKey, _sortOrder, _pageSize);
-        _viewOptionsForm.addUpdateListener((filter, sortKey, sortOrder, pageSize) -> {
+        _viewOptionsForm = new ContextViewOptionsForm(_filters.get(_parent), _sortKey, _pageSize);
+        _viewOptionsForm.addListener((filter, sortKey, pageSize) -> {
             _filters.put(_parent, filter);
             _sortKey = sortKey;
-            _sortOrder = sortOrder;
             _pageSize = pageSize;
             gotoOffset(0);
             _viewOptionsForm.hide();
@@ -708,6 +719,21 @@ public class ListView extends ContainerWidget implements PagingListener, Subscri
                 }
             }
         });
+    }
+
+    @Override
+    public void addListener(Listener l) {
+        if (_listeners == null) {
+            _listeners = new ArrayList<Listener>();
+        }
+        _listeners.add(l);
+    }
+
+    @Override
+    public void removeListener(Listener l) {
+        if (_listeners != null) {
+            _listeners.remove(l);
+        }
     }
 
 }

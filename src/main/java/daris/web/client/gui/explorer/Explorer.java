@@ -64,7 +64,7 @@ public class Explorer extends ContainerWidget {
 
     private VerticalPanel _vp;
     private MenuButtonBar _menuBar;
-    private NavLinkBar _navBar;
+    private ContextLinkBar _contextLinks;
     private ListView _list;
     private DetailedView _dv;
     private DObjectMenu _actionMenu;
@@ -84,8 +84,10 @@ public class Explorer extends ContainerWidget {
         /*
          * Nav bar
          */
-        _navBar = new NavLinkBar() {
-            protected void selected(DObjectRef o) {
+        _contextLinks = new ContextLinkBar();
+        _contextLinks.addListener(new ContextLinkBar.Listener() {
+            @Override
+            public void selected(DObjectRef o) {
                 if (_list != null) {
                     _list.open(o);
                 }
@@ -93,18 +95,21 @@ public class Explorer extends ContainerWidget {
                     _actionMenu.setObject(null).setParent(o);
                 }
             }
-        };
-        _vp.add(_navBar);
+        });
+        _vp.add(_contextLinks);
 
         HorizontalSplitPanel hsp = new HorizontalSplitPanel(5);
         hsp.fitToParent();
         _vp.add(hsp);
 
-        _list = new ListView(null) {
-
-            protected void opened(DObjectRef o) {
-                if (_navBar != null) {
-                    _navBar.update(o);
+        _list = new ListView(null);
+        _list.setPreferredWidth(0.5);
+        _list.setHeight100();
+        _list.addListener(new ContextView.Listener() {
+            @Override
+            public void opened(DObjectRef o) {
+                if (_contextLinks != null) {
+                    _contextLinks.update(o);
                 }
                 if (_actionMenu != null) {
                     _actionMenu.setParent(o).setObject(null);
@@ -113,9 +118,10 @@ public class Explorer extends ContainerWidget {
                 updateWindowTitle(null);
             }
 
-            protected void selected(DObjectRef o) {
-                if (_navBar != null) {
-                    _navBar.update(o == null ? null : o.parent());
+            @Override
+            public void selected(DObjectRef o) {
+                if (_contextLinks != null) {
+                    _contextLinks.update(o == null ? null : o.parent());
                 }
                 if (_actionMenu != null) {
                     _actionMenu.setParent(o.parent()).setObject(o);
@@ -128,23 +134,23 @@ public class Explorer extends ContainerWidget {
                 updateWindowTitle(o);
             }
 
-            protected void deselected(DObjectRef o) {
+            @Override
+            public void deselected(DObjectRef o) {
                 if (_dv != null) {
                     _dv.clear(o);
                 }
             }
 
-            protected void updated(DObjectRef o) {
-                if (_navBar != null && _navBar.contains(o)) {
-                    _navBar.refresh();
+            @Override
+            public void updated(DObjectRef o) {
+                if (_contextLinks != null && _contextLinks.contains(o)) {
+                    _contextLinks.refresh();
                 }
                 if (_dv != null && _dv.isCurrentObject(o)) {
                     _dv.reloadAndDisplayObject(o);
                 }
             }
-        };
-        _list.setPreferredWidth(0.5);
-        _list.setHeight100();
+        });
         hsp.add(_list);
 
         _dv = new DetailedView();
@@ -161,21 +167,21 @@ public class Explorer extends ContainerWidget {
                 if (token != null && token.startsWith("list_")) {
                     String cid = token.substring(5);
                     DObjectRef po = cid == null ? null : new DObjectRef(cid, -1);
-                    _navBar.update(po);
+                    _contextLinks.update(po);
                     _actionMenu.setObject(null).setParent(po);
                     _list.open(po);
                 } else if (token != null && token.startsWith("view_")) {
                     String cid = token.substring(5);
                     DObjectRef o = cid == null ? null : new DObjectRef(cid, -1);
                     DObjectRef po = o.parent();
-                    _navBar.update(po);
+                    _contextLinks.update(po);
                     _actionMenu.setObject(o).setParent(po);
                     _list.seekTo(o, true);
                 } else {
                     if (!"list".equals(token)) {
                         History.replaceItem("list", false);
                     }
-                    _navBar.update(null);
+                    _contextLinks.update(null);
                     _actionMenu.setObject(null).setParent(null);
                     _list.open(null);
                 }

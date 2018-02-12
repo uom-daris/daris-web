@@ -11,7 +11,7 @@ import daris.web.client.gui.query.item.ProjectFilterField;
 import daris.web.client.gui.query.item.StringFilterFieldGroup;
 import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
 import daris.web.client.model.query.DObjectQueryResultCollectionRef;
-import daris.web.client.model.query.SortOrder;
+import daris.web.client.model.query.sort.SortKey;
 
 public class DicomDatasetFinder extends QueryInterface {
 
@@ -26,9 +26,8 @@ public class DicomDatasetFinder extends QueryInterface {
         rc.addXPath("mf-dicom-series/protocol", "protocol");
         rc.addXPath("mf-dicom-series/description", "description");
         rc.addXPath("mf-dicom-series/size", "size");
-        rc.addSortKey("mf-dicom-series/sdate", SortOrder.DESCEND);
-        rc.addSortKey("cid", SortOrder.DESCEND);
-
+        rc.addSortKey("mf-dicom-series/sdate", SortKey.Order.DESCENDING);
+        rc.addSortKey("cid", SortKey.Order.DESCENDING);
     }
 
     @Override

@@ -6,7 +6,7 @@ import daris.web.client.gui.query.item.ProjectFilterField;
 import daris.web.client.gui.query.item.StringFilterFieldGroup;
 import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
 import daris.web.client.model.query.DObjectQueryResultCollectionRef;
-import daris.web.client.model.query.SortOrder;
+import daris.web.client.model.query.sort.SortKey;
 
 public class DObjectFinder extends QueryInterface {
 
@@ -18,8 +18,8 @@ public class DObjectFinder extends QueryInterface {
     protected void initializeQuery(DObjectQueryResultCollectionRef rc) {
         rc.addXPath("daris:pssd-object/description", "description");
         rc.addXPath("mtime", "last-modified");
-        rc.addSortKey("mtime", SortOrder.DESCEND);
-        rc.addSortKey("daris:pssd-object/type", SortOrder.ASCEND);
+        rc.addSortKey("mtime", SortKey.Order.DESCENDING);
+        rc.addSortKey("daris:pssd-object/type", SortKey.Order.DESCENDING);
     }
 
     @Override

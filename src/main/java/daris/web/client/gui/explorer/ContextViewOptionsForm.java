@@ -2,6 +2,8 @@ package daris.web.client.gui.explorer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
@@ -38,16 +40,15 @@ import arc.gui.gwt.widget.panel.TabPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.dtype.StringType;
-import daris.web.client.model.object.DObjectChildrenRef.SortKey;
-import daris.web.client.model.object.SortOrder;
 import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.filter.SimpleObjectFilter.Operator;
+import daris.web.client.model.query.sort.SortKey;
+import daris.web.client.util.MapUtil;
 
-public class ListViewOptionsForm extends ValidatedInterfaceComponent {
+public class ContextViewOptionsForm extends ValidatedInterfaceComponent {
 
-    public static interface UpdateListener {
-
-        void updated(SimpleObjectFilter filter, SortKey sortKey, SortOrder sortOrder, int pageSize);
+    public static interface Listener {
+        void updated(SimpleObjectFilter filter, SortKey sortKey, int pageSize);
     }
 
     public static interface CloseHandler {
@@ -64,26 +65,52 @@ public class ListViewOptionsForm extends ValidatedInterfaceComponent {
     int _sortingTabId;
     private SimplePanel _sortingSP;
     private Form _sortingForm;
+    private Field<String> _sortKeyNameField;
+    private Field<SortKey.Order> _sortKeyOrderField;
 
     int _pagingTabId;
     private SimplePanel _pagingSP;
     private Form _pagingForm;
 
-    private List<UpdateListener> _uls;
+    private List<Listener> _listeners;
     private CloseHandler _ch;
 
     private SimpleObjectFilter _filter;
+    private String _sortKeyName;
     private SortKey _sortKey;
-    private SortOrder _sortOrder;
     private int _pageSize;
 
-    public ListViewOptionsForm(SimpleObjectFilter filter, SortKey sortKey, SortOrder sortOrder,
-            int pageSize) {
+    private Map<String, SortKey> _availableSortKeys = MapUtil.map(
+            new String[] { "object id", "object name", "modification time", "mime type", "content type" },
+            new SortKey[] { SortKey.citeableId(), SortKey.objectName(), SortKey.modificationTime(), SortKey.mimeType(),
+                    SortKey.contentType() });
+
+    public ContextViewOptionsForm(SimpleObjectFilter filter, SortKey sortKey, int pageSize) {
+
         _filter = filter == null
                 ? new SimpleObjectFilter(SimpleObjectFilter.Type.name, SimpleObjectFilter.Operator.CONTAINS, null)
                 : filter.duplicate();
-        _sortKey = sortKey;
-        _sortOrder = sortOrder;
+
+        if (sortKey != null) {
+            _sortKey = sortKey.copy();
+            Set<String> sortKeyNames = _availableSortKeys.keySet();
+
+            for (String sortKeyName : sortKeyNames) {
+                SortKey sk = _availableSortKeys.get(sortKeyName);
+                if (sk.keyEquals(sortKey)) {
+                    _sortKeyName = sortKeyName;
+                    break;
+                }
+            }
+            if (_sortKeyName == null) {
+                _sortKeyName = sortKey.key();
+                _availableSortKeys.put(sortKey.key(), _sortKey);
+            }
+        } else {
+            _sortKey = SortKey.citeableId();
+            _sortKeyName = "object id";
+        }
+
         _pageSize = pageSize;
 
         _vp = new VerticalPanel();
@@ -118,9 +145,8 @@ public class ListViewOptionsForm extends ValidatedInterfaceComponent {
         Button resetButton = bb.addButton("Reset");
         resetButton.addClickHandler(e -> {
             _filter.setValue(null);
-            _sortKey = ListView.DEFAULT_SORT_KEY;
-            _sortOrder = ListView.DEFAULT_SORT_ORDER;
-            _pageSize = ListView.DEFAULT_PAGE_SIZE;
+            _sortKey = ContextView.DEFAULT_SORT_KEY;
+            _pageSize = ContextView.DEFAULT_PAGE_SIZE;
             notifyOfUpdate();
         });
         Button applyButton = bb.addButton("Apply");
@@ -133,7 +159,7 @@ public class ListViewOptionsForm extends ValidatedInterfaceComponent {
         });
         _vp.add(bb);
 
-        _uls = new ArrayList<UpdateListener>();
+        _listeners = new ArrayList<Listener>();
 
     }
 
@@ -195,41 +221,42 @@ public class ListViewOptionsForm extends ValidatedInterfaceComponent {
         _sortingForm.setShowLabels(true);
         _sortingForm.setWidth100();
 
-        Field<SortKey> sortKeyField = new Field<SortKey>(
-                new FieldDefinition("Sort by", "key", SortKey.toEnumerationType(), null, null, 0, 1));
-        sortKeyField.setInitialValue(_sortKey, false);
-        sortKeyField.setRenderOptions(new FieldRenderOptions().setWidth(160));
-        sortKeyField.addListener(new FormItemListener<SortKey>() {
+        _sortKeyNameField = new Field<String>(new FieldDefinition("Sort by",
+                new EnumerationType<String>(_availableSortKeys.keySet()), "Sort key", null, 0, 1));
+        _sortKeyNameField.setInitialValue(_sortKeyName, false);
+        _sortKeyNameField.setRenderOptions(new FieldRenderOptions().setWidth(160));
+        _sortKeyNameField.addListener(new FormItemListener<String>() {
 
             @Override
-            public void itemValueChanged(FormItem<SortKey> f) {
-                _sortKey = f.value();
+            public void itemValueChanged(FormItem<String> f) {
+                _sortKeyName = f.value();
+                _sortKey = new SortKey(_availableSortKeys.get(_sortKeyName).key(), _sortKeyOrderField.value());
             }
 
             @Override
-            public void itemPropertyChanged(FormItem<SortKey> f, Property property) {
-
-            }
-        });
-        _sortingForm.add(sortKeyField);
-
-        Field<SortOrder> sortOrderField = new Field<SortOrder>(
-                new FieldDefinition("Order", "order", SortOrder.toEnumerationType(), null, null, 0, 1));
-        sortOrderField.setInitialValue(_sortOrder, false);
-        sortOrderField.setRenderOptions(new FieldRenderOptions().setWidth(160));
-        sortOrderField.addListener(new FormItemListener<SortOrder>() {
-
-            @Override
-            public void itemValueChanged(FormItem<SortOrder> f) {
-                _sortOrder = f.value();
-            }
-
-            @Override
-            public void itemPropertyChanged(FormItem<SortOrder> f, Property property) {
+            public void itemPropertyChanged(FormItem<String> f, Property property) {
 
             }
         });
-        _sortingForm.add(sortOrderField);
+        _sortingForm.add(_sortKeyNameField);
+
+        _sortKeyOrderField = new Field<SortKey.Order>(new FieldDefinition("Order",
+                new EnumerationType<SortKey.Order>(SortKey.Order.values()), null, null, 0, 1));
+        _sortKeyOrderField.setInitialValue(_sortKey.order(), false);
+        _sortKeyOrderField.setRenderOptions(new FieldRenderOptions().setWidth(160));
+        _sortKeyOrderField.addListener(new FormItemListener<SortKey.Order>() {
+
+            @Override
+            public void itemValueChanged(FormItem<SortKey.Order> f) {
+                _sortKey = new SortKey(_sortKey.key(), f.value());
+            }
+
+            @Override
+            public void itemPropertyChanged(FormItem<SortKey.Order> f, Property property) {
+
+            }
+        });
+        _sortingForm.add(_sortKeyOrderField);
 
         _sortingForm.render();
         _sortingSP.setContent(_sortingForm);
@@ -380,8 +407,8 @@ public class ListViewOptionsForm extends ValidatedInterfaceComponent {
 
     private void notifyOfUpdate() {
         SimpleObjectFilter f = _filter.valid().valid() ? _filter : null;
-        for (UpdateListener ul : _uls) {
-            ul.updated(f, _sortKey, _sortOrder, _pageSize);
+        for (Listener l : _listeners) {
+            l.updated(f, _sortKey, _pageSize);
         }
     }
 
@@ -396,12 +423,12 @@ public class ListViewOptionsForm extends ValidatedInterfaceComponent {
         return _vp;
     }
 
-    public void addUpdateListener(UpdateListener ul) {
-        _uls.add(ul);
+    public void addListener(Listener ul) {
+        _listeners.add(ul);
     }
 
-    public void removeUpdateListener(UpdateListener ul) {
-        _uls.remove(ul);
+    public void removeListener(Listener ul) {
+        _listeners.remove(ul);
     }
 
     public void setCloseHandler(CloseHandler ch) {

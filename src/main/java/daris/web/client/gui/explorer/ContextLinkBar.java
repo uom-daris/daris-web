@@ -1,5 +1,6 @@
 package daris.web.client.gui.explorer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style.Cursor;
@@ -22,7 +23,11 @@ import daris.web.client.model.object.DObjectPathRef;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.util.StringUtils;
 
-public class NavLinkBar extends ContainerWidget {
+public class ContextLinkBar extends ContainerWidget {
+
+    public static interface Listener {
+        void selected(DObjectRef o);
+    }
 
     public static final int FONT_SIZE = 13;
     public static final int HEIGHT = 32;
@@ -38,7 +43,9 @@ public class NavLinkBar extends ContainerWidget {
 
     private DObjectPathRef _path;
 
-    public NavLinkBar() {
+    private List<Listener> _listeners;
+
+    public ContextLinkBar() {
 
         _sp = new SimplePanel();
         _sp.setHeight(HEIGHT);
@@ -85,7 +92,7 @@ public class NavLinkBar extends ContainerWidget {
          */
         addButton(null, (nbParents > 0) ? (event -> {
             update(null);
-            selected(null);
+            notifyOfSelect(null);
         }) : null);
         /*
          * parents
@@ -96,14 +103,18 @@ public class NavLinkBar extends ContainerWidget {
                 addSeparator();
                 addButton(p, (i != nbParents - 1) ? (event -> {
                     update(p);
-                    selected(p);
+                    notifyOfSelect(p);
                 }) : null);
             }
         }
     }
 
-    protected void selected(DObjectRef o) {
-
+    private void notifyOfSelect(DObjectRef o) {
+        if (_listeners != null) {
+            for (Listener l : _listeners) {
+                l.selected(o);
+            }
+        }
     }
 
     private void render(boolean refresh) {
@@ -145,7 +156,7 @@ public class NavLinkBar extends ContainerWidget {
 
         public static final String FONT_FAMILY = "Helvetica,sans-serif";
         public static final int FONT_SIZE = 13;
-        public static final int HEIGHT = NavLinkBar.HEIGHT;
+        public static final int HEIGHT = ContextLinkBar.HEIGHT;
         public static final Colour COLOUR = new RGB(0, 0x78, 0xd7);
         public static final Colour BG_COLOUR = null;
         public static final Colour HOVER_COLOUR = RGB.WHITE;
@@ -211,4 +222,16 @@ public class NavLinkBar extends ContainerWidget {
         return false;
     }
 
+    public void addListener(Listener l) {
+        if (_listeners == null) {
+            _listeners = new ArrayList<Listener>();
+        }
+        _listeners.add(l);
+    }
+
+    public void removeListener(Listener l) {
+        if (_listeners != null) {
+            _listeners.remove(l);
+        }
+    }
 }

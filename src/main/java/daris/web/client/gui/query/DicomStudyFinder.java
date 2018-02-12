@@ -1,11 +1,11 @@
 package daris.web.client.gui.query;
 
-import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
 import daris.web.client.gui.query.item.FilterForm;
 import daris.web.client.gui.query.item.ProjectFilterField;
 import daris.web.client.gui.query.item.StringFilterFieldGroup;
+import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
 import daris.web.client.model.query.DObjectQueryResultCollectionRef;
-import daris.web.client.model.query.SortOrder;
+import daris.web.client.model.query.sort.SortKey;
 
 public class DicomStudyFinder extends QueryInterface {
 
@@ -16,8 +16,8 @@ public class DicomStudyFinder extends QueryInterface {
     protected void initializeQuery(DObjectQueryResultCollectionRef rc) {
         rc.addXPath("mf-dicom-study/sdate", "study-date");
         rc.addXPath("mf-dicom-study/ingest/date", "ingest-date");
-        rc.addSortKey("mf-dicom-study/sdate", SortOrder.DESCEND);
-        rc.addSortKey("cid", SortOrder.DESCEND);
+        rc.addSortKey("mf-dicom-study/sdate", SortKey.Order.DESCENDING);
+        rc.addSortKey("cid", SortKey.Order.DESCENDING);
     }
 
     protected void addFilterItems(FilterForm form) {

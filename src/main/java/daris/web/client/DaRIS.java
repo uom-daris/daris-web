@@ -13,6 +13,7 @@ import arc.mf.session.DefaultLoginDialog;
 import arc.mf.session.Session;
 import arc.mf.session.SessionHandler;
 import daris.web.client.gui.explorer.Explorer;
+import daris.web.client.gui.explorer.Test;
 import daris.web.client.gui.theme.DaRISTheme;
 import daris.web.client.model.object.event.DObjectEvents;
 import daris.web.client.model.shoppingcart.ActiveShoppingCart;
@@ -73,6 +74,8 @@ public class DaRIS implements EntryPoint, SessionHandler {
              * show gui
              */
             RootPanel.add(Explorer.get());
+            
+//            Test.show();
 
             /*
              * Fire current history state

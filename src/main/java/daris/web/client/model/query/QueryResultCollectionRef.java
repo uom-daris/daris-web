@@ -13,6 +13,7 @@ import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.object.OrderedCollectionRef;
 import arc.mf.session.ServiceResponseHandler;
 import arc.mf.session.Session;
+import daris.web.client.model.query.sort.SortKey;
 import daris.web.client.util.DownloadUtil;
 
 public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends OrderedCollectionRef<T>
@@ -24,8 +25,7 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
 
     private List<String> _wheres;
     private Action _action;
-    private SortOrder _sortOrder;
-    private Map<String, SortOrder> _sortKeys;
+    private Map<String, SortKey> _sortKeys;
     private Set<XPath> _xpaths;
 
     protected QueryResultCollectionRef(String... wheres) {
@@ -38,8 +38,7 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
             }
         }
         _action = Action.GET_VALUE;
-        _sortOrder = null;
-        _sortKeys = new LinkedHashMap<String, SortOrder>();
+        _sortKeys = new LinkedHashMap<String, SortKey>();
     }
 
     public void addWhere(String where) {
@@ -73,17 +72,14 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
             }
         }
         w.add("action", _action.value());
-        if (!_sortKeys.isEmpty() || _sortOrder != null) {
+        if (!_sortKeys.isEmpty()) {
             w.push("sort");
             if (!_sortKeys.isEmpty()) {
                 Set<String> keys = _sortKeys.keySet();
                 for (String key : keys) {
-                    SortOrder order = _sortKeys.get(key);
-                    w.add("key", new String[] { "order", order == null ? null : order.value() }, key);
+                    SortKey sortKey = _sortKeys.get(key);
+                    w.add("key", new String[] { "order", sortKey.order().value() }, key);
                 }
-            }
-            if (_sortOrder != null) {
-                w.add("order", _sortOrder.value());
             }
             w.pop();
         }
@@ -104,12 +100,12 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
         return new String[] { "asset" };
     }
 
-    public void addSortKey(String key, SortOrder order) {
-        _sortKeys.put(key, order);
+    public void addSortKey(SortKey order) {
+        _sortKeys.put(order.key(), order);
     }
 
-    public void setSortOrder(SortOrder order) {
-        _sortOrder = order;
+    public void addSortKey(String key, SortKey.Order order) {
+        addSortKey(new SortKey(key, order));
     }
 
     public void setAction(Action action) {
@@ -200,7 +196,7 @@ public abstract class QueryResultCollectionRef<T extends IsQueryResult> extends 
             }
         });
     }
-    
+
     public boolean supportsPaging() {
         return true;
     }
