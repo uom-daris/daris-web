@@ -30,7 +30,7 @@ import daris.web.client.model.object.DObjectRef;
 import daris.web.client.util.ObjectUtils;
 import daris.web.client.util.StringUtils;
 
-public class Explorer extends ContainerWidget {
+public class Explorer extends ContainerWidget implements ContextView.Listener {
 
     public static final arc.gui.image.Image ICON_DARIS = new arc.gui.image.Image(
             Resource.INSTANCE.daris16().getSafeUri().asString(), 14, 14);
@@ -65,9 +65,11 @@ public class Explorer extends ContainerWidget {
     private VerticalPanel _vp;
     private MenuButtonBar _menuBar;
     private ContextLinkBar _contextLinks;
-    private ListView _list;
-    private DetailedView _dv;
+    private ContextView _contextView;
+    private DetailedView _detailedView;
     private DObjectMenu _actionMenu;
+
+    private boolean _treeView = false;
 
     private Explorer() {
 
@@ -87,9 +89,9 @@ public class Explorer extends ContainerWidget {
         _contextLinks = new ContextLinkBar();
         _contextLinks.addListener(new ContextLinkBar.Listener() {
             @Override
-            public void selected(DObjectRef o) {
-                if (_list != null) {
-                    _list.open(o);
+            public void selectedLink(DObjectRef o) {
+                if (_contextView != null) {
+                    _contextView.open(o);
                 }
                 if (_actionMenu != null) {
                     _actionMenu.setObject(null).setParent(o);
@@ -102,62 +104,17 @@ public class Explorer extends ContainerWidget {
         hsp.fitToParent();
         _vp.add(hsp);
 
-        _list = new ListView(null);
-        _list.setPreferredWidth(0.5);
-        _list.setHeight100();
-        _list.addListener(new ContextView.Listener() {
-            @Override
-            public void opened(DObjectRef o) {
-                if (_contextLinks != null) {
-                    _contextLinks.update(o);
-                }
-                if (_actionMenu != null) {
-                    _actionMenu.setParent(o).setObject(null);
-                }
-                updateHistoryToken(o, null);
-                updateWindowTitle(null);
-            }
+        _contextView = _treeView ? new TreeView(null) : new ListView(null);
+        _contextView.widget().setPreferredWidth(0.5);
+        _contextView.widget().setHeight100();
+        _contextView.addListener(this);
+        hsp.add(_contextView.widget());
 
-            @Override
-            public void selected(DObjectRef o) {
-                if (_contextLinks != null) {
-                    _contextLinks.update(o == null ? null : o.parent());
-                }
-                if (_actionMenu != null) {
-                    _actionMenu.setParent(o.parent()).setObject(o);
-                }
-                if (_dv != null) {
-                    _dv.setForEdit(false);
-                    _dv.loadAndDisplayObject(o);
-                }
-                updateHistoryToken(o);
-                updateWindowTitle(o);
-            }
-
-            @Override
-            public void deselected(DObjectRef o) {
-                if (_dv != null) {
-                    _dv.clear(o);
-                }
-            }
-
-            @Override
-            public void updated(DObjectRef o) {
-                if (_contextLinks != null && _contextLinks.contains(o)) {
-                    _contextLinks.refresh();
-                }
-                if (_dv != null && _dv.isCurrentObject(o)) {
-                    _dv.reloadAndDisplayObject(o);
-                }
-            }
-        });
-        hsp.add(_list);
-
-        _dv = new DetailedView();
-        _dv.fitToParent();
-        _dv.setObjectRegistry(DObjectGUIRegistry.get());
-        _dv.setDisplayContextMenu(false);
-        hsp.add(_dv);
+        _detailedView = new DetailedView();
+        _detailedView.fitToParent();
+        _detailedView.setObjectRegistry(DObjectGUIRegistry.get());
+        _detailedView.setDisplayContextMenu(false);
+        hsp.add(_detailedView);
 
         initWidget(_vp);
 
@@ -169,21 +126,21 @@ public class Explorer extends ContainerWidget {
                     DObjectRef po = cid == null ? null : new DObjectRef(cid, -1);
                     _contextLinks.update(po);
                     _actionMenu.setObject(null).setParent(po);
-                    _list.open(po);
+                    _contextView.open(po);
                 } else if (token != null && token.startsWith("view_")) {
                     String cid = token.substring(5);
                     DObjectRef o = cid == null ? null : new DObjectRef(cid, -1);
                     DObjectRef po = o.parent();
                     _contextLinks.update(po);
                     _actionMenu.setObject(o).setParent(po);
-                    _list.seekTo(o, true);
+                    _contextView.seekTo(o, true);
                 } else {
                     if (!"list".equals(token)) {
                         History.replaceItem("list", false);
                     }
                     _contextLinks.update(null);
                     _actionMenu.setObject(null).setParent(null);
-                    _list.open(null);
+                    _contextView.open(null);
                 }
             });
         }
@@ -349,6 +306,51 @@ public class Explorer extends ContainerWidget {
             return sb.toString();
         }
         return "Distributed and Reflective Informatics System (DaRIS)";
+    }
+
+    @Override
+    public void opened(DObjectRef o) {
+        if (_contextLinks != null) {
+            _contextLinks.update(o);
+        }
+        if (_actionMenu != null) {
+            _actionMenu.setParent(o).setObject(null);
+        }
+        updateHistoryToken(o, null);
+        updateWindowTitle(null);
+    }
+
+    @Override
+    public void selected(DObjectRef o) {
+        if (_contextLinks != null) {
+            _contextLinks.update(o == null ? null : o.parent());
+        }
+        if (_actionMenu != null) {
+            _actionMenu.setParent(o.parent()).setObject(o);
+        }
+        if (_detailedView != null) {
+            _detailedView.setForEdit(false);
+            _detailedView.loadAndDisplayObject(o);
+        }
+        updateHistoryToken(o);
+        updateWindowTitle(o);
+    }
+
+    @Override
+    public void deselected(DObjectRef o) {
+        if (_detailedView != null) {
+            _detailedView.clear(o);
+        }
+    }
+
+    @Override
+    public void updated(DObjectRef o) {
+        if (_contextLinks != null && _contextLinks.contains(o)) {
+            _contextLinks.refresh();
+        }
+        if (_detailedView != null && _detailedView.isCurrentObject(o)) {
+            _detailedView.reloadAndDisplayObject(o);
+        }
     }
 
     private static Explorer _instance;

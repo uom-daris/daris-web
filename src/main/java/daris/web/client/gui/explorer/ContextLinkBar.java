@@ -26,7 +26,7 @@ import daris.web.client.util.StringUtils;
 public class ContextLinkBar extends ContainerWidget {
 
     public static interface Listener {
-        void selected(DObjectRef o);
+        void selectedLink(DObjectRef o);
     }
 
     public static final int FONT_SIZE = 13;
@@ -112,7 +112,7 @@ public class ContextLinkBar extends ContainerWidget {
     private void notifyOfSelect(DObjectRef o) {
         if (_listeners != null) {
             for (Listener l : _listeners) {
-                l.selected(o);
+                l.selectedLink(o);
             }
         }
     }

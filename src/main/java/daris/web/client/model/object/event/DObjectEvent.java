@@ -63,6 +63,17 @@ public class DObjectEvent extends SystemEvent {
         if (!type().equals(f.type())) {
             return false;
         }
+        if (f.object() != null) {
+            switch (_action) {
+            case CREATE:
+            case DESTROY:
+                return CiteableIdUtils.isDirectChild(object(), f.object());
+            default:
+                return f.object().equals(object());
+            }
+        }
+        // ListView subscriber
+        // RootNode subscriber
         return true;
     }
 
@@ -111,35 +122,35 @@ public class DObjectEvent extends SystemEvent {
         return false;
     }
 
-    public static void isRelavent(DObjectEvent de, ObjectMessageResponse<Boolean> rh) {
-        if (de.action() == Action.DESTROY) {
-            final String ecid = de.citeableId();
-            if (CiteableIdUtils.isProject(ecid)) {
-                // project deleted.
-                rh.responded(true);
-                return;
-            }
-            Session.execute("asset.query",
-                    "<where>model='om.pssd.project'</where><action>get-cid</action><size>infinity</size>",
-                    (xe, outputs) -> {
-                        Collection<String> cids = xe.values("cid");
-                        if (cids != null) {
-                            for (String cid : cids) {
-                                if (ecid.startsWith(cid + ".") || ecid.equals(cid)) {
-                                    rh.responded(true);
-                                    return;
-                                }
-                            }
-                        }
-                        rh.responded(false);
-                    });
-        } else {
-            Session.execute("asset.query", "<where>cid='" + de.object() + "'</where><action>count</action>",
-                    (xe, outputs) -> {
-                        int count = xe.intValue("value");
-                        rh.responded(count > 0);
-                    });
-        }
-    }
+//    public static void isRelavent(DObjectEvent de, ObjectMessageResponse<Boolean> rh) {
+//        if (de.action() == Action.DESTROY) {
+//            final String ecid = de.citeableId();
+//            if (CiteableIdUtils.isProject(ecid)) {
+//                // project deleted.
+//                rh.responded(true);
+//                return;
+//            }
+//            Session.execute("asset.query",
+//                    "<where>model='om.pssd.project'</where><action>get-cid</action><size>infinity</size>",
+//                    (xe, outputs) -> {
+//                        Collection<String> cids = xe.values("cid");
+//                        if (cids != null) {
+//                            for (String cid : cids) {
+//                                if (ecid.startsWith(cid + ".") || ecid.equals(cid)) {
+//                                    rh.responded(true);
+//                                    return;
+//                                }
+//                            }
+//                        }
+//                        rh.responded(false);
+//                    });
+//        } else {
+//            Session.execute("asset.query", "<where>cid='" + de.object() + "'</where><action>count</action>",
+//                    (xe, outputs) -> {
+//                        int count = xe.intValue("value");
+//                        rh.responded(count > 0);
+//                    });
+//        }
+//    }
 
 }

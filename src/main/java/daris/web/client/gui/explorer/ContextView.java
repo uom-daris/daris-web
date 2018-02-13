@@ -1,5 +1,6 @@
 package daris.web.client.gui.explorer;
 
+import arc.gui.gwt.widget.BaseWidget;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.query.sort.SortKey;
 
@@ -24,8 +25,12 @@ public interface ContextView {
 
     void seekTo(DObjectRef o, boolean refresh);
 
+    void refreshSelected();
+
     void addListener(Listener l);
 
     void removeListener(Listener l);
+
+    BaseWidget widget();
 
 }

@@ -168,91 +168,100 @@ public class DObjectTreeNode implements Container, RemoteNode {
         if (_o != null) {
             return new Filter("pssd-object", _o.citeableId(), descend);
         } else {
-            return null;
+            return new Filter("pssd-object", null, descend);
         }
     }
 
     @Override
     public void process(final SystemEvent se, final NodeListener nl) {
         final DObjectEvent de = (DObjectEvent) se;
-        DObjectEvent.isRelavent(de, r -> {
-            if (r) {
-                switch (de.action()) {
-                case DESTROY:
-                    destroyed(de.id(), de.objectRef(), nl);
-                    break;
-                case CREATE:
-                    created(de.id(), de.objectRef(), nl);
-                    break;
-                case MODIFY:
-                    modified(de.id(), de.objectRef(), nl);
-                    break;
-                case MEMBERS:
-                    membersChanged(de.id(), de.objectRef(), nl);
-                    break;
-                default:
-                    break;
+        if (_o != null || CiteableIdUtils.isProject(de.citeableId())) {
+            switch (de.action()) {
+            case DESTROY:
+                destroyed(de.id(), de.objectRef(), nl);
+                break;
+            case CREATE:
+                created(de.id(), de.objectRef(), nl);
+                break;
+            case MODIFY:
+                modified(de.id(), de.objectRef(), nl);
+                break;
+            case MEMBERS:
+                membersChanged(de.id(), de.objectRef(), nl);
+                break;
+            default:
+                break;
 
-                }
             }
-        });
+        }
     }
 
     private void destroyed(long stateId, DObjectRef co, NodeListener nl) {
-        _o.reset();
-        _o.resolve(new ObjectResolveHandler<DObject>() {
-
-            @Override
-            public void resolved(DObject ooo) {
-                nl.modified(DObjectTreeNode.this);
-                if (_stateId != stateId) {
-                    _stateId = stateId;
-                }
-                nl.removed(DObjectTreeNode.this, new DObjectTreeNode(_tree, DObjectTreeNode.this, co));
-                if (_children != null) {
-                    _start = 0L;
-                    _children.reset();
-                    nl.changeInMembers(DObjectTreeNode.this);
-                }
+        if (_stateId != stateId) {
+            _stateId = stateId;
+        }
+        if (_tree.treeGUI().isSelected(co)) {
+            _tree.treeGUI().deselectAll();
+            if (_o == null) {
+                _tree.treeGUI().reload();
+                return;
+            } else {
+                _tree.treeGUI().select(this);
             }
-        });
-
+        }
+        nl.removed(this, new DObjectTreeNode(_tree, this, co));
+        if (_children != null) {
+            _children.reset();
+        }
+        if (_o != null) {
+            _o.reset();
+            _o.resolve(o -> {
+                nl.modified(DObjectTreeNode.this);
+                nl.changeInMembers(DObjectTreeNode.this);
+            });
+        }
     }
 
     private void created(long stateId, DObjectRef co, NodeListener nl) {
+        if (_stateId != stateId) {
+            _stateId = stateId;
+        }
+        if (_children != null) {
+            _start = 0L; // TODO: check if it is necessary.
+            _children.reset();
+        }
         co.resolve(new ObjectResolveHandler<DObject>() {
             @Override
             public void resolved(DObject coo) {
-                _o.reset();
-                _o.resolve(new ObjectResolveHandler<DObject>() {
+                nl.added(DObjectTreeNode.this, new DObjectTreeNode(_tree, DObjectTreeNode.this, co), -1);
+                if (_o == null) {
+                    // root node
+                    nl.modified(DObjectTreeNode.this);
+                    nl.changeInMembers(DObjectTreeNode.this);
+                } else {
+                    _o.reset();
+                    _o.resolve(new ObjectResolveHandler<DObject>() {
 
-                    @Override
-                    public void resolved(DObject ooo) {
-                        nl.modified(DObjectTreeNode.this);
-                        if (_stateId != stateId) {
-                            _stateId = stateId;
-                        }
-                        nl.added(DObjectTreeNode.this, new DObjectTreeNode(_tree, DObjectTreeNode.this, co), -1);
-                        if (_children != null) {
-                            _start = 0L;
-                            _children.reset();
+                        @Override
+                        public void resolved(DObject ooo) {
+                            nl.modified(DObjectTreeNode.this);
                             nl.changeInMembers(DObjectTreeNode.this);
                         }
-                    }
-                });
+                    });
+                }
             }
         });
     }
 
     private void modified(long stateId, DObjectRef co, NodeListener nl) {
+        if (_stateId != stateId) {
+            _stateId = stateId;
+        }
         _o.reset();
         _o.resolve(new ObjectResolveHandler<DObject>() {
 
             @Override
             public void resolved(DObject ooo) {
-                if (_stateId != stateId) {
-                    _stateId = stateId;
-                }
                 nl.modified(DObjectTreeNode.this);
             }
         });

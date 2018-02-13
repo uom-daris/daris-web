@@ -100,6 +100,7 @@ public class ShoppingCartCollectionRef extends OrderedCollectionRef<ShoppingCart
 
     @Override
     public void process(SystemEvent se) {
+        System.out.print(se.object());
         reset();
         notifyOfCollectionChange();
     }
@@ -143,7 +144,7 @@ public class ShoppingCartCollectionRef extends OrderedCollectionRef<ShoppingCart
 
     @Override
     public boolean supportsPaging() {
-        return true;
+        return _pageSize > 0;
     }
 
     public static final ShoppingCartCollectionRef ALL_CARTS = new ShoppingCartCollectionRef().setPagingSize(-1)

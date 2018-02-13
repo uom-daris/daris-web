@@ -588,11 +588,11 @@ public class ListView extends ContainerWidget implements ContextView, PagingList
     @Override
     public void process(SystemEvent se) {
         DObjectEvent de = (DObjectEvent) se;
-        DObjectEvent.isRelavent(de, relavent -> {
-            if (relavent) {
+//        DObjectEvent.isRelavent(de, relavent -> {
+//            if (relavent) {
                 handleEvent(de);
-            }
-        });
+//            }
+//        });
     }
 
     private void handleEvent(DObjectEvent de) {
@@ -734,6 +734,22 @@ public class ListView extends ContainerWidget implements ContextView, PagingList
         if (_listeners != null) {
             _listeners.remove(l);
         }
+    }
+
+    @Override
+    public void refreshSelected() {
+        DObjectRef selected = _selectedMap.get(_parent);
+        if (selected != null) {
+            if (isInCurrentPage(selected)) {
+                refreshRow(selected);
+            }
+            updated(selected);
+        }
+    }
+
+    @Override
+    public BaseWidget widget() {
+        return this;
     }
 
 }

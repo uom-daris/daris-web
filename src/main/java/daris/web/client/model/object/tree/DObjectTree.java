@@ -8,6 +8,7 @@ import arc.gui.image.Image;
 import arc.mf.object.tree.Container;
 import arc.mf.object.tree.Tree;
 import arc.mf.object.tree.TreeNodeDescriptionHandler;
+import daris.web.client.gui.object.tree.DObjectTreeGUI;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.query.sort.SortKey;
@@ -22,10 +23,23 @@ public class DObjectTree implements Tree {
     private HashMap<DObjectRef, SimpleObjectFilter> _filters;
     private SortKey _sortKey;
 
-    public DObjectTree() {
+    private DObjectTreeGUI _treeGUI;
+
+    public DObjectTree(DObjectRef seekToProject) {
         _pageSize = DEFAULT_PAGE_SIZE;
         _sortKey = SortKey.citeableId();
         _root = new RootNode(this);
+        if (seekToProject != null) {
+            _root.setSeekToChild(seekToProject);
+        }
+    }
+
+    public void setTreeGUI(DObjectTreeGUI treeGUI) {
+        _treeGUI = treeGUI;
+    }
+
+    DObjectTreeGUI treeGUI() {
+        return _treeGUI;
     }
 
     public void setFilter(DObjectRef parent, SimpleObjectFilter filter) {
