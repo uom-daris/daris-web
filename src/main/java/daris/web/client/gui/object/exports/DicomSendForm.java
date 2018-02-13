@@ -37,6 +37,7 @@ import arc.mf.dtype.IntegerType;
 import arc.mf.dtype.StringType;
 import arc.mf.object.BackgroundObjectMessageResponse;
 import daris.web.client.gui.background.BackgroundServiceMonitor;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.dicom.DicomAE;
 import daris.web.client.model.dicom.exports.DicomSend;
 import daris.web.client.model.dicom.exports.DicomSend.ElementName;
@@ -94,7 +95,7 @@ public class DicomSendForm extends ValidatedInterfaceComponent implements Asynch
         _formSP.fitToParent();
         _vp.add(_formSP);
 
-        _form = new Form(FormEditMode.CREATE);
+        _form = FormUtil.createForm(FormEditMode.CREATE);
         _form.setPadding(25);
         _form.setWidth100();
 

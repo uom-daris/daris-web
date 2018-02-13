@@ -20,6 +20,7 @@ import arc.mf.dtype.ConstantType;
 import arc.mf.object.ObjectResolveHandler;
 import arc.mf.object.tree.Node;
 import daris.web.client.gui.dataset.action.DicomSRExportAction;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.widget.LoadingMessage;
 import daris.web.client.model.dataset.DicomDataset;
 import daris.web.client.model.dataset.sr.ContentItem;
@@ -156,12 +157,10 @@ public class DicomStructuredReportViewer extends ContainerWidget {
         if (item == null) {
             return;
         }
-        Form form = new Form();
+        Form form = FormUtil.createForm();
 
         form.setShowDescriptions(false);
         form.setShowHelp(false);
-        form.setSpacing(15);
-        form.setPadding(25);
         form.fitToParent();
 
         Field<String> name = new Field<String>("Name", ConstantType.DEFAULT, null, 1, 1);

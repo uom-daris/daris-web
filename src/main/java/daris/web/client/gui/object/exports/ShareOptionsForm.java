@@ -38,6 +38,7 @@ import arc.mf.dtype.TextType;
 import arc.mf.model.authentication.Actor;
 import arc.mf.session.ServiceResponseHandler;
 import arc.mf.session.Session;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.exports.ArchiveFormat;
@@ -120,9 +121,7 @@ public class ShareOptionsForm extends ExportOptionsForm<ShareOptions> implements
         if (_form != null) {
             removeMustBeValid(_form);
         }
-        _form = new Form();
-        _form.setPaddingTop(25);
-        _form.setPaddingLeft(25);
+        _form = FormUtil.createForm();
         // parts
         Field<Parts> partsField = new Field<Parts>(new FieldDefinition("Parts", "parts",
                 new EnumerationType<Parts>(

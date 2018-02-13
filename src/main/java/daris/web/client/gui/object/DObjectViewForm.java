@@ -36,6 +36,7 @@ import arc.mf.dtype.TextType;
 import daris.web.client.gui.archive.ArchiveViewerGUI;
 import daris.web.client.gui.dataset.DatasetViewForm;
 import daris.web.client.gui.exmethod.ExMethodViewForm;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.project.ProjectViewForm;
 import daris.web.client.gui.study.StudyViewForm;
@@ -145,9 +146,9 @@ public class DObjectViewForm<T extends DObject> extends ValidatedInterfaceCompon
 
         prependToInterfaceVP(_interfaceVP);
 
-        Form interfaceForm = new Form(FormEditMode.READ_ONLY);
+        Form interfaceForm = FormUtil.createForm(FormEditMode.READ_ONLY);
+        interfaceForm.setShowHelp(false);
         interfaceForm.setWidth100();
-        DefaultStyles.apply(interfaceForm);
 
         prependToInterfaceForm(interfaceForm);
 

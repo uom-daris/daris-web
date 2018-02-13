@@ -40,6 +40,7 @@ import arc.gui.gwt.widget.panel.TabPanel;
 import arc.gui.gwt.widget.panel.VerticalPanel;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.dtype.StringType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.object.filter.SimpleObjectFilter;
 import daris.web.client.model.object.filter.SimpleObjectFilter.Operator;
 import daris.web.client.model.query.sort.SortKey;
@@ -175,7 +176,7 @@ public class ContextViewOptionsForm extends ValidatedInterfaceComponent {
         }
         _pagingSP.clear();
 
-        _pagingForm = new Form();
+        _pagingForm = FormUtil.createForm();
         _pagingForm.setShowDescriptions(false);
         _pagingForm.setShowHelp(false);
         _pagingForm.setShowLabels(true);
@@ -215,7 +216,7 @@ public class ContextViewOptionsForm extends ValidatedInterfaceComponent {
         }
         _sortingSP.clear();
 
-        _sortingForm = new Form();
+        _sortingForm = FormUtil.createForm();
         _sortingForm.setShowDescriptions(false);
         _sortingForm.setShowHelp(false);
         _sortingForm.setShowLabels(true);
@@ -270,7 +271,7 @@ public class ContextViewOptionsForm extends ValidatedInterfaceComponent {
         }
         _filterSP.clear();
 
-        _filterForm = new Form();
+        _filterForm = FormUtil.createForm();
         _filterForm.setShowDescriptions(false);
         _filterForm.setShowHelp(false);
         _filterForm.setShowLabels(false);

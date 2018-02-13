@@ -22,6 +22,7 @@ import arc.mf.client.util.ActionListener;
 import arc.mf.client.util.AsynchronousAction;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.EnumerationType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.collection.messages.CollectionArchiveCreate;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
@@ -91,9 +92,7 @@ public class DownloadOptionsForm extends ExportOptionsForm<DownloadOptions> impl
         if (_form != null) {
             removeMustBeValid(_form);
         }
-        _form = new Form();
-        _form.setPaddingTop(25);
-        _form.setPaddingLeft(25);
+        _form = FormUtil.createForm();
         // parts
         Field<Parts> partsField = new Field<Parts>(new FieldDefinition("Parts", "parts",
                 new EnumerationType<Parts>(

@@ -43,7 +43,7 @@ public class XmlMetaForm {
      * @return
      */
     public static Form formFor(List<XmlElement> docs, FormEditMode mode) {
-        Form form = new Form(mode);
+        Form form = FormUtil.createForm(mode);
         form.setBooleanAs(BooleanAs.TRUE_FALSE);
         if (FormEditMode.READ_ONLY == mode) {
             addDocsForView(form, docs);
@@ -67,9 +67,10 @@ public class XmlMetaForm {
 
         assert root.name().equals("meta") || root.name().equals("public") || root.name().equals("private")
                 || root.name().equals("method") || root.name().equals("subject");
-        Form form = new Form(mode);
+        Form form = FormUtil.createForm(mode);
         form.setBooleanAs(BooleanAs.TRUE_FALSE);
         if (FormEditMode.READ_ONLY == mode) {
+            form.setShowHelp(false);
             addDocsForView(form, root.elements());
         } else {
             addDocsForEdit(form, root.elements("metadata"));

@@ -12,8 +12,8 @@ import arc.mf.model.shopping.events.ShoppingEvents;
 import arc.mf.session.DefaultLoginDialog;
 import arc.mf.session.Session;
 import arc.mf.session.SessionHandler;
+import daris.web.client.gui.Resource;
 import daris.web.client.gui.explorer.Explorer;
-import daris.web.client.gui.explorer.Test;
 import daris.web.client.gui.theme.DaRISTheme;
 import daris.web.client.model.object.event.DObjectEvents;
 import daris.web.client.model.shoppingcart.ActiveShoppingCart;
@@ -24,7 +24,9 @@ public class DaRIS implements EntryPoint, SessionHandler {
         /*
          * Initialise theme
          */
+        Resource.INSTANCE.css().ensureInjected();
         new ThemeRegistry().setCurrentTheme(new DaRISTheme());
+        
 
         if (Plugin.isStandaloneApplication()) {
             /*
@@ -34,7 +36,8 @@ public class DaRIS implements EntryPoint, SessionHandler {
             dlg.setBaseWidth(360);
             dlg.setTitle("DaRIS");
             dlg.setVersion(Version.VERSION);
-//            Session.setAutoLogonCredentials("system", "manager", "change_me");
+            // Session.setAutoLogonCredentials("system", "manager",
+            // "change_me");
             Session.setLoginDialog(dlg);
             Session.initialize(this);
         } else {
@@ -74,8 +77,8 @@ public class DaRIS implements EntryPoint, SessionHandler {
              * show gui
              */
             RootPanel.add(Explorer.get());
-            
-//            Test.show();
+
+            // Test.show();
 
             /*
              * Fire current history state

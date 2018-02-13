@@ -31,7 +31,7 @@ public abstract class XmlMetaFormGroup extends ValidatedInterfaceComponent {
             String group = group(e);
             Form form = _forms.get(group);
             if (form == null) {
-                form = new Form(_mode);
+                form = FormUtil.createForm(_mode);
                 form.setAllowMissingMandatory(allowMissingMandatory);
                 _forms.put(group, form);
                 addMustBeValid(form);

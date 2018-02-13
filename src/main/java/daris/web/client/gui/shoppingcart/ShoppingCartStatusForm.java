@@ -22,6 +22,7 @@ import arc.gui.menu.ActionEntry;
 import arc.gui.menu.Menu;
 import arc.mf.client.util.Action;
 import arc.mf.dtype.EnumerationType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.gui.widget.ListGridCellWidget;
 import daris.web.client.model.shoppingcart.ShoppingCart;
@@ -45,7 +46,7 @@ public class ShoppingCartStatusForm implements InterfaceComponent {
         /*
          * status
          */
-        Form statusForm = new Form(FormEditMode.READ_ONLY);
+        Form statusForm = FormUtil.createForm(FormEditMode.READ_ONLY);
         statusForm.setHeight(30);
         statusForm.setPadding(20);
         _statusField = new Field<Status>(new FieldDefinition("status", new EnumerationType<Status>(Status.values()),

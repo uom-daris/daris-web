@@ -25,6 +25,8 @@ import arc.mf.client.util.Validity;
 import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.DocType;
 import arc.mf.dtype.EnumerationType;
+import daris.web.client.gui.form.FormUtil;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.object.CollectionSummary;
 import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.exports.PathExpressionSetRef;
@@ -88,8 +90,7 @@ public class SinkForm extends ValidatedInterfaceComponent {
     }
 
     private void initSinkSelectForm() {
-        _sinkSelectForm = new Form();
-        _sinkSelectForm.setSpacing(10);
+        _sinkSelectForm = FormUtil.createForm();
         _sinkSelectForm.setWidth100();
         _sinkSelectForm.setShowHelp(false);
         // _sinkSelectForm.setShowDescriptions(false);
@@ -143,7 +144,8 @@ public class SinkForm extends ValidatedInterfaceComponent {
             _sinkSettingsFormSP.clear();
             _sinkSettingsForm = null;
         }
-        _sinkSettingsForm = new SinkSettingsForm(_sink, _summary.numberOfObjects() > 1, new PathExpressionSetRef(_o.projectCiteableId()));
+        _sinkSettingsForm = new SinkSettingsForm(_sink, _summary.numberOfObjects() > 1,
+                new PathExpressionSetRef(_o.projectCiteableId()));
         _sinkSettingsForm.render();
         _sinkSettingsFormSP.setContent(new ScrollPanel(_sinkSettingsForm, ScrollPolicy.AUTO));
         addMustBeValid(_sinkSettingsForm);

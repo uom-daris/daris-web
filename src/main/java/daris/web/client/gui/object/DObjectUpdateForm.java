@@ -24,6 +24,7 @@ import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
 import daris.web.client.gui.dataset.DatasetUpdateForm;
 import daris.web.client.gui.exmethod.ExMethodUpdateForm;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.project.ProjectUpdateForm;
 import daris.web.client.gui.study.StudyUpdateForm;
 import daris.web.client.gui.subject.SubjectUpdateForm;
@@ -75,7 +76,7 @@ public abstract class DObjectUpdateForm<T extends DObject> extends ValidatedInte
             }
         });
 
-        Form interfaceForm = new Form(FormEditMode.UPDATE);
+        Form interfaceForm = FormUtil.createForm(FormEditMode.UPDATE);
         interfaceForm.fitToParent();
         addToInterfaceForm(interfaceForm);
         interfaceForm.render();

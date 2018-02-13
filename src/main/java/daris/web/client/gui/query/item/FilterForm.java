@@ -18,7 +18,7 @@ public class FilterForm extends Form implements Filter {
         setShowDescriptions(false);
         setShowHelp(false);
         setFontSize(DefaultStyles.HTML_FONT_SIZE);
-        setSpacing(15);
+        setSpacing(DefaultStyles.FORM_SPACING);
     }
 
     public <T> Field<T> add(Field<T> field) {

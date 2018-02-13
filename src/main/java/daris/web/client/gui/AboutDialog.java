@@ -22,6 +22,7 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.client.xml.XmlStringWriter;
 import arc.mf.session.ServiceResponseHandler;
 import arc.mf.session.Session;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.form.XmlMetaForm;
 import daris.web.client.gui.widget.LoadingMessage;
 
@@ -67,7 +68,7 @@ public class AboutDialog {
         /*
          * server
          */
-        Form serverIdentityForm = new Form(FormEditMode.READ_ONLY);
+        Form serverIdentityForm = FormUtil.createForm(FormEditMode.READ_ONLY);
         serverIdentityForm.setShowHelp(false);
         serverIdentityForm.setShowDescriptions(false);
         serverIdentityForm.setMarginTop(10);

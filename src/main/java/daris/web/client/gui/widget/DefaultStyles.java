@@ -22,6 +22,8 @@ public class DefaultStyles {
 
     public static final int FORM_PADDING = 20;
 
+    public static final int FORM_FONT_SIZE = 11;
+
     public static void apply(Form form, int spacing, int padding) {
         if (spacing > 0) {
             form.setSpacing(spacing);

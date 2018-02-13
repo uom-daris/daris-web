@@ -15,6 +15,7 @@ import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.mf.client.util.ObjectUtil;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.dtype.StringType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.object.filter.MetadataFilter;
 import daris.web.client.model.object.filter.MetadataFilter.Operator;
 
@@ -53,7 +54,7 @@ public class MetadataFilterItem extends FilterItem<MetadataFilter> {
             label.setFontWeight(FontWeight.BOLD);
             _hp.add(label);
         } else {
-            _pathForm = new Form(FormEditMode.UPDATE);
+            _pathForm = FormUtil.createForm(FormEditMode.UPDATE);
             _pathForm.setShowLabels(false);
             _pathForm.setShowDescriptions(false);
             _pathForm.setShowHelp(false);
@@ -82,7 +83,7 @@ public class MetadataFilterItem extends FilterItem<MetadataFilter> {
          * operator
          */
         MetadataFilter.Operator op = _f.operator();
-        _opForm = new Form(FormEditMode.UPDATE);
+        _opForm =  FormUtil.createForm(FormEditMode.UPDATE);
         _opForm.setShowLabels(false);
         _opForm.setShowDescriptions(false);
         _opForm.setShowHelp(false);
@@ -114,7 +115,7 @@ public class MetadataFilterItem extends FilterItem<MetadataFilter> {
             /*
              * value
              */
-            _valueForm = new Form(FormEditMode.UPDATE);
+            _valueForm = FormUtil.createForm(FormEditMode.UPDATE);
             _valueForm.setShowLabels(false);
             _valueForm.setShowDescriptions(false);
             _valueForm.setShowHelp(false);

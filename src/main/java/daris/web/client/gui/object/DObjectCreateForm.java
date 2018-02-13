@@ -23,6 +23,7 @@ import arc.mf.client.util.Validity;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.StringType;
 import arc.mf.dtype.TextType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.object.DObjectCreator;
 
 public abstract class DObjectCreateForm<T extends DObjectCreator> extends ValidatedInterfaceComponent
@@ -64,7 +65,7 @@ public abstract class DObjectCreateForm<T extends DObjectCreator> extends Valida
             }
         });
 
-        Form interfaceForm = new Form(FormEditMode.CREATE);
+        Form interfaceForm = FormUtil.createForm(FormEditMode.CREATE);
         interfaceForm.setPaddingTop(15);
         interfaceForm.setPaddingLeft(20);
         interfaceForm.setPaddingRight(20);

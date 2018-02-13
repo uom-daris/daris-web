@@ -21,6 +21,7 @@ import arc.mf.dtype.StringType;
 import arc.mf.object.Null;
 import arc.mf.object.ObjectMessageResponse;
 import daris.web.client.gui.Resource;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.dataset.sr.StructuredReportRef;
 import daris.web.client.model.dataset.sr.messages.StructuredReportExport;
 import daris.web.client.model.dataset.sr.messages.StructuredReportExport.Format;
@@ -39,9 +40,7 @@ public class DicomSRExportForm extends ValidatedInterfaceComponent implements As
         _vp = new VerticalPanel();
         _vp.fitToParent();
 
-        _form = new Form();
-        _form.setPadding(25);
-        _form.setSpacing(20);
+        _form = FormUtil.createForm();
         _form.setShowDescriptions(false);
         _form.setShowHelp(false);
 

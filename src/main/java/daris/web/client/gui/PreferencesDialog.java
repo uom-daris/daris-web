@@ -18,6 +18,7 @@ import arc.mf.client.xml.XmlElement;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.session.Session;
 import daris.web.client.gui.explorer.ListView;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.widget.LoadingMessage;
 
 public class PreferencesDialog extends ValidatedInterfaceComponent {
@@ -64,7 +65,7 @@ public class PreferencesDialog extends ValidatedInterfaceComponent {
         _pageSizeCommitted = se.intValue("page.size", ListView.DEFAULT_PAGE_SIZE);
         TabPanel tp = new TabPanel();
         tp.fitToParent();
-        Form explorerPreferencesForm = new Form(FormEditMode.UPDATE);
+        Form explorerPreferencesForm = FormUtil.createForm(FormEditMode.UPDATE);
         Field<Integer> pageSizeField = new Field<Integer>(new FieldDefinition("Objects per page", "pageSize",
                 new EnumerationType<Integer>(), "Number of object per page.", null, 0, 1));
         pageSizeField.addListener(new FormItemListener<Integer>() {

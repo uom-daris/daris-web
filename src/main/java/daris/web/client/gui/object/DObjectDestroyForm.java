@@ -97,7 +97,7 @@ public class DObjectDestroyForm extends ValidatedInterfaceComponent implements A
             AbsolutePanel formAP = new AbsolutePanel() {
                 protected void doLayoutChildren() {
                     super.doLayoutChildren();
-                    form.setLeft(absoluteLeft() + (width() - form.width()) / 2);
+                    form.setLeft((width() - form.width()) / 2);
                 }
             };
             formAP.setWidth100();

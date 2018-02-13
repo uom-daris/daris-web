@@ -14,6 +14,7 @@ import arc.gui.gwt.widget.HTML;
 import arc.gui.gwt.widget.panel.HorizontalPanel;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.dtype.StringType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.model.object.filter.TextFilter;
 
 public class TextFilterItem extends FilterItem<TextFilter> {
@@ -47,7 +48,7 @@ public class TextFilterItem extends FilterItem<TextFilter> {
          * operator
          */
         TextFilter.Operator op = _f.operator();
-        _opForm = new Form(FormEditMode.UPDATE);
+        _opForm = FormUtil.createForm(FormEditMode.UPDATE);
         _opForm.setShowLabels(false);
         _opForm.setShowDescriptions(false);
         _opForm.setShowHelp(false);
@@ -74,7 +75,7 @@ public class TextFilterItem extends FilterItem<TextFilter> {
         /*
          * value
          */
-        _valueForm = new Form(FormEditMode.UPDATE);
+        _valueForm = FormUtil.createForm(FormEditMode.UPDATE);
         _valueForm.setShowLabels(false);
         _valueForm.setShowDescriptions(false);
         _valueForm.setShowHelp(false);

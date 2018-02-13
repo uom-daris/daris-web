@@ -2,10 +2,20 @@ package daris.web.client.gui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface Resource extends ClientBundle {
     Resource INSTANCE = GWT.create(Resource.class);
+
+    public interface Style extends CssResource {
+        @ClassName("my-css-class")
+        String myCssClass();
+    }
+
+    @ClientBundle.Source("resource/_default.css")
+    @CssResource.NotStrict
+    Style css();
 
     @Source("resource/about-16.png")
     ImageResource about16();

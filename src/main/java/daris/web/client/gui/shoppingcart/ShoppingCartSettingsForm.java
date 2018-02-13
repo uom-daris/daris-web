@@ -29,6 +29,7 @@ import arc.mf.dtype.ConstantType;
 import arc.mf.dtype.DocType;
 import arc.mf.dtype.EnumerationType;
 import arc.mf.dtype.StringType;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.sink.SinkSettingsForm;
 import daris.web.client.model.object.exports.PathExpression;
 import daris.web.client.model.object.exports.PathExpressionEnum;
@@ -99,7 +100,7 @@ public class ShoppingCartSettingsForm extends ValidatedInterfaceComponent {
             return;
         }
 
-        _form = new Form(_cart.status() == Status.EDITABLE ? FormEditMode.UPDATE : FormEditMode.READ_ONLY);
+        _form = FormUtil.createForm(_cart.status() == Status.EDITABLE ? FormEditMode.UPDATE : FormEditMode.READ_ONLY);
         _form.setBooleanAs(BooleanAs.CHECKBOX);
         _form.setWidth100();
         _form.setMargin(20);

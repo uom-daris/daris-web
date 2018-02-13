@@ -24,6 +24,7 @@ import arc.mf.client.util.Validity;
 import arc.mf.dtype.BooleanType;
 import arc.mf.dtype.ConstantType;
 import daris.web.client.gui.dataset.FileForm;
+import daris.web.client.gui.form.FormUtil;
 import daris.web.client.gui.object.imports.FileUploadTaskManager;
 import daris.web.client.model.dicom.imports.DicomIngestSettings;
 import daris.web.client.model.dicom.imports.DicomIngestTask;
@@ -52,10 +53,9 @@ public class DicomIngestForm extends ValidatedInterfaceComponent implements Asyn
         _vp = new VerticalPanel();
         _vp.fitToParent();
 
-        Form settingsForm = new Form();
+        Form settingsForm = FormUtil.createForm();
         settingsForm.setBooleanAs(BooleanAs.CHECKBOX);
         settingsForm.setHeight(160);
-        settingsForm.setPadding(20);
         settingsForm.setWidth100();
 
         Field<String> cid = new Field<String>(new FieldDefinition("Destination " + po.referentTypeName(), "cid",

@@ -25,6 +25,7 @@ import arc.mf.dtype.FloatType;
 import arc.mf.dtype.IntegerType;
 import arc.mf.object.ObjectResolveHandler;
 import arc.mf.session.Session;
+import daris.web.client.gui.widget.DefaultStyles;
 import daris.web.client.model.object.exports.PathExpression;
 import daris.web.client.model.object.exports.PathExpressionEnum;
 import daris.web.client.model.object.exports.PathExpressionSetRef;
@@ -44,12 +45,14 @@ public class SinkSettingsForm extends Form {
     private boolean _mayContainMultipleItems;
 
     public SinkSettingsForm(Sink sink, boolean mayContainMultipleItems, PathExpressionSetRef pes) {
+        
 
         _sink = sink;
         _mayContainMultipleItems = mayContainMultipleItems;
         _pes = pes;
 
-        setSpacing(10);
+        setSpacing(DefaultStyles.FORM_SPACING);
+        setPadding(DefaultStyles.FORM_PADDING);
         setBooleanAs(BooleanAs.CHECKBOX);
         fitToParent();
 
