@@ -48,16 +48,27 @@ public class TreeView extends ContainerWidget implements ContextView, PagingList
 
     private List<ContextView.Listener> _listeners;
 
-    public TreeView() {
+    public TreeView(DObjectRef seekTo) {
+
+        DObjectTree tree = new DObjectTree();
 
         _seekTo = new Stack<DObjectRef>();
+        if (seekTo != null) {
+            _seekTo.push(seekTo);
+            DObjectRef po = seekTo.parent();
+            while (po != null) {
+                _seekTo.push(po);
+                po = po.parent();
+            }
+            tree.rootNode().setSeekToChild(_seekTo.peek());
+        }
 
         SimplePanel header = new SimplePanel();
         header.setWidth100();
         header.setHeight(HEADER_HEIGHT);
         header.setBackgroundImage(HEADER_BACKGROUND_IMAGE);
 
-        _treeGUI = new TreeGUI(new DObjectTree(), ScrollPolicy.AUTO, new TreeGUIEventHandler() {
+        _treeGUI = new TreeGUI(tree, ScrollPolicy.AUTO, new TreeGUIEventHandler() {
 
             @Override
             public void clicked(Node n) {
@@ -243,29 +254,7 @@ public class TreeView extends ContainerWidget implements ContextView, PagingList
     }
 
     public void seekTo(DObjectRef o) {
-        if (o != null) {
-            _seekTo.clear();
-            _seekTo.push(o);
-            DObjectRef po = o.parent();
-            while (po != null) {
-                _seekTo.push(po);
-                po = po.parent();
-            }
-            new DObjectChildCursorFromGet(_seekTo.peek().citeableId(), tree().pageSize())
-                    .send(new ObjectMessageResponse<Long>() {
-                        @Override
-                        public void responded(Long idx) {
-                            if (idx != null && idx > 0) {
-                                tree().rootNode().setOffset(idx - 1);
-                            } else {
-                                tree().rootNode().setOffset(0);
-                            }
-                            tree().rootNode().children().cancel();
-                            tree().rootNode().children().reset();
-                            _treeGUI.reload();
-                        }
-                    });
-        }
+        seekTo(o, true);
     }
 
     @Override
@@ -276,8 +265,18 @@ public class TreeView extends ContainerWidget implements ContextView, PagingList
 
     @Override
     public void seekTo(DObjectRef o, boolean refresh) {
-        // TODO Auto-generated method stub
-
+        // Always refresh(rebuild) because no local caching.
+        if (o != null) {
+            _seekTo.clear();
+            _seekTo.push(o);
+            DObjectRef po = o.parent();
+            while (po != null) {
+                _seekTo.push(po);
+                po = po.parent();
+            }
+            tree().rootNode().setSeekToChild(_seekTo.peek());
+            _treeGUI.reload();
+        }
     }
 
     @Override

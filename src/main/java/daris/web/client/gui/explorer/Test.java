@@ -11,12 +11,12 @@ public class Test {
         wp.setSize(0.7, 0.7);
         wp.setCanBeClosed(true);
         wp.setTitle("test");
-        TreeView tv = new TreeView();
+        TreeView tv = new TreeView(new DObjectRef("39.1.10.1.1.1.1", -1));
         tv.fitToParent();
         Window win = Window.create(wp);
         win.setContent(tv);
         win.show();
         win.centerInPage();
-        tv.seekTo(new DObjectRef("1.10.3.102.1.1.1", -1));
+        
     }
 }

@@ -20,6 +20,7 @@ import arc.mf.client.util.ObjectUtil;
 import arc.mf.event.Filter;
 import arc.mf.event.SystemEvent;
 import arc.mf.object.CollectionResolveHandler;
+import arc.mf.object.ObjectMessageResponse;
 import arc.mf.object.ObjectResolveHandler;
 import arc.mf.object.tree.Container;
 import arc.mf.object.tree.Node;
@@ -39,6 +40,7 @@ import daris.web.client.model.object.DObject;
 import daris.web.client.model.object.DObjectChildrenRef;
 import daris.web.client.model.object.DObjectRef;
 import daris.web.client.model.object.event.DObjectEvent;
+import daris.web.client.model.object.messages.DObjectChildCursorFromGet;
 import daris.web.client.model.object.messages.DObjectExists;
 
 public class DObjectTreeNode implements Container, RemoteNode {
@@ -56,6 +58,7 @@ public class DObjectTreeNode implements Container, RemoteNode {
     private long _stateId;
     private Map<Object, NodeListener> _listeners;
     private DObjectChildrenRef _children;
+    private DObjectRef _seekToChild;
 
     private long _start = 0;
 
@@ -308,30 +311,50 @@ public class DObjectTreeNode implements Container, RemoteNode {
             ch.loaded(0, 0, 0, null);
             _adornment.setHTML("" + 0);
         } else {
-            if (start > 0) {
-                _start = start;
-            }
-            if (end > _start + pageSize()) {
-                end = _start + pageSize();
-            }
-            resolveChildrenInCurrentPage(cos -> {
-                if (cos == null || cos.isEmpty()) {
-                    ch.loaded(0, 0, 0, null);
-                    _adornment.setHTML("" + 0);
-                } else {
-                    List<Node> nodes = new ArrayList<Node>(cos.size());
-                    for (DObjectRef co : cos) {
-                        nodes.add(new DObjectTreeNode(_tree, DObjectTreeNode.this, co));
-                    }
-                    ch.loaded(_start, _start + nodes.size(), numberOfChildren(), nodes);
-                    if (_start == 0 && nodes.size() < pageSize()) {
-                        _adornment.setHTML("" + nodes.size());
-                    } else {
-                        _adornment.setHTML("" + _start + ".." + (_start + nodes.size()) + "/" + numberOfChildren());
-                    }
+            if (_seekToChild != null) {
+                new DObjectChildCursorFromGet(_seekToChild.citeableId(), pageSize())
+                        .send(new ObjectMessageResponse<Long>() {
+                            @Override
+                            public void responded(Long idx) {
+                                _seekToChild = null;
+                                if (idx != null && idx > 0) {
+                                    setOffset(idx - 1);
+                                } else {
+                                    setOffset(0);
+                                }
+                                _children.cancel();
+                                _children.reset();
+                                contents(start, end, ch);
+                            }
+                        });
+
+            } else {
+                if (start > 0) {
+                    _start = start;
                 }
-            });
+                resolveChildrenInCurrentPage(cos -> {
+                    if (cos == null || cos.isEmpty()) {
+                        ch.loaded(0, 0, 0, null);
+                        _adornment.setHTML("" + 0);
+                    } else {
+                        List<Node> nodes = new ArrayList<Node>(cos.size());
+                        for (DObjectRef co : cos) {
+                            nodes.add(new DObjectTreeNode(_tree, DObjectTreeNode.this, co));
+                        }
+                        ch.loaded(_start, _start + nodes.size(), numberOfChildren(), nodes);
+                        if (_start == 0 && nodes.size() < pageSize()) {
+                            _adornment.setHTML("" + nodes.size());
+                        } else {
+                            _adornment.setHTML("" + _start + ".." + (_start + nodes.size()) + "/" + numberOfChildren());
+                        }
+                    }
+                });
+            }
         }
+    }
+
+    public void setSeekToChild(DObjectRef seekToChild) {
+        _seekToChild = seekToChild;
     }
 
     public long numberOfChildren() {
