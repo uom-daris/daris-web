@@ -92,6 +92,7 @@ public class SinkType {
                                 defaultValue = p.substring(8);
                             } else if (p != null && p.startsWith("enum=")) {
                                 _enumValues = p.substring(5).split("\\|");
+                                type = EnumerationType.TYPE_NAME;
                             } else if (p != null && p.startsWith("xor")) {
                                 _xorArgs = p.substring(4).split("\\|");
                             }
