@@ -105,7 +105,7 @@ public class ProjectViewForm extends DObjectViewForm<Project> {
             vp.add(userList);
         }
 
-        UserSelf.isAdministrator(isAdmin -> {
+        UserSelf.isProjectAdmin(object(), isAdmin -> {
             if (project.editable() || isAdmin) {
                 ButtonBar bb = new ButtonBar(Position.BOTTOM, Alignment.CENTER);
                 bb.setHeight(32);

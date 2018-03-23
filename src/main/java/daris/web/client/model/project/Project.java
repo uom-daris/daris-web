@@ -10,6 +10,22 @@ import daris.web.client.model.object.DObject;
 
 public class Project extends DObject {
 
+    public static String projectAdminRoleOf(String projectCID) {
+        return "daris:pssd.project.admin." + projectCID;
+    }
+
+    public static String subjectAdminRoleOf(String projectCID) {
+        return "daris:pssd.project.subject.admin." + projectCID;
+    }
+
+    public static String memberRoleOf(String projectCID) {
+        return "daris:pssd.project.member." + projectCID;
+    }
+
+    public static String guestRoleOf(String projectCID) {
+        return "daris:pssd.project.guest." + projectCID;
+    }
+
     private List<MethodRef> _methods;
     private DataUse _dataUse;
     private List<ProjectUser> _users;
