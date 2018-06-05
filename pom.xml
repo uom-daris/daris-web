@@ -6,7 +6,7 @@
 	<groupId>au.edu.unimelb.daris</groupId>
 	<artifactId>daris-web</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<name>daris-web</name>
 	<description>DaRIS web client.</description>
 	<url>https://github.com/uom-daris/daris-web</url>

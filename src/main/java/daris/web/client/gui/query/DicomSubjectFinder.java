@@ -8,7 +8,6 @@ import daris.web.client.gui.query.item.ProjectFilterField;
 import daris.web.client.gui.query.item.StringFilterFieldGroup;
 import daris.web.client.gui.query.item.TimePeriodFilterFieldGroup;
 import daris.web.client.model.query.DObjectQueryResultCollectionRef;
-import daris.web.client.model.query.sort.SortKey;
 
 public class DicomSubjectFinder extends QueryInterface {
 
@@ -24,7 +23,9 @@ public class DicomSubjectFinder extends QueryInterface {
         rc.addXPath("mf-dicom-patient/sex", "patient-sex");
         rc.addXPath("mf-dicom-patient/dob", "patient-birth-date");
         rc.addXPath("mtime", "last-modified");
-        rc.addSortKey("mtime", SortKey.Order.DESCENDING);
+        // TODO enable sorting by adding sort options (otherwise it could slow
+        // the query significantly).
+        // rc.addSortKey("mtime", SortKey.Order.DESCENDING);
     }
 
     @Override

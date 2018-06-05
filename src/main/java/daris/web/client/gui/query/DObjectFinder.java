@@ -18,8 +18,11 @@ public class DObjectFinder extends QueryInterface {
     protected void initializeQuery(DObjectQueryResultCollectionRef rc) {
         rc.addXPath("daris:pssd-object/description", "description");
         rc.addXPath("mtime", "last-modified");
-        rc.addSortKey("mtime", SortKey.Order.DESCENDING);
+        // TODO enable mtime sorting by adding sort options (otherwise it could
+        // slow the query significantly).
+        // rc.addSortKey("mtime", SortKey.Order.DESCENDING);
         rc.addSortKey("daris:pssd-object/type", SortKey.Order.DESCENDING);
+        rc.addSortKey("cid", SortKey.Order.DESCENDING);
     }
 
     @Override
